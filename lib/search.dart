@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hotelapps/class_list.dart';
+import 'package:hotelapps/detail.dart';
 import 'package:hotelapps/main.dart';
 import 'package:hotelapps/profile.dart';
 
@@ -194,7 +195,7 @@ class _SearchPageState extends State<SearchPage> {
                     Container(
                       child: Column(
                         children: [
-                          //histori 1
+                          //hotel 1
                           GestureDetector(
                             onLongPress: (){
                               setState(() {
@@ -210,9 +211,16 @@ class _SearchPageState extends State<SearchPage> {
                               });
                             },
                             onTap: (){
-                              setState(() {
-                                hotellist[0].selected=false;
-                              });
+                              if(hotellist[0].selected){
+                                //tap buat batalin pilihann haasil longpress tadi
+                                setState(() {
+                                  hotellist[0].selected=false;
+                                });
+                              } else {
+                                //kondisi belum longpress, pas di onetap langsung ke detailpage
+                                Navigator.push(context, MaterialPageRoute(builder: (context)=>DetailPage(hotel:hotellist[0]),)
+                                );
+                              }
                             },
                             child: Container(
                               padding: EdgeInsets.all(5),
@@ -297,9 +305,16 @@ class _SearchPageState extends State<SearchPage> {
                               });
                             },
                             onTap: (){
-                              setState(() {
-                                hotellist[1].selected=false;
-                              });
+                              if(hotellist[1].selected){
+                                //tap buat batalin pilihann haasil longpress tadi
+                                setState(() {
+                                  hotellist[1].selected=false;
+                                });
+                              } else {
+                                //kondisi belum longpress, pas di onetap langsung ke detailpage
+                                Navigator.push(context, MaterialPageRoute(builder: (context)=>DetailPage(hotel:hotellist[1]),)
+                                );
+                              }
                             },
                             child: Container(
                               padding: EdgeInsets.all(5),
@@ -384,9 +399,16 @@ class _SearchPageState extends State<SearchPage> {
                               });
                             },
                             onTap: (){
-                              setState(() {
-                                hotellist[2].selected=false;
-                              });
+                              if(hotellist[2].selected){
+                                //tap buat batalin pilihann haasil longpress tadi
+                                setState(() {
+                                  hotellist[2].selected=false;
+                                });
+                              } else {
+                                //kondisi belum longpress, pas di onetap langsung ke detailpage
+                                Navigator.push(context, MaterialPageRoute(builder: (context)=>DetailPage(hotel:hotellist[2]),)
+                                );
+                              }
                             },
                             child: Container(
                               padding: EdgeInsets.all(5),
@@ -471,9 +493,16 @@ class _SearchPageState extends State<SearchPage> {
                               });
                             },
                             onTap: (){
-                              setState(() {
-                                hotellist[3].selected=false;
-                              });
+                              if(hotellist[3].selected){
+                                //tap buat batalin pilihann haasil longpress tadi
+                                setState(() {
+                                  hotellist[3].selected=false;
+                                });
+                              } else {
+                                //kondisi belum longpress, pas di onetap langsung ke detailpage
+                                Navigator.push(context, MaterialPageRoute(builder: (context)=>DetailPage(hotel:hotellist[4]),)
+                                );
+                              }
                             },
                             child: Container(
                               padding: EdgeInsets.all(5),
@@ -558,9 +587,16 @@ class _SearchPageState extends State<SearchPage> {
                               });
                             },
                             onTap: (){
-                              setState(() {
-                                hotellist[4].selected=false;
-                              });
+                              if(hotellist[4].selected){
+                                //tap buat batalin pilihann haasil longpress tadi
+                                setState(() {
+                                  hotellist[4].selected=false;
+                                });
+                              } else {
+                                //kondisi belum longpress, pas di onetap langsung ke detailpage
+                                Navigator.push(context, MaterialPageRoute(builder: (context)=>DetailPage(hotel:hotellist[4]),)
+                                );
+                              }
                             },
                             child: Container(
                               padding: EdgeInsets.all(5),
@@ -645,9 +681,16 @@ class _SearchPageState extends State<SearchPage> {
                               });
                             },
                             onTap: (){
-                              setState(() {
-                                hotellist[5].selected=false;
-                              });
+                              if(hotellist[5].selected){
+                                //tap buat batalin pilihann haasil longpress tadi
+                                setState(() {
+                                  hotellist[5].selected=false;
+                                });
+                              } else {
+                                //kondisi belum longpress, pas di onetap langsung ke detailpage
+                                Navigator.push(context, MaterialPageRoute(builder: (context)=>DetailPage(hotel:hotellist[5]),)
+                                );
+                              }
                             },
                             child: Container(
                               padding: EdgeInsets.all(5),
