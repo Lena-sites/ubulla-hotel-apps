@@ -847,6 +847,20 @@ class _MyAppState extends State<HomePage>{
           ),
         ),
       ),
+    bottomNavigationBar: BottomNavigationBar(
+    currentIndex: 0,
+    type: BottomNavigationBarType.fixed,
+    backgroundColor: Colors.white,
+    selectedItemColor: Color(0xFF10B981),
+    unselectedItemColor: Colors.grey,
+    onTap: (index) {},
+    items: [
+    BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: 'Home'),
+    BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
+    BottomNavigationBarItem(icon: Icon(Icons.receipt_long_outlined), label: 'Booking'),
+    BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+    ],
+    ),
     );
   }
 }
