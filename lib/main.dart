@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hotelapps/profile.dart';
 
 void main() {
   runApp(const MyApp());
@@ -71,6 +72,7 @@ class _MyAppState extends State<HomePage>{
             Icon(Icons.bookmark_outline)
           ],
         ),
+        automaticallyImplyLeading: false, //matiin tanda panah back otomatis
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -847,20 +849,26 @@ class _MyAppState extends State<HomePage>{
           ),
         ),
       ),
+    //tempat navigasi
     bottomNavigationBar: BottomNavigationBar(
-    currentIndex: 0,
-    type: BottomNavigationBarType.fixed,
-    backgroundColor: Colors.white,
-    selectedItemColor: Color(0xFF10B981),
-    unselectedItemColor: Colors.grey,
-    onTap: (index) {},
-    items: [
-    BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: 'Home'),
-    BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
-    BottomNavigationBarItem(icon: Icon(Icons.receipt_long_outlined), label: 'Booking'),
-    BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-    ],
-    ),
+      currentIndex: 0,
+      type: BottomNavigationBarType.fixed,
+      backgroundColor: Colors.white,
+      selectedItemColor: Color(0xFF10B981),
+      unselectedItemColor: Colors.grey,
+        onTap: (index) {
+          if(index == 3){
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfilePage()),
+            );
+          }
+      },
+      items: [
+          BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
+          BottomNavigationBarItem(icon: Icon(Icons.receipt_long_outlined), label: 'Booking'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+        ],
+      ),
     );
   }
 }

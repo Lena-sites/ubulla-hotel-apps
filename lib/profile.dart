@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:hotelapps/main.dart';
 
-void main() {
-  runApp(const ProfileApp());
-}
+// void main() {
+//   runApp(const ProfileApp());
+// }
 
-class ProfileApp extends StatelessWidget {
-  const ProfileApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: ProfilePage(),
-    );
-  }
-}
+// class ProfileApp extends StatelessWidget {
+//   const ProfileApp({super.key});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       debugShowCheckedModeBanner: false,
+//       home: ProfilePage(),
+//     );
+//   }
+// }
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -160,6 +161,7 @@ class _ProfilePageState extends State<ProfilePage> {
             Icon(Icons.bookmark_outline),
           ],
         ),
+        automaticallyImplyLeading: false, //matiin tanda panah back otomatis
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -390,7 +392,13 @@ class _ProfilePageState extends State<ProfilePage> {
         backgroundColor: cardColor,
         selectedItemColor: Color(0xFF10B981),
         unselectedItemColor: Colors.grey,
-        onTap: (index) {},
+        onTap: (index) {
+            if(index == 0) {
+              Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const HomePage()),
+              );
+            }
+        },
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: 'Home'),
           BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
