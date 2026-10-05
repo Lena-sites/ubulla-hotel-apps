@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hotelapps/classfiltering.dart';
+import 'package:hotelapps/class_list.dart';
 import 'package:hotelapps/profile.dart';
 import 'package:hotelapps/search.dart';
 
@@ -26,18 +26,10 @@ class HomePage extends StatefulWidget{
 }
 
 class _MyAppState extends State<HomePage>{
-  //variabel kondisi untuk gesture
-  // bool filter=false;
-
-  // List<Filtering>filtering=[
-  //   Filtering(button:'Recommended'),
-  //   Filtering(button: 'Popular'),
-  //   Filtering(button: 'Trending'),
-  //   Filtering(button: 'New'),
-  // ];
 
   @override
   Widget build(BuildContext context){
+
     // mengambil ukuran layar
     final screenWidth = MediaQuery.of(context).size.width;
     //jika lebar >600 dianggap layarnya lebar/besar
@@ -57,16 +49,18 @@ class _MyAppState extends State<HomePage>{
               )
             ),
             SizedBox(width: 5,),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('UBULLA',
-                  style: TextStyle(fontFamily: 'Cormorant_Garamond', fontSize: 18),
+            Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('UBULLA',
+                      style: TextStyle(fontFamily: 'Cormorant_Garamond', fontSize: 18),
+                    ),
+                    Text('Hotel and Resort',
+                      style: TextStyle(fontFamily: 'Cormorant_Garamond', fontSize: 9),
+                    )
+                  ],
                 ),
-                Text('Hotel and Resort',
-                  style: TextStyle(fontFamily: 'Cormorant_Garamond', fontSize: 9),
-                )
-              ],
             ),
             Spacer(),
             Icon(Icons.notifications_none_outlined),
@@ -467,380 +461,512 @@ class _MyAppState extends State<HomePage>{
                   child: Column(
                     children: [
                       //histori 1
-                      Container(
-                        padding: EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10)
-                        ),
-                        child: Row(
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: Image.asset(
-                                  'assets/images/hotel5.jpg',
-                                width: 80,
-                                height: 80,
-                                fit: BoxFit.cover
+                      GestureDetector(
+                        onDoubleTap: (){
+                          setState(() {
+                            hotellist[0].save=true;
+                          });
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10)
+                          ),
+                          child: Row(
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: Image.asset(
+                                    'assets/images/hotel5.jpg',
+                                    width: 80,
+                                    height: 80,
+                                    fit: BoxFit.cover
+                                ),
                               ),
-                            ),
-                            SizedBox(width: 10,),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text('President Hotel', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),),
-                                Text('Greek', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10),),
-                                Row(
+                              SizedBox(width: 10,),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text('Rp 450.000', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
-                                    Text(' / night', style: TextStyle(fontSize: 12),),
+                                    Text(hotellist[0].name,
+                                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                                    ),
+                                    Text(hotellist[0].location, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10),),
+                                    Row(
+                                      children: [
+                                        Text('Rp ${hotellist[0].price}', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
+                                        Text(' / night', style: TextStyle(fontSize: 12),),
+                                      ],
+                                    )
                                   ],
-                                )
-                              ],
-                            ),
-                            Spacer(),
-                            //pengkondisian untuk posisi keterangan harga sama tanda mark nya
-                            LayoutBuilder(
-                                builder: (context, constraint){
-                                  return Flex(
-                                    direction: isLargeScreen? Axis.horizontal: Axis.vertical,
-                                    crossAxisAlignment: isLargeScreen? CrossAxisAlignment.center: CrossAxisAlignment.end,
-                                    mainAxisAlignment: isLargeScreen? MainAxisAlignment.start: MainAxisAlignment.center,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Icon(Icons.star, color: Colors.yellowAccent,size: 18,),
-                                          SizedBox(width: 3,),
-                                          Text('4.8'),
-                                        ],
-                                      ),
-                                      //ini buat geser si icon mark nya supaya aga jauh dari "/ night" saat layarnya >600
-                                      SizedBox(
-                                        width: isLargeScreen ? 20 : 0,
-                                        height: isLargeScreen ? 0 : 5,
-                                      ),
-                                      Icon(Icons.bookmark_border_outlined)
-                                    ],
-                                  );
-                                }
-                            ),
-                            SizedBox(width: 10,)
-                          ],
+                                ),
+                              ),
+                              //pengkondisian untuk posisi keterangan harga sama tanda mark nya
+                              LayoutBuilder(
+                                  builder: (context, constraint){
+                                    return Flex(
+                                      direction: isLargeScreen? Axis.horizontal: Axis.vertical,
+                                      crossAxisAlignment: isLargeScreen? CrossAxisAlignment.center: CrossAxisAlignment.end,
+                                      mainAxisAlignment: isLargeScreen? MainAxisAlignment.start: MainAxisAlignment.center,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Icon(Icons.star, color: Colors.yellowAccent,size: 18,),
+                                            SizedBox(width: 3,),
+                                            Text('4.8'),
+                                          ],
+                                        ),
+                                        //ini buat geser si icon mark nya supaya aga jauh dari "/ night" saat layarnya >600
+                                        SizedBox(
+                                          width: isLargeScreen ? 20 : 0,
+                                          height: isLargeScreen ? 0 : 5,
+                                        ),
+                                        GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              hotellist[0].save = !hotellist[0].save;
+                                            });
+                                          },
+                                          child: Container(
+                                            child: Icon(
+                                              hotellist[0].save ? Icons.bookmark : Icons.bookmark_border_outlined,
+                                              color: hotellist[0].save ? Colors.green : Colors.black,
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    );
+                                  }
+                              ),
+                              SizedBox(width: 10,)
+                            ],
+                          ),
                         ),
                       ),
                       SizedBox(height: 20,),
                       //histori booking ke2
-                      Container(
-                        padding: EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10)
-                        ),
-                        child: Row(
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: Image.asset(
-                                  'assets/images/hotel6.jpg',
-                                  width: 80,
-                                  height: 80,
-                                  fit: BoxFit.cover
+                      GestureDetector(
+                        onDoubleTap: (){
+                          setState(() {
+                            hotellist[1].save=true;
+                          });
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10)
+                          ),
+                          child: Row(
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: Image.asset(
+                                    'assets/images/hotel6.jpg',
+                                    width: 80,
+                                    height: 80,
+                                    fit: BoxFit.cover
+                                ),
                               ),
-                            ),
-                            SizedBox(width: 10,),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text('President Hotel', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),),
-                                Text('Greek', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10),),
-                                Row(
+                              SizedBox(width: 10,),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text('Rp 450.000', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
-                                    Text(' / night', style: TextStyle(fontSize: 12),),
+                                    Text(hotellist[1].name,
+                                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                                    ),
+                                    Text(hotellist[1].location, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10),),
+                                    Row(
+                                      children: [
+                                        Text('Rp ${hotellist[1].price}', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
+                                        Text(' / night', style: TextStyle(fontSize: 12),),
+                                      ],
+                                    )
                                   ],
-                                )
-                              ],
-                            ),
-                            Spacer(),
-                            //pengkondisian untuk posisi keterangan harga sama tanda mark nya
-                            LayoutBuilder(
-                                builder: (context, constraint){
-                                  return Flex(
-                                    direction: isLargeScreen? Axis.horizontal: Axis.vertical,
-                                    crossAxisAlignment: isLargeScreen? CrossAxisAlignment.center: CrossAxisAlignment.end,
-                                    mainAxisAlignment: isLargeScreen? MainAxisAlignment.start: MainAxisAlignment.center,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Icon(Icons.star, color: Colors.yellowAccent,size: 18,),
-                                          SizedBox(width: 3,),
-                                          Text('4.8'),
-                                        ],
-                                      ),
-                                      //ini buat geser si icon mark nya supaya aga jauh dari "/ night" saat layarnya >600
-                                      SizedBox(
-                                        width: isLargeScreen ? 20 : 0,
-                                        height: isLargeScreen ? 0 : 5,
-                                      ),
-                                      Icon(Icons.bookmark_border_outlined)
-                                    ],
-                                  );
-                                }
-                            ),
-                            SizedBox(width: 10,)
-                          ],
+                                ),
+                              ),
+                              //pengkondisian untuk posisi keterangan harga sama tanda mark nya
+                              LayoutBuilder(
+                                  builder: (context, constraint){
+                                    return Flex(
+                                      direction: isLargeScreen? Axis.horizontal: Axis.vertical,
+                                      crossAxisAlignment: isLargeScreen? CrossAxisAlignment.center: CrossAxisAlignment.end,
+                                      mainAxisAlignment: isLargeScreen? MainAxisAlignment.start: MainAxisAlignment.center,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Icon(Icons.star, color: Colors.yellowAccent,size: 18,),
+                                            SizedBox(width: 3,),
+                                            Text('4.8'),
+                                          ],
+                                        ),
+                                        //ini buat geser si icon mark nya supaya aga jauh dari "/ night" saat layarnya >600
+                                        SizedBox(
+                                          width: isLargeScreen ? 20 : 0,
+                                          height: isLargeScreen ? 0 : 5,
+                                        ),
+                                        GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              hotellist[1].save = !hotellist[1].save;
+                                            });
+                                          },
+                                          child: Container(
+                                            child: Icon(
+                                              hotellist[1].save ? Icons.bookmark : Icons.bookmark_border_outlined,
+                                              color: hotellist[1].save ? Colors.green : Colors.black,
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    );
+                                  }
+                              ),
+                              SizedBox(width: 10,)
+                            ],
+                          ),
                         ),
                       ),
                       SizedBox(height: 20,),
                       //histori booking ke3
-                      Container(
-                        padding: EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10)
-                        ),
-                        child: Row(
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: Image.asset(
-                                  'assets/images/hotel7.jpg',
-                                  width: 80,
-                                  height: 80,
-                                  fit: BoxFit.cover
+                      GestureDetector(
+                        onDoubleTap: (){
+                          setState(() {
+                            hotellist[2].save=true;
+                          });
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10)
+                          ),
+                          child: Row(
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: Image.asset(
+                                    'assets/images/hotel7.jpg',
+                                    width: 80,
+                                    height: 80,
+                                    fit: BoxFit.cover
+                                ),
                               ),
-                            ),
-                            SizedBox(width: 10,),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text('President Hotel', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),),
-                                Text('Greek', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10),),
-                                Row(
+                              SizedBox(width: 10,),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text('Rp 450.000', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
-                                    Text(' / night', style: TextStyle(fontSize: 12),),
+                                    Text(hotellist[2].name,
+                                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                                    ),
+                                    Text(hotellist[2].location, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10),),
+                                    Row(
+                                      children: [
+                                        Text('Rp ${hotellist[2].price}', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
+                                        Text(' / night', style: TextStyle(fontSize: 12),),
+                                      ],
+                                    )
                                   ],
-                                )
-                              ],
-                            ),
-                            Spacer(),
-                            //pengkondisian untuk posisi keterangan harga sama tanda mark nya
-                            LayoutBuilder(
-                                builder: (context, constraint){
-                                  return Flex(
-                                    direction: isLargeScreen? Axis.horizontal: Axis.vertical,
-                                    crossAxisAlignment: isLargeScreen? CrossAxisAlignment.center: CrossAxisAlignment.end,
-                                    mainAxisAlignment: isLargeScreen? MainAxisAlignment.start: MainAxisAlignment.center,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Icon(Icons.star, color: Colors.yellowAccent,size: 18,),
-                                          SizedBox(width: 3,),
-                                          Text('4.8'),
-                                        ],
-                                      ),
-                                      //ini buat geser si icon mark nya supaya aga jauh dari "/ night" saat layarnya >600
-                                      SizedBox(
-                                        width: isLargeScreen ? 20 : 0,
-                                        height: isLargeScreen ? 0 : 5,
-                                      ),
-                                      Icon(Icons.bookmark_border_outlined)
-                                    ],
-                                  );
-                                }
-                            ),
-                            SizedBox(width: 10,)
-                          ],
+                                ),
+                              ),
+                              //pengkondisian untuk posisi keterangan harga sama tanda mark nya
+                              LayoutBuilder(
+                                  builder: (context, constraint){
+                                    return Flex(
+                                      direction: isLargeScreen? Axis.horizontal: Axis.vertical,
+                                      crossAxisAlignment: isLargeScreen? CrossAxisAlignment.center: CrossAxisAlignment.end,
+                                      mainAxisAlignment: isLargeScreen? MainAxisAlignment.start: MainAxisAlignment.center,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Icon(Icons.star, color: Colors.yellowAccent,size: 18,),
+                                            SizedBox(width: 3,),
+                                            Text('4.8'),
+                                          ],
+                                        ),
+                                        //ini buat geser si icon mark nya supaya aga jauh dari "/ night" saat layarnya >600
+                                        SizedBox(
+                                          width: isLargeScreen ? 20 : 0,
+                                          height: isLargeScreen ? 0 : 5,
+                                        ),
+                                        GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              hotellist[2].save = !hotellist[2].save;
+                                            });
+                                          },
+                                          child: Container(
+                                            child: Icon(
+                                              hotellist[2].save ? Icons.bookmark : Icons.bookmark_border_outlined,
+                                              color: hotellist[2].save ? Colors.green : Colors.black,
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    );
+                                  }
+                              ),
+                              SizedBox(width: 10,)
+                            ],
+                          ),
                         ),
                       ),
                       SizedBox(height: 20,),
                       //histori booking ke4
-                      Container(
-                        padding: EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10)
-                        ),
-                        child: Row(
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: Image.asset(
-                                  'assets/images/hotel8.jpg',
-                                  width: 80,
-                                  height: 80,
-                                  fit: BoxFit.cover
+                      GestureDetector(
+                        onDoubleTap: (){
+                          setState(() {
+                            hotellist[3].save=true;
+                          });
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10)
+                          ),
+                          child: Row(
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: Image.asset(
+                                    'assets/images/hotel8.jpg',
+                                    width: 80,
+                                    height: 80,
+                                    fit: BoxFit.cover
+                                ),
                               ),
-                            ),
-                            SizedBox(width: 10,),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text('President Hotel', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),),
-                                Text('Greek', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10),),
-                                Row(
+                              SizedBox(width: 10,),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text('Rp 450.000', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
-                                    Text(' / night', style: TextStyle(fontSize: 12),),
+                                    Text(hotellist[3].name,
+                                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                                    ),
+                                    Text(hotellist[3].location, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10),),
+                                    Row(
+                                      children: [
+                                        Text('Rp ${hotellist[3].price}', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
+                                        Text(' / night', style: TextStyle(fontSize: 12),),
+                                      ],
+                                    )
                                   ],
-                                )
-                              ],
-                            ),
-                            Spacer(),
-                            //pengkondisian untuk posisi keterangan harga sama tanda mark nya
-                            LayoutBuilder(
-                                builder: (context, constraint){
-                                  return Flex(
-                                    direction: isLargeScreen? Axis.horizontal: Axis.vertical,
-                                    crossAxisAlignment: isLargeScreen? CrossAxisAlignment.center: CrossAxisAlignment.end,
-                                    mainAxisAlignment: isLargeScreen? MainAxisAlignment.start: MainAxisAlignment.center,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Icon(Icons.star, color: Colors.yellowAccent,size: 18,),
-                                          SizedBox(width: 3,),
-                                          Text('4.8'),
-                                        ],
-                                      ),
-                                      //ini buat geser si icon mark nya supaya aga jauh dari "/ night" saat layarnya >600
-                                      SizedBox(
-                                        width: isLargeScreen ? 20 : 0,
-                                        height: isLargeScreen ? 0 : 5,
-                                      ),
-                                      Icon(Icons.bookmark_border_outlined)
-                                    ],
-                                  );
-                                }
-                            ),
-                            SizedBox(width: 10,)
-                          ],
+                                ),
+                              ),
+                              //pengkondisian untuk posisi keterangan harga sama tanda mark nya
+                              LayoutBuilder(
+                                  builder: (context, constraint){
+                                    return Flex(
+                                      direction: isLargeScreen? Axis.horizontal: Axis.vertical,
+                                      crossAxisAlignment: isLargeScreen? CrossAxisAlignment.center: CrossAxisAlignment.end,
+                                      mainAxisAlignment: isLargeScreen? MainAxisAlignment.start: MainAxisAlignment.center,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Icon(Icons.star, color: Colors.yellowAccent,size: 18,),
+                                            SizedBox(width: 3,),
+                                            Text('4.8'),
+                                          ],
+                                        ),
+                                        //ini buat geser si icon mark nya supaya aga jauh dari "/ night" saat layarnya >600
+                                        SizedBox(
+                                          width: isLargeScreen ? 20 : 0,
+                                          height: isLargeScreen ? 0 : 5,
+                                        ),
+                                        GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              hotellist[3].save = !hotellist[3].save;
+                                            });
+                                          },
+                                          child: Container(
+                                            child: Icon(
+                                              hotellist[3].save ? Icons.bookmark : Icons.bookmark_border_outlined,
+                                              color: hotellist[3].save ? Colors.green : Colors.black,
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    );
+                                  }
+                              ),
+                              SizedBox(width: 10,)
+                            ],
+                          ),
                         ),
                       ),
                       SizedBox(height: 20,),
-                      //histori booking ke2
-                      Container(
-                        padding: EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10)
-                        ),
-                        child: Row(
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: Image.asset(
-                                  'assets/images/hotel9.jpg',
-                                  width: 80,
-                                  height: 80,
-                                  fit: BoxFit.cover
+                      //histori booking ke5
+                      GestureDetector(
+                        onDoubleTap: (){
+                          setState(() {
+                            hotellist[4].save=true;
+                          });
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10)
+                          ),
+                          child: Row(
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: Image.asset(
+                                    'assets/images/hotel9.jpg',
+                                    width: 80,
+                                    height: 80,
+                                    fit: BoxFit.cover
+                                ),
                               ),
-                            ),
-                            SizedBox(width: 10,),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text('President Hotel', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),),
-                                Text('Greek', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10),),
-                                Row(
+                              SizedBox(width: 10,),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text('Rp 450.000', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
-                                    Text(' / night', style: TextStyle(fontSize: 12),),
+                                    Text(hotellist[4].name,
+                                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                                    ),
+                                    Text(hotellist[4].location, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10),),
+                                    Row(
+                                      children: [
+                                        Text('Rp ${hotellist[4].price}', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
+                                        Text(' / night', style: TextStyle(fontSize: 12),),
+                                      ],
+                                    )
                                   ],
-                                )
-                              ],
-                            ),
-                            Spacer(),
-                            //pengkondisian untuk posisi keterangan harga sama tanda mark nya
-                            LayoutBuilder(
-                                builder: (context, constraint){
-                                  return Flex(
-                                    direction: isLargeScreen? Axis.horizontal: Axis.vertical,
-                                    crossAxisAlignment: isLargeScreen? CrossAxisAlignment.center: CrossAxisAlignment.end,
-                                    mainAxisAlignment: isLargeScreen? MainAxisAlignment.start: MainAxisAlignment.center,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Icon(Icons.star, color: Colors.yellowAccent,size: 18,),
-                                          SizedBox(width: 3,),
-                                          Text('4.8'),
-                                        ],
-                                      ),
-                                      //ini buat geser si icon mark nya supaya aga jauh dari "/ night" saat layarnya >600
-                                      SizedBox(
-                                        width: isLargeScreen ? 20 : 0,
-                                        height: isLargeScreen ? 0 : 5,
-                                      ),
-                                      Icon(Icons.bookmark_border_outlined)
-                                    ],
-                                  );
-                                }
-                            ),
-                            SizedBox(width: 10,)
-                          ],
+                                ),
+                              ),
+                              //pengkondisian untuk posisi keterangan harga sama tanda mark nya
+                              LayoutBuilder(
+                                  builder: (context, constraint){
+                                    return Flex(
+                                      direction: isLargeScreen? Axis.horizontal: Axis.vertical,
+                                      crossAxisAlignment: isLargeScreen? CrossAxisAlignment.center: CrossAxisAlignment.end,
+                                      mainAxisAlignment: isLargeScreen? MainAxisAlignment.start: MainAxisAlignment.center,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Icon(Icons.star, color: Colors.yellowAccent,size: 18,),
+                                            SizedBox(width: 3,),
+                                            Text('4.8'),
+                                          ],
+                                        ),
+                                        //ini buat geser si icon mark nya supaya aga jauh dari "/ night" saat layarnya >600
+                                        SizedBox(
+                                          width: isLargeScreen ? 20 : 0,
+                                          height: isLargeScreen ? 0 : 5,
+                                        ),
+                                        GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              hotellist[4].save = !hotellist[4].save;
+                                            });
+                                          },
+                                          child: Container(
+                                            child: Icon(
+                                              hotellist[4].save ? Icons.bookmark : Icons.bookmark_border_outlined,
+                                              color: hotellist[4].save ? Colors.green : Colors.black,
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    );
+                                  }
+                              ),
+                              SizedBox(width: 10,)
+                            ],
+                          ),
                         ),
                       ),
                       SizedBox(height: 20,),
-                      //histori booking ke10
-                      Container(
-                        padding: EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10)
-                        ),
-                        child: Row(
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: Image.asset(
-                                  'assets/images/hotel10.jpg',
-                                  width: 80,
-                                  height: 80,
-                                  fit: BoxFit.cover
+                      //histori booking ke6
+                      GestureDetector(
+                        onDoubleTap: (){
+                          setState(() {
+                            hotellist[5].save=true;
+                          });
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10)
+                          ),
+                          child: Row(
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: Image.asset(
+                                    'assets/images/hotel10.jpg',
+                                    width: 80,
+                                    height: 80,
+                                    fit: BoxFit.cover
+                                ),
                               ),
-                            ),
-                            SizedBox(width: 10,),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text('President Hotel', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),),
-                                Text('Greek', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10),),
-                                Row(
+                              SizedBox(width: 10,),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text('Rp 450.000', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
-                                    Text(' / night', style: TextStyle(fontSize: 12),),
+                                    Text(hotellist[5].name,
+                                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                                    ),
+                                    Text(hotellist[5].location, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10),),
+                                    Row(
+                                      children: [
+                                        Text('Rp ${hotellist[5].price}', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
+                                        Text(' / night', style: TextStyle(fontSize: 12),),
+                                      ],
+                                    )
                                   ],
-                                )
-                              ],
-                            ),
-                            Spacer(),
-                            //pengkondisian untuk posisi keterangan harga sama tanda mark nya
-                            LayoutBuilder(
-                                builder: (context, constraint){
-                                  return Flex(
-                                    direction: isLargeScreen? Axis.horizontal: Axis.vertical,
-                                    crossAxisAlignment: isLargeScreen? CrossAxisAlignment.center: CrossAxisAlignment.end,
-                                    mainAxisAlignment: isLargeScreen? MainAxisAlignment.start: MainAxisAlignment.center,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Icon(Icons.star, color: Colors.yellowAccent,size: 18,),
-                                          SizedBox(width: 3,),
-                                          Text('4.8'),
-                                        ],
-                                      ),
-                                      //ini buat geser si icon mark nya supaya aga jauh dari "/ night" saat layarnya >600
-                                      SizedBox(
-                                        width: isLargeScreen ? 20 : 0,
-                                        height: isLargeScreen ? 0 : 5,
-                                      ),
-                                      Icon(Icons.bookmark_border_outlined)
-                                    ],
-                                  );
-                                }
-                            ),
-                            SizedBox(width: 10,)
-                          ],
+                                ),
+                              ),
+                              //pengkondisian untuk posisi keterangan harga sama tanda mark nya
+                              LayoutBuilder(
+                                  builder: (context, constraint){
+                                    return Flex(
+                                      direction: isLargeScreen? Axis.horizontal: Axis.vertical,
+                                      crossAxisAlignment: isLargeScreen? CrossAxisAlignment.center: CrossAxisAlignment.end,
+                                      mainAxisAlignment: isLargeScreen? MainAxisAlignment.start: MainAxisAlignment.center,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Icon(Icons.star, color: Colors.yellowAccent,size: 18,),
+                                            SizedBox(width: 3,),
+                                            Text('4.8'),
+                                          ],
+                                        ),
+                                        //ini buat geser si icon mark nya supaya aga jauh dari "/ night" saat layarnya >600
+                                        SizedBox(
+                                          width: isLargeScreen ? 20 : 0,
+                                          height: isLargeScreen ? 0 : 5,
+                                        ),
+                                        GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              hotellist[5].save = !hotellist[5].save;
+                                            });
+                                          },
+                                          child: Container(
+                                            child: Icon(
+                                              hotellist[5].save ? Icons.bookmark : Icons.bookmark_border_outlined,
+                                              color: hotellist[5].save ? Colors.green : Colors.black,
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    );
+                                  }
+                              ),
+                              SizedBox(width: 10,)
+                            ],
+                          ),
                         ),
                       ),
                     ],
@@ -883,17 +1009,3 @@ class _MyAppState extends State<HomePage>{
     );
   }
 }
-
-// //class untuk simpan tombol2 untuk filtering
-// class Filtering{
-//   String button;
-//
-//   //variabel pengatur kondisi filteringnya
-//   bool filter;
-//
-//   //constructor
-//   Filtering({
-//     required this.button,
-//     this.filter=false
-//   });
-// }
