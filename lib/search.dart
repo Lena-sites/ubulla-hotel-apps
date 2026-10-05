@@ -1,477 +1,194 @@
 import 'package:flutter/material.dart';
 import 'package:hotelapps/classfiltering.dart';
+import 'package:hotelapps/main.dart';
 import 'package:hotelapps/profile.dart';
-import 'package:hotelapps/search.dart';
 
-void main() {
-  runApp(const MyApp());
+class SearchPage extends StatefulWidget {
+  const SearchPage({super.key});
+
+  @override
+  State<SearchPage> createState() => _SearchPageState();
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
+class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: HomePage(),
-    );
-  }
-}
-
-class HomePage extends StatefulWidget{
-  const HomePage({super.key});
-  @override
-  State<StatefulWidget> createState()=>_MyAppState();
-}
-
-class _MyAppState extends State<HomePage>{
-  //variabel kondisi untuk gesture
-  // bool filter=false;
-
-  // List<Filtering>filtering=[
-  //   Filtering(button:'Recommended'),
-  //   Filtering(button: 'Popular'),
-  //   Filtering(button: 'Trending'),
-  //   Filtering(button: 'New'),
-  // ];
-
-  @override
-  Widget build(BuildContext context){
     // mengambil ukuran layar
     final screenWidth = MediaQuery.of(context).size.width;
     //jika lebar >600 dianggap layarnya lebar/besar
     final isLargeScreen = screenWidth > 600;
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.grey,
-        title: Row(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Image.asset(
-                'assets/images/logo.png',
-                width: 40,
-                height: 40,
-              )
-            ),
-            SizedBox(width: 5,),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('UBULLA',
-                  style: TextStyle(fontFamily: 'Cormorant_Garamond', fontSize: 18),
-                ),
-                Text('Hotel and Resort',
-                  style: TextStyle(fontFamily: 'Cormorant_Garamond', fontSize: 9),
-                )
-              ],
-            ),
-            Spacer(),
-            Icon(Icons.notifications_none_outlined),
-            SizedBox(width: 2),
-            Icon(Icons.bookmark_outline)
-          ],
-        ),
-        automaticallyImplyLeading: false, //matiin tanda panah back otomatis
-      ),
       body: SafeArea(
         child: SingleChildScrollView(
-          //container terluar (basenya)
+          //basee container
           child: Container(
-            width: double.infinity,
+            padding: EdgeInsets.all(20),
             color: Colors.grey[200],
             child: Column(
               children: [
-                //container untuk menampung "hello.." dan search bar"
+                //search bar
                 Container(
-                  padding: EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  width: double.infinity,
+                  height: 45,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: Colors.grey[300],
+                  ),
+                  child: Row(
                     children: [
-                      Text('Welcome, Lena!',
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(height: 10,),
-                      Container(
-                        width: double.infinity,
-                        height: 45,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          color: Colors.grey[300],
-                        ),
-                        child: Row(
-                          children: [
-                            SizedBox(width: 10),
-                            Icon(Icons.search_outlined, color: Colors.grey),
-                            SizedBox(width: 5),
-                            Text('Search', style: TextStyle(color: Colors.grey)),
-                            Spacer(),
-                            Icon(Icons.tune_outlined, color: Colors.grey),
-                            SizedBox(width: 10)
-                          ],
-                        ),
-                      )
+                      SizedBox(width: 10),
+                      Icon(Icons.search_outlined, color: Colors.grey),
+                      SizedBox(width: 5),
+                      Text('Search', style: TextStyle(color: Colors.grey)),
+                      Spacer(),
+                      Icon(Icons.tune_outlined, color: Colors.grey),
+                      SizedBox(width: 10),
                     ],
                   ),
                 ),
+                //bagian tombol2 filtering
                 //Row ini bisa scroll ke samping
+                SizedBox(height: 30,),
                 SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child:Row(
-                    children: [
-                      SizedBox(width: 20,),
-                      //RECOMMENDED
-                      ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            filtering[0].filter = !filtering[0].filter;
-                          });
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: filtering[0].filter ? Color(0xFF10B981) : Colors.white, // Background hijau / putih
-                          side: BorderSide(
-                            color: Colors.green, // Warna border hijau untuk kedua kondisi
-                            width: 1.5,
+                    scrollDirection: Axis.horizontal,
+                    child:Row(
+                      children: [
+                        SizedBox(width: 20,),
+                        //RECOMMENDED
+                        ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              filtering[4].filter = !filtering[4].filter;
+                            });
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: filtering[4].filter ? Color(0xFF10B981) : Colors.white, // Background hijau / putih
+                            side: BorderSide(
+                              color: Colors.green, // Warna border hijau untuk kedua kondisi
+                              width: 1.5,
+                            ),
+                          ),
+                          child: Text('All', style: TextStyle(
+                            color: filtering[4].filter? Colors.white: Colors.green,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                          ),
                           ),
                         ),
-                        child: Text('Recommended', style: TextStyle(
+                        SizedBox(width: 15,),
+                        //RECOMMENDED
+                        ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              filtering[0].filter = !filtering[0].filter;
+                            });
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: filtering[0].filter ? Color(0xFF10B981) : Colors.white, // Background hijau / putih
+                            side: BorderSide(
+                              color: Colors.green, // Warna border hijau untuk kedua kondisi
+                              width: 1.5,
+                            ),
+                          ),
+                          child: Text('Recommended', style: TextStyle(
                             color: filtering[0].filter? Colors.white: Colors.green,
                             fontWeight: FontWeight.w600,
                             fontSize: 14,
                           ),
-                        ),
-                      ),
-                      SizedBox(width: 15,),
-                      //POPULAR
-                      ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            filtering[1].filter = !filtering[1].filter;
-                          });
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: filtering[1].filter ? Color(0xFF10B981) : Colors.white, // Background hijau / putih
-                          side: BorderSide(
-                            color: Colors.green, // Warna border hijau untuk kedua kondisi
-                            width: 1.5,
                           ),
                         ),
-                        child: Text('Popular', style: TextStyle(
+                        SizedBox(width: 15,),
+                        //POPULAR
+                        ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              filtering[1].filter = !filtering[1].filter;
+                            });
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: filtering[1].filter ? Color(0xFF10B981) : Colors.white, // Background hijau / putih
+                            side: BorderSide(
+                              color: Colors.green, // Warna border hijau untuk kedua kondisi
+                              width: 1.5,
+                            ),
+                          ),
+                          child: Text('Popular', style: TextStyle(
                             color: filtering[1].filter? Colors.white: Colors.green,
                             fontWeight: FontWeight.w600,
                             fontSize: 14,
                           ),
-                        ),
-                      ),
-                      SizedBox(width: 15,),
-                      //TRENDING
-                      ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            filtering[2].filter = !filtering[2].filter;
-                          });
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: filtering[2].filter ? Color(0xFF10B981) : Colors.white, // Background hijau / putih
-                          side: BorderSide(
-                            color: Colors.green, // Warna border hijau untuk kedua kondisi
-                            width: 1.5,
                           ),
                         ),
-                        child: Text('Trending', style: TextStyle(
+                        SizedBox(width: 15,),
+                        //TRENDING
+                        ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              filtering[2].filter = !filtering[2].filter;
+                            });
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: filtering[2].filter ? Color(0xFF10B981) : Colors.white, // Background hijau / putih
+                            side: BorderSide(
+                              color: Colors.green, // Warna border hijau untuk kedua kondisi
+                              width: 1.5,
+                            ),
+                          ),
+                          child: Text('Trending', style: TextStyle(
                             color: filtering[2].filter? Colors.white: Colors.green,
                             fontWeight: FontWeight.w600,
                             fontSize: 14,
                           ),
-                        ),
-                      ),
-                      SizedBox(width: 15,),
-                      //NEW
-                      ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            filtering[3].filter = !filtering[3].filter;
-                          });
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: filtering[3].filter ? Color(0xFF10B981) : Colors.white, // Background hijau / putih
-                          side: BorderSide(
-                            color: Colors.green, // Warna border hijau untuk kedua kondisi
-                            width: 1.5,
                           ),
                         ),
-                        child: Text('New', style: TextStyle(
+                        SizedBox(width: 15,),
+                        //NEW
+                        ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              filtering[3].filter = !filtering[3].filter;
+                            });
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: filtering[3].filter ? Color(0xFF10B981) : Colors.white, // Background hijau / putih
+                            side: BorderSide(
+                              color: Colors.green, // Warna border hijau untuk kedua kondisi
+                              width: 1.5,
+                            ),
+                          ),
+                          child: Text('New', style: TextStyle(
                             color: filtering[3].filter? Colors.white: Colors.green,
                             fontWeight: FontWeight.w600,
                             fontSize: 14,
                           ),
-                        ),
-                      )
-                    ],
-                  )
+                          ),
+                        )
+                      ],
+                    )
                 ),
-                SizedBox(height: 20,),
-                //item2 hotel hasil dari filtering dan bisa di scroll ke samping
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      //hotel 1
-                      SizedBox(width: 20,),
-                      Stack(
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(30),
-                            child: Image.asset(
-                                'assets/images/hotel1.jpg',
-                                width: 190,
-                                height: 260,
-                                fit: BoxFit.cover
-                            ),
-                          ),
-                          //rating
-                          Positioned(
-                            top: 12,
-                            right: 12,
-                            child: Container(
-                              width: 60,
-                              height: 30,
-                              decoration: BoxDecoration(
-                                  color: Colors.green,
-                                  borderRadius: BorderRadius.circular(20)
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(Icons.star, color: Colors.white, size: 13,),
-                                  SizedBox(width: 5,),
-                                  Text('4.8', style: TextStyle(fontSize: 12, color: Colors.white),)
-                                ],
-                              ),
-                            )
-                          ),
-                          //info hotel
-                          Positioned(
-                              bottom: 12,
-                              left: 12,
-                              right: 12,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text('Emeralda De Hotel', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
-                                  Text('Paris, France', style: TextStyle(color: Colors.white, fontSize: 10)),
-                                  Row(
-                                    children: [
-                                      Text('Rp 800.000', style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold)),
-                                      Text(' / per night', style: TextStyle(fontSize: 10, color: Colors.white)),
-                                      Spacer(),
-                                      Icon(Icons.bookmark_outline, color: Colors.white,)
-                                    ],
-                                  )
-                                ],
-                              )
-                          ),
-                        ],
-                      ),
-                      SizedBox(width: 20,),
-                      //hotel 2
-                      Stack(
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(30),
-                            child: Image.asset(
-                                'assets/images/hotel2.jpg',
-                                width: 190,
-                                height: 260,
-                                fit: BoxFit.cover
-                            ),
-                          ),
-                          //rating
-                          Positioned(
-                              top: 12,
-                              right: 12,
-                              child: Container(
-                                width: 60,
-                                height: 30,
-                                decoration: BoxDecoration(
-                                    color: Colors.green,
-                                    borderRadius: BorderRadius.circular(20)
-                                ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(Icons.star, color: Colors.white, size: 13,),
-                                    SizedBox(width: 5,),
-                                    Text('4.8', style: TextStyle(fontSize: 12, color: Colors.white),)
-                                  ],
-                                ),
-                              )
-                          ),
-                          //info hotel
-                          Positioned(
-                              bottom: 12,
-                              left: 12,
-                              right: 12,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text('Emeralda De Hotel', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
-                                  Text('Paris, France', style: TextStyle(color: Colors.white, fontSize: 10)),
-                                  Row(
-                                    children: [
-                                      Text('Rp 800.000', style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold)),
-                                      Text(' / per night', style: TextStyle(fontSize: 10, color: Colors.white)),
-                                      Spacer(),
-                                      Icon(Icons.bookmark_outline, color: Colors.white,)
-                                    ],
-                                  )
-                                ],
-                              )
-                          ),
-                        ],
-                      ),
-                      SizedBox(width: 20,),
-                      //hotel 3
-                      Stack(
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(30),
-                            child: Image.asset(
-                                'assets/images/hotel3.jpg',
-                                width: 190,
-                                height: 260,
-                                fit: BoxFit.cover
-                            ),
-                          ),
-                          //rating
-                          Positioned(
-                              top: 12,
-                              right: 12,
-                              child: Container(
-                                width: 60,
-                                height: 30,
-                                decoration: BoxDecoration(
-                                    color: Colors.green,
-                                    borderRadius: BorderRadius.circular(20)
-                                ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(Icons.star, color: Colors.white, size: 13,),
-                                    SizedBox(width: 5,),
-                                    Text('4.8', style: TextStyle(fontSize: 12, color: Colors.white),)
-                                  ],
-                                ),
-                              )
-                          ),
-                          //info hotel
-                          Positioned(
-                              bottom: 12,
-                              left: 12,
-                              right: 12,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text('Emeralda De Hotel', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
-                                  Text('Paris, France', style: TextStyle(color: Colors.white, fontSize: 10)),
-                                  Row(
-                                    children: [
-                                      Text('Rp 800.000', style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold)),
-                                      Text(' / per night', style: TextStyle(fontSize: 10, color: Colors.white)),
-                                      Spacer(),
-                                      Icon(Icons.bookmark_outline, color: Colors.white,)
-                                    ],
-                                  )
-                                ],
-                              )
-                          ),
-                        ],
-                      ),
-                      SizedBox(width: 20,),
-                      //hotel 4
-                      Stack(
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(30),
-                            child: Image.asset(
-                                'assets/images/hotel4.jpg',
-                                width: 190,
-                                height: 260,
-                                fit: BoxFit.cover
-                            ),
-                          ),
-                          //rating
-                          Positioned(
-                              top: 12,
-                              right: 12,
-                              child: Container(
-                                width: 60,
-                                height: 30,
-                                decoration: BoxDecoration(
-                                    color: Colors.green,
-                                    borderRadius: BorderRadius.circular(20)
-                                ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(Icons.star, color: Colors.white, size: 13,),
-                                    SizedBox(width: 5,),
-                                    Text('4.8', style: TextStyle(fontSize: 12, color: Colors.white),)
-                                  ],
-                                ),
-                              )
-                          ),
-                          //info hotel
-                          Positioned(
-                              bottom: 12,
-                              left: 12,
-                              right: 12,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text('Emeralda De Hotel', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
-                                  Text('Paris, France', style: TextStyle(color: Colors.white, fontSize: 10)),
-                                  Row(
-                                    children: [
-                                      Text('Rp 800.000', style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold)),
-                                      Text(' / per night', style: TextStyle(fontSize: 10, color: Colors.white)),
-                                      Spacer(),
-                                      Icon(Icons.bookmark_outline, color: Colors.white,)
-                                    ],
-                                  )
-                                ],
-                              )
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 20,),
-                //tulisan Recenlty Booked dan see all
+                SizedBox(height: 20),
                 Row(
                   children: [
-                    SizedBox(width: 20,),
-                    Text('Recently Booked', style: TextStyle(fontWeight: FontWeight.bold),),
-                    Spacer(),
-                    Text('See All', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),),
-                    SizedBox(width: 20,),
+                    Expanded( // mengikuti lebar sisa layar
+                      child: Text(
+                        'Recommended (580.000)',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
                   ],
                 ),
-                // SizedBox(height: 20,),
+                SizedBox(height: 5,),
                 //History Booking
                 Container(
-                  padding: EdgeInsets.all(20),
                   child: Column(
                     children: [
                       //histori 1
                       Container(
                         padding: EdgeInsets.all(5),
                         decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10)
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10)
                         ),
                         child: Row(
                           children: [
@@ -479,9 +196,9 @@ class _MyAppState extends State<HomePage>{
                               borderRadius: BorderRadius.circular(10),
                               child: Image.asset(
                                   'assets/images/hotel5.jpg',
-                                width: 80,
-                                height: 80,
-                                fit: BoxFit.cover
+                                  width: 80,
+                                  height: 80,
+                                  fit: BoxFit.cover
                               ),
                             ),
                             SizedBox(width: 10,),
@@ -847,17 +564,16 @@ class _MyAppState extends State<HomePage>{
                   ),
                 ) // sini
               ],
-            )
+            ),
           ),
-        ),
+        )
       ),
-    //tempat navigasi
-    bottomNavigationBar: BottomNavigationBar(
-      currentIndex: 0,
-      type: BottomNavigationBarType.fixed,
-      backgroundColor: Colors.white,
-      selectedItemColor: Color(0xFF10B981),
-      unselectedItemColor: Colors.grey,
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: 1,
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: Colors.white,
+        selectedItemColor: Color(0xFF10B981),
+        unselectedItemColor: Colors.grey,
         onTap: (index) {
           if(index == 0){
             Navigator.push(context, MaterialPageRoute(builder: (context) => const HomePage()),
@@ -869,11 +585,11 @@ class _MyAppState extends State<HomePage>{
             // Navigator.push(context, MaterialPageRoute(builder: (context) => const SearchPage()),
             // );
           } else if (index == 3){
-              Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfilePage()),
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfilePage()),
             );
           }
-       },
-      items: [
+        },
+        items: [
           BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: 'Home'),
           BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
           BottomNavigationBarItem(icon: Icon(Icons.receipt_long_outlined), label: 'Booking'),
@@ -883,17 +599,3 @@ class _MyAppState extends State<HomePage>{
     );
   }
 }
-
-// //class untuk simpan tombol2 untuk filtering
-// class Filtering{
-//   String button;
-//
-//   //variabel pengatur kondisi filteringnya
-//   bool filter;
-//
-//   //constructor
-//   Filtering({
-//     required this.button,
-//     this.filter=false
-//   });
-// }

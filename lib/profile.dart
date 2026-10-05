@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hotelapps/main.dart';
+import 'package:hotelapps/search.dart';
 
 // void main() {
 //   runApp(const ProfileApp());
@@ -393,11 +394,19 @@ class _ProfilePageState extends State<ProfilePage> {
         selectedItemColor: Color(0xFF10B981),
         unselectedItemColor: Colors.grey,
         onTap: (index) {
-            if(index == 0) {
-              Navigator.push(context,
-                MaterialPageRoute(builder: (context) => const HomePage()),
-              );
-            }
+          if(index == 0){
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const HomePage()),
+            );
+          } else if (index == 1){
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const SearchPage()),
+            );
+          } else if (index == 2){
+            // Navigator.push(context, MaterialPageRoute(builder: (context) => const SearchPage()),
+            // );
+          } else if (index == 3){
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfilePage()),
+            );
+          }
         },
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: 'Home'),
