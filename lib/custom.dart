@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hotelapps/class_list.dart';
-import 'package:hotelapps/confirmpayment.dart';
+import 'package:hotelapps/payment.dart';
 
 class CustomPage extends StatefulWidget {
   // hal baru di sini
@@ -463,8 +463,8 @@ class _CustomPage extends State<CustomPage> {
                 Text('Rp $totalPrice', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),textAlign: TextAlign.center,),
                 ElevatedButton(
                     onPressed: (){
-                      // Navigator.push(context, MaterialPageRoute(builder: (context) => ConfirmPage(hotel: widget.hotel, guest: guest, room: room, totalPrice: totalPrice,),), //KIRIM VARIABEL
-                      // );
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => PaymentPage(hotel: widget.hotel, guest: guest, room: room, totalPrice: totalPrice),), //KIRIM VARIABEL
+                      );
                     },
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.green,   minimumSize: Size(double.infinity, 50)),
                     child: Text('Continue',

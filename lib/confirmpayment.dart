@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hotelapps/class_list.dart';
 import 'package:hotelapps/custom.dart';
 import 'package:hotelapps/main.dart';
+import 'package:hotelapps/payment.dart';
 
 class ConfirmPage extends StatefulWidget {
   //hal baru di sini
@@ -9,12 +10,14 @@ class ConfirmPage extends StatefulWidget {
   final int guest;
   final int room;
   final int totalPrice;
+  final String payMet;
 
   const ConfirmPage({super.key,
     required this.hotel,
     required this.guest,
     required this.room,
-    required this.totalPrice
+    required this.totalPrice,
+    required this.payMet,
   });
 
   @override
@@ -71,7 +74,10 @@ class _ConfirmPage extends State<ConfirmPage> {
               padding: EdgeInsets.all(20),
               color: Colors.grey[100],
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Text('Booking Details', style: TextStyle(fontWeight: FontWeight.bold),),
+                  SizedBox(height: 10,),
                   Container(
                     padding: EdgeInsets.all(5),
                     decoration: BoxDecoration(
@@ -210,14 +216,21 @@ class _ConfirmPage extends State<ConfirmPage> {
                   ),
                   SizedBox(height: 30,),
                   Container(
-                      padding: EdgeInsets.all(20),
+                      padding: EdgeInsets.all(10),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Row(
                         children: [
-                          Text('payment typee')
+                          if(widget.payMet=='Paypal')
+                            Icon(Icons.paypal),
+                          if(widget.payMet=='Credit Card')
+                            Image.asset('assets/images/cc.jpg', width: 50, height: 50),
+                          if(widget.payMet=='BCA M-Banking')
+                            Image.asset('assets/images/bca.jpg', width: 50, height: 50),
+                          SizedBox(width: 10),
+                          Text(widget.payMet, style: TextStyle(fontWeight: FontWeight.bold),)
                         ],
                       )
                   ),

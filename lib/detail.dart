@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hotelapps/class_list.dart';
 import 'package:hotelapps/custom.dart';
+import 'package:hotelapps/payment.dart';
 
 
 // body: Text(widget.hotel.name),
