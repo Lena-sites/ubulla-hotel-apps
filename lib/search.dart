@@ -501,7 +501,7 @@ class _SearchPageState extends State<SearchPage> {
                                 });
                               } else {
                                 //kondisi belum longpress, pas di onetap langsung ke detailpage
-                                Navigator.push(context, MaterialPageRoute(builder: (context)=>DetailPage(hotel:hotellist[4]),)
+                                Navigator.push(context, MaterialPageRoute(builder: (context)=>DetailPage(hotel:hotellist[3]),)
                                 );
                               }
                             },

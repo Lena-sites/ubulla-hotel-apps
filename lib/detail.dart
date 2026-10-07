@@ -74,6 +74,7 @@ class _DetailPage extends State<DetailPage> {
                   fit: BoxFit.cover,
                 ),
               SizedBox(height: 10,),
+              //container pembungkus elemen2 yang di bawah foto
               Container(
                 padding: EdgeInsets.all(25),
                 child: Column(
@@ -97,6 +98,7 @@ class _DetailPage extends State<DetailPage> {
                         Text('See All', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),)
                       ],
                     ),
+                    SizedBox(height: 5,),
                     SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Row(
@@ -154,7 +156,92 @@ class _DetailPage extends State<DetailPage> {
                       ),
                     ),
                     Divider(color: Colors.grey[300], thickness: 1,height: 30,),
-
+                    SizedBox(height: 20,),
+                    Text('Details', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),),
+                    SizedBox(height: 5,),
+                    //Deskripsi
+                    Text('Offers a comfortable and relaxing stay in the heart of this room. Featuring modern rooms, cozy facilities, and convenient access to popular attractions, this hotel is a great choice for both business and leisure travelers. Enjoy a pleasant atmosphere, quality service, and a memorable stay.',
+                      textAlign: TextAlign.justify,
+                    ),
+                    SizedBox(height: 15,),
+                    Text('Facilities', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),),
+                    SizedBox(height: 5,),
+                    //fasilitas
+                    Wrap(
+                      alignment: WrapAlignment.start,
+                      spacing: 25, //jarak kiri kanan
+                      runSpacing: 20, //jarak atas bawah
+                      children: [
+                        Column(
+                          children: [
+                            Icon(Icons.pool, color: Colors.green, size: 35),
+                            Text('Swimming Pool')
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            Icon(Icons.wifi, color: Colors.green,size: 35),
+                            Text('WiFi')
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            Icon(Icons.restaurant, color: Colors.green,size: 35),
+                            Text('Restaurant')
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            Icon(Icons.local_parking, color: Colors.green,size: 35),
+                            Text('Parking')
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            Icon(Icons.door_sliding, color: Colors.green,size: 35),
+                            Text('Meeting Room')
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            Icon(Icons.fitness_center, color: Colors.green,size: 35),
+                            Text('Fitness Center')
+                          ],
+                        )
+                      ],
+                    ),
+                    SizedBox(height: 15,),
+                    Text('Location', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),),
+                    SizedBox(height: 5,),
+                    //ini maps dummy ya
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(30),
+                      child: Image.asset(
+                          'assets/images/maps.jpg',
+                          width: screenWidth,
+                          height: 230,
+                          fit: BoxFit.cover
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              //pilihan lanjut ke proses booking
+              Container(
+                width: screenWidth,
+                height: 70,
+                color: Colors.grey[400],
+                padding: EdgeInsets.all(20),
+                child: Row(
+                  children: [
+                    Text('Rp ${widget.hotel.price}', style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),),
+                    Text(' / night', style: TextStyle(fontSize: 12),),
+                    Spacer(),
+                    ElevatedButton(
+                        onPressed: (){},
+                        style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                        child: Text('Book Now!', style: TextStyle(color: Colors.white),)
+                    ),
                   ],
                 ),
               )

@@ -21,12 +21,12 @@ class Filtering{
 }
 
 List<HotelList>hotellist=[
-  HotelList(name:'Four Seasons Resort Bali at Jimbaran Bay',price:100000, location: 'Jimbaran, Bali'),
-  HotelList(name:'Amanjiwo',price:100000, location: 'Desa Majaksingi, Borobudur'),
-  HotelList(name:'The Ritz-Carlton Bali',price:100000, location: 'Nusa Dua, Bali'),
-  HotelList(name:'Grand Hyatt Jakarta',price:100000, location: 'Jakarta Pusat'),
-  HotelList(name:'JW Marriott Hotel Medan',price:100000, location: 'Medan, Sumatera Utara'),
-  HotelList(name:'Aryaduta Palembang',price:100000, location: 'Palembang, Sumatera Selatan'),
+  HotelList(name:'Four Seasons Resort Bali at Jimbaran Bay',price:800000, location: 'Jimbaran, Bali'),
+  HotelList(name:'Amanjiwo',price:800000, location: 'Desa Majaksingi, Borobudur'),
+  HotelList(name:'The Ritz-Carlton Bali',price:500000, location: 'Nusa Dua, Bali'),
+  HotelList(name:'Grand Hyatt Jakarta',price:600000, location: 'Jakarta Pusat'),
+  HotelList(name:'JW Marriott Hotel Medan',price:500000, location: 'Medan, Sumatera Utara'),
+  HotelList(name:'Aryaduta Palembang',price:700000, location: 'Palembang, Sumatera Selatan'),
 ];
 
 class HotelList{
