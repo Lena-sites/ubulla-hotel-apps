@@ -44,3 +44,20 @@ class HotelList{
     this.save=false,
   });
 }
+
+//ini metode pembayaran
+List<PaymentMethod>paymentMethod=[
+  PaymentMethod(method:'Paypal'),
+  PaymentMethod(method: 'Credit Card'),
+  PaymentMethod(method: 'BCA M-Banking'),
+];
+
+//class untuk simpan metode pembayaran
+class PaymentMethod{
+  String method;
+
+  //constructor
+  PaymentMethod({
+    required this.method,
+  });
+}
