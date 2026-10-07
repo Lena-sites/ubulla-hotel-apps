@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hotelapps/booking.dart';
 import 'package:hotelapps/class_list.dart';
 import 'package:hotelapps/profile.dart';
 import 'package:hotelapps/search.dart';
@@ -992,8 +993,8 @@ class _MyAppState extends State<HomePage>{
             Navigator.push(context, MaterialPageRoute(builder: (context) => const SearchPage()),
             );
           } else if (index == 2){
-            // Navigator.push(context, MaterialPageRoute(builder: (context) => const SearchPage()),
-            // );
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const BookingPage()),
+            );
           } else if (index == 3){
               Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfilePage()),
             );

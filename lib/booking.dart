@@ -1,29 +1,18 @@
 import 'package:flutter/material.dart';
-
-void main() {
-  runApp(const BookingApp());
-}
-
-class BookingApp extends StatelessWidget {
-  const BookingApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: BookingPage(),
-    );
-  }
-}
+import 'package:hotelapps/class_list.dart';
+import 'package:hotelapps/detail.dart';
+import 'package:hotelapps/main.dart';
+import 'package:hotelapps/profile.dart';
+import 'package:hotelapps/search.dart';
 
 class BookingPage extends StatefulWidget {
   const BookingPage({super.key});
 
   @override
-  State<BookingPage> createState() => _BookingPageState();
+  State<BookingPage> createState() => _BookingPage();
 }
 
-class _BookingPageState extends State<BookingPage> {
+class _BookingPage extends State<BookingPage> {
   // variabel kondisi untuk tombol tab
   bool ongoing = true;
   bool completed = false;
@@ -454,12 +443,26 @@ class _BookingPageState extends State<BookingPage> {
       ),
       //tempat navigasi
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 2,
+        currentIndex: 1,
         type: BottomNavigationBarType.fixed,
         backgroundColor: Colors.white,
         selectedItemColor: Color(0xFF10B981),
         unselectedItemColor: Colors.grey,
-        onTap: (index) {},
+        onTap: (index) {
+          if(index == 0){
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const HomePage()),
+            );
+          } else if (index == 1){
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const SearchPage()),
+            );
+          } else if (index == 2){
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const BookingPage()),
+            );
+          } else if (index == 3){
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfilePage()),
+            );
+          }
+        },
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: 'Home'),
           BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),

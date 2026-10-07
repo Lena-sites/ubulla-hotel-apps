@@ -58,6 +58,7 @@ class _DetailPage extends State<DetailPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              //ini buat tampilin foto aja untuk 2 hotel teratas, yang lain sisanya ga ada foto
               if (widget.hotel.name == 'Four Seasons Resort Bali at Jimbaran Bay')
                 Image.asset(
                   'assets/images/hotel5.jpg',
