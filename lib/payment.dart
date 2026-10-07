@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hotelapps/class_list.dart';
-import 'package:hotelapps/class_list.dart';
 import 'package:hotelapps/confirmpayment.dart';
 
 class PaymentPage extends StatefulWidget {
+  //pengambilan variabel dari custom page
   final HotelList hotel;
   final int guest;
   final int room;
@@ -22,7 +22,7 @@ class PaymentPage extends StatefulWidget {
 }
 
 class _PaymentPage extends State<PaymentPage> {
-  int selected=0;
+  int selected=0; //inisialisasi variabel selected untuk pemilihan method
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +58,6 @@ class _PaymentPage extends State<PaymentPage> {
         ),
       ),
       body: SafeArea(
-        // child: SingleChildScrollView(
           child:  Padding(
             padding: EdgeInsets.all(20),
             child: Column(
@@ -94,7 +93,7 @@ class _PaymentPage extends State<PaymentPage> {
                         SizedBox(width: 16),
                         Text(paymentMethod[0].method, style: TextStyle(fontWeight: FontWeight.bold)),
                         Spacer(),
-                        // radio buatan sendiri, hijau kalo kepilih
+                        // radio, hijau kalo kepilih
                         Icon(
                           selected == 0 ? Icons.radio_button_checked : Icons.radio_button_unchecked,
                           color: Color(0xFF10B981),
@@ -105,7 +104,7 @@ class _PaymentPage extends State<PaymentPage> {
                 ),
                 SizedBox(height: 15),
 
-                //google pay
+                //metode payment ke dua (Credit Card)
                 GestureDetector(
                   onTap: () {
                     setState(() {
@@ -134,7 +133,7 @@ class _PaymentPage extends State<PaymentPage> {
                 ),
                 SizedBox(height: 15),
 
-                //apple pay
+                //metode payment ketiga (BCA)
                 GestureDetector(
                   onTap: () {
                     setState(() {
@@ -168,7 +167,7 @@ class _PaymentPage extends State<PaymentPage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => ConfirmPage(
+                        builder: (context) => ConfirmPage( //lanjut ke halaman Confirm page dan membawa variabel2nya juga
                           hotel: widget.hotel,
                           guest: widget.guest,
                           room: widget.room,

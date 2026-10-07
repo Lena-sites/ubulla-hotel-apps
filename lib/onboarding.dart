@@ -36,33 +36,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
     });
   }
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //
-  //   // 0.3s, muncul logo
-  //   Future.delayed(Duration(milliseconds: 300), () {
-  //     setState(() {
-  //       showLogo = true;
-  //     });
-  //   });
-  //
-  //   // 1.3s, muncul loading
-  //   Future.delayed(Duration(milliseconds: 1300), () {
-  //     setState(() {
-  //       showLoading = true;
-  //     });
-  //   });
-  //
-  //   // 3s, homepage
-  //   Future.delayed(Duration(seconds: 3), () {
-  //     Navigator.pushReplacement(
-  //       context,
-  //       MaterialPageRoute(builder: (context) => const HomePage()),
-  //     );
-  //   });
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -3,6 +3,7 @@ import 'package:hotelapps/booking.dart';
 import 'package:hotelapps/class_list.dart';
 
 class TicketPage extends StatefulWidget {
+  //mengambil data hotel yang telah dipilih sebelumnya
   final HotelList hotel;
   final int guest;
   final int room;
@@ -29,9 +30,10 @@ class _TicketPage extends State<TicketPage> {
         backgroundColor: Colors.grey,
         title: Row(
           children: [
+            //tombol untuk keluar (diarahkan ke booking page)
             GestureDetector(
               onTap: (){
-                bookingList.add(widget.hotel);
+                bookingList.add(widget.hotel); //penyimpanan data booking ke list
                 Navigator.push(context, MaterialPageRoute(builder: (context) => const BookingPage()),
                 );
               },
@@ -39,7 +41,6 @@ class _TicketPage extends State<TicketPage> {
             ),
             Spacer(),
             Column(
-              // crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text('UBULLA',
                   style: TextStyle(fontFamily: 'Cormorant_Garamond', fontSize: 18),
@@ -79,12 +80,11 @@ class _TicketPage extends State<TicketPage> {
                   Divider(color: Colors.grey[300], thickness: 1, height: 30),
                   Image.asset(
                     'assets/images/qr.jpg',
-                    width: 250, // Disesuaikan agar lebih aman di layar kecil
+                    width: 250,
                     height: 250,
                   ),
                   Divider(color: Colors.grey[300], thickness: 1, height: 30),
                   const SizedBox(height: 10),
-
                   // Informasi Tiket
                   Column(
                     children: [
@@ -93,7 +93,7 @@ class _TicketPage extends State<TicketPage> {
                         children: [
                           Expanded(
                             child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center, // Ubah ke .start jika ingin teks rata kiri di dalam kolomnya
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 const Text('Name', style: TextStyle(color: Colors.grey, fontSize: 12)),
                                 const SizedBox(height: 4),
@@ -168,7 +168,6 @@ class _TicketPage extends State<TicketPage> {
                       ),
                     ],
                   ),
-
                   const SizedBox(height: 30),
                   SizedBox(
                     width: double.infinity,

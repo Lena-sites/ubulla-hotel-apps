@@ -3,7 +3,7 @@ import 'package:hotelapps/class_list.dart';
 import 'package:hotelapps/payment.dart';
 
 class CustomPage extends StatefulWidget {
-  // hal baru di sini
+  //mengambil data hotel yang telah dipilih sebelumnya di search page
   final HotelList hotel;
 
   const CustomPage({
@@ -40,22 +40,15 @@ class _CustomPage extends State<CustomPage> {
       child: Container(
         margin: EdgeInsets.all(3),
         decoration: BoxDecoration(
-          color: selected
-              ? Colors.green
-              : Colors.transparent,
+          color: selected ? Colors.green : Colors.transparent,
           shape: BoxShape.circle,
         ),
         child: Center(
           child: Text(
             '$date',
             style: TextStyle(
-              color: selected
-                  ? Colors.white
-                  : Colors.black,
-
-              fontWeight: selected
-                  ? FontWeight.bold
-                  : FontWeight.normal,
+              color: selected ? Colors.white : Colors.black,
+              fontWeight: selected ? FontWeight.bold : FontWeight.normal,
             ),
           ),
         ),
@@ -65,8 +58,6 @@ class _CustomPage extends State<CustomPage> {
 
   @override
   Widget build(BuildContext context) {
-    // mengambil ukuran layar
-    final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
       appBar: AppBar(
@@ -77,8 +68,8 @@ class _CustomPage extends State<CustomPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text('UBULLA', style: TextStyle(fontFamily: 'Cormorant_Garamond', fontSize: 18,),),
-                  Text('Hotel and Resort', style: TextStyle(fontFamily: 'Cormorant_Garamond', fontSize: 9,),),
+                  Text('UBULLA', style: TextStyle(fontFamily: 'Cormorant_Garamond', fontSize: 18,)),
+                  Text('Hotel and Resort', style: TextStyle(fontFamily: 'Cormorant_Garamond', fontSize: 9,)),
                 ],
               ),
             ),
@@ -116,7 +107,7 @@ class _CustomPage extends State<CustomPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('October 2026', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,),),
+                          Text('October 2026', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,)),
                           Row(
                             children: [
                               Icon(Icons.chevron_left, color: Colors.green),
@@ -174,7 +165,7 @@ class _CustomPage extends State<CustomPage> {
                         physics: NeverScrollableScrollPhysics(),
                         children: [
                           // MINGGU PERTAMA
-                          // 1 Desember 2024 = Minggu
+                          // dummy
                           Container(),
                           Container(),
                           Container(),
@@ -332,7 +323,6 @@ class _CustomPage extends State<CustomPage> {
                             ),
                           ),
                           SizedBox(width: 40),
-
                           // JUMLAH GUEST
                           Text(
                             '$guest',
@@ -342,7 +332,6 @@ class _CustomPage extends State<CustomPage> {
                             ),
                           ),
                           SizedBox(width: 40),
-
                           // TOMBOL PLUS
                           GestureDetector(
                             onTap: () {
@@ -420,7 +409,7 @@ class _CustomPage extends State<CustomPage> {
                             ),
                           ),
                           SizedBox(width: 40),
-                          // JUMLAH GUEST
+                          // JUMLAH ROOM
                           Text(
                             '$room',
                             style: TextStyle(
@@ -463,7 +452,7 @@ class _CustomPage extends State<CustomPage> {
                 Text('Rp $totalPrice', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),textAlign: TextAlign.center,),
                 ElevatedButton(
                     onPressed: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => PaymentPage(hotel: widget.hotel, guest: guest, room: room, totalPrice: totalPrice),), //KIRIM VARIABEL
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => PaymentPage(hotel: widget.hotel, guest: guest, room: room, totalPrice: totalPrice),), //KIRIM VARIABEL ke page Payment
                       );
                     },
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.green,   minimumSize: Size(double.infinity, 50)),

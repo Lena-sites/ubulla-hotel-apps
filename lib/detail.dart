@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hotelapps/class_list.dart';
 import 'package:hotelapps/custom.dart';
-import 'package:hotelapps/payment.dart';
 
-
-// body: Text(widget.hotel.name),
 
 class DetailPage extends StatefulWidget {
-  //hal baru di sini
+  //mengambil data hotel yang telah dipilih sebelumnya di search page
   final HotelList hotel;
   const DetailPage({super.key, required this.hotel});
 
@@ -21,8 +18,6 @@ class _DetailPage extends State<DetailPage> {
 
     // mengambil ukuran layar
     final screenWidth = MediaQuery.of(context).size.width;
-    //jika lebar >600 dianggap layarnya lebar/besar
-    final isLargeScreen = screenWidth > 600;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -241,7 +236,7 @@ class _DetailPage extends State<DetailPage> {
                     Spacer(),
                     ElevatedButton(
                       onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => CustomPage(hotel: widget.hotel),), //BARUUU NIH
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => CustomPage(hotel: widget.hotel),), //mempassing data hotel ke halaman custom
                         );
                       },
                       style: ElevatedButton.styleFrom(backgroundColor: Colors.green),

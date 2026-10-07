@@ -4,7 +4,7 @@ import 'package:hotelapps/main.dart';
 import 'package:hotelapps/ticket.dart';
 
 class ConfirmPage extends StatefulWidget {
-  //hal baru di sini
+  //mengambil data hotel yang telah dipilih sebelumnya
   final HotelList hotel;
   final int guest;
   final int room;
@@ -237,7 +237,7 @@ class _ConfirmPage extends State<ConfirmPage> {
                   SizedBox(height: 20,),
                   ElevatedButton(
                     onPressed: (){
-                      showPaymentSuccessDialog();
+                      showPaymentSuccessDialog(); //panggil function yang uda di buat
                     },
                     style: ElevatedButton.styleFrom(backgroundColor: Colors.green, minimumSize: Size(double.infinity, 50)),
                     child: Text('Confirm Payment',
@@ -252,7 +252,7 @@ class _ConfirmPage extends State<ConfirmPage> {
     );
   }
 
-  //BARU NIHhhhhhhhhhhhhhhhhhhhhh
+  //function untuk menampilkan popup pembayaran berhasil
   void showPaymentSuccessDialog() {
     showDialog(
       context: context,
@@ -289,10 +289,8 @@ class _ConfirmPage extends State<ConfirmPage> {
                   ),
                 ),
                 SizedBox(height: 25),
-
                 // JUDUL
-                Text(
-                  'Payment Successfull!',
+                Text('Payment Successfull!',
                   style: TextStyle(
                     color: Color(0xFF10B981),
                     fontSize: 20,
@@ -300,15 +298,12 @@ class _ConfirmPage extends State<ConfirmPage> {
                   ),
                 ),
                 SizedBox(height: 12),
-
                 // DESKRIPSI
-                Text(
-                  'Successfully made payment and hotel booking',
+                Text('Successfully made payment and hotel booking',
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 14),
                 ),
                 SizedBox(height: 25),
-
                 // TOMBOL VIEW TICKET
                 SizedBox(
                   width: double.infinity,
@@ -337,16 +332,15 @@ class _ConfirmPage extends State<ConfirmPage> {
                   ),
                 ),
                 SizedBox(height: 10),
-
                 // TOMBOL CANCEL
                 SizedBox(
                   width: double.infinity,
                   height: 50,
                   child: ElevatedButton(
                     onPressed: () {
-                      bookingList.add(widget.hotel);
+                      bookingList.add(widget.hotel); //walaupun pengguna tekan cancel, bukan view ticket, data bookingnya tetap disimpan karna udah pembayaran
                       Navigator.pop(dialogContext); // tutup popup
-                      //KE HALAMAN HOME PAGE NTR
+                      //KE HALAMAN HOME PAGE klo dia tekan cancel
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => HomePage()),

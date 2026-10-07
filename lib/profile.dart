@@ -64,7 +64,6 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
       ],
     );
-
     // nama email
     final namaEmail = Column(
       crossAxisAlignment:
@@ -85,7 +84,6 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
       ],
     );
-
     // tombol dark theme
     final darkSwitch = Container(
       width: 44,
@@ -112,7 +110,6 @@ class _ProfilePageState extends State<ProfilePage> {
         ],
       ),
     );
-
     return Scaffold(
       backgroundColor: bgColor,
       appBar: AppBar(
@@ -178,9 +175,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   ],
                 ),
-
                 SizedBox(height: 20),
-
                 // profile agar sesuai layar
                 Flex(
                   direction: isLargeScreen ? Axis.horizontal : Axis.vertical,

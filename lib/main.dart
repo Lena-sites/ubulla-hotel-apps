@@ -456,7 +456,6 @@ class _MyAppState extends State<HomePage>{
                     SizedBox(width: 20,),
                   ],
                 ),
-                // SizedBox(height: 20,),
                 //History Booking
                 Container(
                   padding: EdgeInsets.all(20),
