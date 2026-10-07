@@ -116,7 +116,7 @@ class _CustomPage extends State<CustomPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('Oktober 2026', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,),),
+                          Text('October 2026', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,),),
                           Row(
                             children: [
                               Icon(Icons.chevron_left, color: Colors.green),

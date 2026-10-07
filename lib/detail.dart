@@ -25,6 +25,7 @@ class _DetailPage extends State<DetailPage> {
     final isLargeScreen = screenWidth > 600;
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.grey,
         title: Row(

@@ -213,7 +213,7 @@ class _BookingPage extends State<BookingPage> {
                                           style: TextStyle(
                                               color: Colors.green,
                                               fontWeight: FontWeight.w600,
-                                              fontSize: 14)),
+                                              fontSize: 12)),
                                     ),
                                   ),
                                   SizedBox(width: 10),
@@ -228,7 +228,7 @@ class _BookingPage extends State<BookingPage> {
                                           style: TextStyle(
                                               color: Colors.white,
                                               fontWeight: FontWeight.w600,
-                                              fontSize: 14)),
+                                              fontSize: 12)),
                                     ),
                                   ),
                                 ],

@@ -38,6 +38,7 @@ class _ConfirmPage extends State<ConfirmPage> {
     final isLargeScreen = screenWidth > 600;
 
     return Scaffold(
+      backgroundColor: Colors.grey[200],
       appBar: AppBar(
         backgroundColor: Colors.grey,
         title: Row(
@@ -343,6 +344,7 @@ class _ConfirmPage extends State<ConfirmPage> {
                   height: 50,
                   child: ElevatedButton(
                     onPressed: () {
+                      bookingList.add(widget.hotel);
                       Navigator.pop(dialogContext); // tutup popup
                       //KE HALAMAN HOME PAGE NTR
                       Navigator.push(

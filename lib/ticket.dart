@@ -62,118 +62,121 @@ class _TicketPage extends State<TicketPage> {
         ),
         automaticallyImplyLeading: false,
       ),
-      body: SafeArea(
+        body: SafeArea(
           child: SingleChildScrollView(
             child: Container(
               color: Colors.white,
-              padding: EdgeInsets.all(30),
+              padding: const EdgeInsets.all(16),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center, // Bikin konten utama rata tengah
                 children: [
-                  Divider(color: Colors.grey[300], thickness: 1,height: 30,),
-                  Image.asset('assets/images/qr.jpg', width: 300, height: 300,),
-                  Divider(color: Colors.grey[300], thickness: 1,height: 30,),
-                  SizedBox(height: 20),
-                  Container(
-                    padding: EdgeInsets.all(25),
-                    child: Column(
-                      children: [
-                        // baris 1
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              width: 160,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text('Name', style: TextStyle(color: Colors.grey)),
-                                  SizedBox(height: 4),
-                                  Text('Lena', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-                                ],
-                              ),
-                            ),
-                            SizedBox(
-                              width: 160,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text('Phone Number', style: TextStyle(color: Colors.grey)),
-                                  SizedBox(height: 4),
-                                  Text('+62 899 9999 9999', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 25),
-                        //baris 2
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              width: 160,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text('Check in', style: TextStyle(color: Colors.grey)),
-                                  SizedBox(height: 4),
-                                  Text('Oct 07, 2026', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-                                ],
-                              ),
-                            ),
-                            SizedBox(
-                              width: 160,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text('Check out', style: TextStyle(color: Colors.grey)),
-                                  SizedBox(height: 4),
-                                  Text('Oct 08, 2026', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 25),
-                        // baris 3
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              width: 160,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text('Hotel', style: TextStyle(color: Colors.grey)),
-                                  SizedBox(height: 4),
-                                  Text(widget.hotel.name, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-                                ],
-                              ),
-                            ),
-                            SizedBox(
-                              width: 160,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text('Guest', style: TextStyle(color: Colors.grey)),
-                                  SizedBox(height: 4),
-                                  Text('${widget.guest}', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                  const SizedBox(height: 10),
+                  const Text(
+                    'CHECK-IN TICKET',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
+                  const SizedBox(height: 10),
+                  Divider(color: Colors.grey[300], thickness: 1, height: 30),
+                  Image.asset(
+                    'assets/images/qr.jpg',
+                    width: 250, // Disesuaikan agar lebih aman di layar kecil
+                    height: 250,
+                  ),
+                  Divider(color: Colors.grey[300], thickness: 1, height: 30),
+                  const SizedBox(height: 10),
+
+                  // Informasi Tiket
+                  Column(
+                    children: [
+                      // baris 1
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center, // Ubah ke .start jika ingin teks rata kiri di dalam kolomnya
+                              children: [
+                                const Text('Name', style: TextStyle(color: Colors.grey, fontSize: 12)),
+                                const SizedBox(height: 4),
+                                const Text('Lena', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600), textAlign: TextAlign.center),
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const Text('Phone Number', style: TextStyle(color: Colors.grey, fontSize: 12)),
+                                const SizedBox(height: 4),
+                                const Text('+62xxxxxxxxxxx', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600), textAlign: TextAlign.center),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 25),
+                      // baris 2
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const Text('Check in', style: TextStyle(color: Colors.grey, fontSize: 12)),
+                                const SizedBox(height: 4),
+                                const Text('Oct 07, 2026', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600), textAlign: TextAlign.center),
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const Text('Check out', style: TextStyle(color: Colors.grey, fontSize: 12)),
+                                const SizedBox(height: 4),
+                                const Text('Oct 08, 2026', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600), textAlign: TextAlign.center),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 25),
+                      // baris 3
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const Text('Hotel', style: TextStyle(color: Colors.grey, fontSize: 12)),
+                                const SizedBox(height: 4),
+                                Text(widget.hotel.name, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600), textAlign: TextAlign.center),
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const Text('Guest', style: TextStyle(color: Colors.grey, fontSize: 12)),
+                                const SizedBox(height: 4),
+                                Text('${widget.guest}', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600), textAlign: TextAlign.center),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 30),
                   SizedBox(
                     width: double.infinity,
                     height: 50,
                     child: ElevatedButton(
                       onPressed: () {},
                       style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-                      child: Text(
+                      child: const Text(
                         'Download Ticket',
                         style: TextStyle(
                           color: Colors.white,
@@ -186,8 +189,8 @@ class _TicketPage extends State<TicketPage> {
                 ],
               ),
             ),
-          )
-      ),
+          ),
+        )
     );
   }
 }
