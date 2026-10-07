@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hotelapps/class_list.dart';
-import 'package:hotelapps/search.dart';
+import 'package:hotelapps/custom.dart';
 
 
 // body: Text(widget.hotel.name),
@@ -238,10 +238,13 @@ class _DetailPage extends State<DetailPage> {
                     Text(' / night', style: TextStyle(fontSize: 12),),
                     Spacer(),
                     ElevatedButton(
-                        onPressed: (){},
-                        style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-                        child: Text('Book Now!', style: TextStyle(color: Colors.white),)
-                    ),
+                      onPressed: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => CustomPage(hotel: widget.hotel),), //BARUUU NIH
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                      child: Text('Book Now!', style: TextStyle(color: Colors.white),),
+                    )
                   ],
                 ),
               )
