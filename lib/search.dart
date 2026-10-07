@@ -61,7 +61,7 @@ class _SearchPageState extends State<SearchPage> {
                   children: [
                     //bagian tombol2 filtering
                     //Row ini bisa scroll ke samping
-                    SizedBox(height: 30,),
+                    SizedBox(height: 20,),
                     SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child:Row(

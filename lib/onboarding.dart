@@ -1,21 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hotelapps/main.dart';
 
-void main() {
-  runApp(const OnboardingApp());
-}
-
-class OnboardingApp extends StatelessWidget {
-  const OnboardingApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: OnboardingPage(),
-    );
-  }
-}
 
 class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
@@ -33,28 +18,51 @@ class _OnboardingPageState extends State<OnboardingPage> {
   void initState() {
     super.initState();
 
-    // 0.3s, muncul logo
     Future.delayed(Duration(milliseconds: 300), () {
-      setState(() {
-        showLogo = true;
-      });
+      if (!mounted) return;
+      setState(() => showLogo = true);
     });
 
-    // 1.3s, muncul loading
     Future.delayed(Duration(milliseconds: 1300), () {
-      setState(() {
-        showLoading = true;
-      });
+      if (!mounted) return;
+      setState(() => showLoading = true);
     });
 
-    // 3s, homepage
     Future.delayed(Duration(seconds: 3), () {
+      if (!mounted) return;
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const HomePage()),
       );
     });
   }
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //
+  //   // 0.3s, muncul logo
+  //   Future.delayed(Duration(milliseconds: 300), () {
+  //     setState(() {
+  //       showLogo = true;
+  //     });
+  //   });
+  //
+  //   // 1.3s, muncul loading
+  //   Future.delayed(Duration(milliseconds: 1300), () {
+  //     setState(() {
+  //       showLoading = true;
+  //     });
+  //   });
+  //
+  //   // 3s, homepage
+  //   Future.delayed(Duration(seconds: 3), () {
+  //     Navigator.pushReplacement(
+  //       context,
+  //       MaterialPageRoute(builder: (context) => const HomePage()),
+  //     );
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {

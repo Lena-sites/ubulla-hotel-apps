@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:hotelapps/class_list.dart';
-import 'package:hotelapps/detail.dart';
 import 'package:hotelapps/main.dart';
 import 'package:hotelapps/profile.dart';
 import 'package:hotelapps/search.dart';
+import 'package:hotelapps/class_list.dart';
 
 class BookingPage extends StatefulWidget {
   const BookingPage({super.key});
@@ -21,6 +20,7 @@ class _BookingPage extends State<BookingPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[200],
       appBar: AppBar(
         backgroundColor: Colors.grey,
         title: Row(
@@ -59,7 +59,6 @@ class _BookingPage extends State<BookingPage> {
           //container terluar (basenya)
           child: Container(
               width: double.infinity,
-              color: Colors.grey[200],
               child: Column(
                 children: [
                   //judul halaman
@@ -155,54 +154,52 @@ class _BookingPage extends State<BookingPage> {
                     padding: EdgeInsets.all(20),
                     child: Column(
                       children: [
-                        //booking ke1
-                        Container(
+                        ...bookingList.map((hotel) => Container(
+                          margin: EdgeInsets.only(bottom: 20),
                           padding: EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10)
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
                           ),
                           child: Column(
                             children: [
+                              // gambar + teks
                               Row(
                                 children: [
                                   ClipRRect(
                                     borderRadius: BorderRadius.circular(10),
-                                    child: Image.asset(
-                                        'assets/images/hotel5.jpg',
-                                        width: 80,
-                                        height: 80,
-                                        fit: BoxFit.cover
-                                    ),
+                                    child: Image.asset('assets/images/hotel1.jpg',
+                                        width: 80, height: 80, fit: BoxFit.cover),
                                   ),
-                                  SizedBox(width: 10,),
+                                  SizedBox(width: 10),
                                   Expanded(
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Text('Four Seasons Resort Bali at Jimbaran Bay',
-                                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                                        ),
-                                        Text('Jimbaran, Bali', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10),),
-                                        SizedBox(height: 6,),
-                                        //label paid
+                                        Text(hotel.name,
+                                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                                        Text(hotel.location,
+                                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10)),
+                                        SizedBox(height: 6),
                                         Container(
                                           padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                                           decoration: BoxDecoration(
                                             color: Color(0xFFD1FAE5),
                                             borderRadius: BorderRadius.circular(4),
                                           ),
-                                          child: Text('Paid', style: TextStyle(fontSize: 10, color: Colors.green),),
-                                        )
+                                          child: Text('Paid',
+                                              style: TextStyle(fontSize: 10, color: Colors.green)),
+                                        ),
                                       ],
                                     ),
                                   ),
                                 ],
                               ),
-                              SizedBox(height: 10,),
+                              SizedBox(height: 10),
                               //garis pemisah
                               Container(height: 1, color: Colors.grey[300]),
-                              SizedBox(height: 10,),
+                              SizedBox(height: 10),
+                              // tombol
                               Row(
                                 children: [
                                   Expanded(
@@ -210,229 +207,36 @@ class _BookingPage extends State<BookingPage> {
                                       onPressed: () {},
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: Colors.white,
-                                        side: BorderSide(
-                                          color: Colors.green,
-                                          width: 1.5,
-                                        ),
+                                        side: BorderSide(color: Colors.green, width: 1.5),
                                       ),
-                                      child: Text('Cancel Booking', style: TextStyle(
-                                        color: Colors.green,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 14,
-                                      ),
-                                      ),
+                                      child: Text('Cancel Booking',
+                                          style: TextStyle(
+                                              color: Colors.green,
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 14)),
                                     ),
                                   ),
-                                  SizedBox(width: 10,),
+                                  SizedBox(width: 10),
                                   Expanded(
                                     child: ElevatedButton(
                                       onPressed: () {},
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: Color(0xFF10B981),
-                                        side: BorderSide(
-                                          color: Colors.green,
-                                          width: 1.5,
-                                        ),
+                                        side: BorderSide(color: Colors.green, width: 1.5),
                                       ),
-                                      child: Text('View Ticket', style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 14,
-                                      ),
-                                      ),
+                                      child: Text('View Ticket',
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 14)),
                                     ),
                                   ),
                                 ],
                               ),
                             ],
                           ),
-                        ),
+                        )),
                         SizedBox(height: 20,),
-                        //booking ke2
-                        Container(
-                          padding: EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10)
-                          ),
-                          child: Column(
-                            children: [
-                              Row(
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: Image.asset(
-                                        'assets/images/hotel6.jpg',
-                                        width: 80,
-                                        height: 80,
-                                        fit: BoxFit.cover
-                                    ),
-                                  ),
-                                  SizedBox(width: 10,),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text('Amanjiwo',
-                                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                                        ),
-                                        Text('Desa Majaksingi, Borobudur', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10),),
-                                        SizedBox(height: 6,),
-                                        //label paid
-                                        Container(
-                                          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                                          decoration: BoxDecoration(
-                                            color: Color(0xFFD1FAE5),
-                                            borderRadius: BorderRadius.circular(4),
-                                          ),
-                                          child: Text('Paid', style: TextStyle(fontSize: 10, color: Colors.green),),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 10,),
-                              //garis pemisah
-                              Container(height: 1, color: Colors.grey[300]),
-                              SizedBox(height: 10,),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: ElevatedButton(
-                                      onPressed: () {},
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.white,
-                                        side: BorderSide(
-                                          color: Colors.green,
-                                          width: 1.5,
-                                        ),
-                                      ),
-                                      child: Text('Cancel Booking', style: TextStyle(
-                                        color: Colors.green,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 14,
-                                      ),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(width: 10,),
-                                  Expanded(
-                                    child: ElevatedButton(
-                                      onPressed: () {},
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Color(0xFF10B981),
-                                        side: BorderSide(
-                                          color: Colors.green,
-                                          width: 1.5,
-                                        ),
-                                      ),
-                                      child: Text('View Ticket', style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 14,
-                                      ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 20,),
-                        //booking ke3
-                        Container(
-                          padding: EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10)
-                          ),
-                          child: Column(
-                            children: [
-                              Row(
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: Image.asset(
-                                        'assets/images/hotel7.jpg',
-                                        width: 80,
-                                        height: 80,
-                                        fit: BoxFit.cover
-                                    ),
-                                  ),
-                                  SizedBox(width: 10,),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text('The Ritz-Carlton Bali',
-                                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                                        ),
-                                        Text('Nusa Dua, Bali', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10),),
-                                        SizedBox(height: 6,),
-                                        //label paid
-                                        Container(
-                                          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                                          decoration: BoxDecoration(
-                                            color: Color(0xFFD1FAE5),
-                                            borderRadius: BorderRadius.circular(4),
-                                          ),
-                                          child: Text('Paid', style: TextStyle(fontSize: 10, color: Colors.green),),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 10,),
-                              //garis pemisah
-                              Container(height: 1, color: Colors.grey[300]),
-                              SizedBox(height: 10,),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: ElevatedButton(
-                                      onPressed: () {},
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.white,
-                                        side: BorderSide(
-                                          color: Colors.green,
-                                          width: 1.5,
-                                        ),
-                                      ),
-                                      child: Text('Cancel Booking', style: TextStyle(
-                                        color: Colors.green,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 14,
-                                      ),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(width: 10,),
-                                  Expanded(
-                                    child: ElevatedButton(
-                                      onPressed: () {},
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Color(0xFF10B981),
-                                        side: BorderSide(
-                                          color: Colors.green,
-                                          width: 1.5,
-                                        ),
-                                      ),
-                                      child: Text('View Ticket', style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 14,
-                                      ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
                       ],
                     ),
                   )
@@ -443,7 +247,7 @@ class _BookingPage extends State<BookingPage> {
       ),
       //tempat navigasi
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 1,
+        currentIndex: 2,
         type: BottomNavigationBarType.fixed,
         backgroundColor: Colors.white,
         selectedItemColor: Color(0xFF10B981),

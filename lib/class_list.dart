@@ -61,3 +61,6 @@ class PaymentMethod{
     required this.method,
   });
 }
+
+// isinya kumpulan hotel yang dibooking
+final List<HotelList> bookingList = [];

@@ -3,6 +3,7 @@ import 'package:hotelapps/booking.dart';
 import 'package:hotelapps/class_list.dart';
 import 'package:hotelapps/profile.dart';
 import 'package:hotelapps/search.dart';
+import 'package:hotelapps/onboarding.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: HomePage(),
+      home: const OnboardingPage(),
     );
   }
 }

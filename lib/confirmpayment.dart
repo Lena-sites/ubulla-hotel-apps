@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hotelapps/class_list.dart';
-import 'package:hotelapps/custom.dart';
 import 'package:hotelapps/main.dart';
-import 'package:hotelapps/payment.dart';
+import 'package:hotelapps/ticket.dart';
 
 class ConfirmPage extends StatefulWidget {
   //hal baru di sini
@@ -317,10 +316,10 @@ class _ConfirmPage extends State<ConfirmPage> {
                     onPressed: () {
                       Navigator.pop(dialogContext); // tutup popup
                       //KE HALAMAN TIKET NTR
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(builder: (context) => HomePage()),
-                      // );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => TicketPage(hotel: widget.hotel, guest: widget.guest, room: widget.room, totalPrice: widget.totalPrice, payMet: widget.payMet)),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color(0xFF10B981),

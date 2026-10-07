@@ -3,22 +3,6 @@ import 'package:hotelapps/booking.dart';
 import 'package:hotelapps/main.dart';
 import 'package:hotelapps/search.dart';
 
-// void main() {
-//   runApp(const ProfileApp());
-// }
-
-// class ProfileApp extends StatelessWidget {
-//   const ProfileApp({super.key});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       debugShowCheckedModeBanner: false,
-//       home: ProfilePage(),
-//     );
-//   }
-// }
-
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
@@ -49,7 +33,7 @@ class _ProfilePageState extends State<ProfilePage> {
         ClipOval(
           // foto dari asset
           child: Image.asset(
-            'assets/images/profile.jpg',
+            'assets/images/profil.jpg',
             width: 120,
             height: 120,
             fit: BoxFit.cover,
@@ -87,7 +71,7 @@ class _ProfilePageState extends State<ProfilePage> {
       isLargeScreen ? CrossAxisAlignment.start : CrossAxisAlignment.center,
       children: [
         Text(
-          'Li Shen',
+          'Lena',
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
@@ -96,7 +80,7 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
         SizedBox(height: 4),
         Text(
-          'lishen@lnds.com',
+          'lena@gmail.com',
           style: TextStyle(fontSize: 13, color: subTextColor),
         ),
       ],
