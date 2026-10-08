@@ -1,17 +1,25 @@
 # hotelapps
 
-A new Flutter project.
+Aplikasi pemesanan hotel berbasis Flutter untuk mempermudah pencarian dan pemesanan kamar hotel secara praktis.
 
-## Getting Started
+## Fitur Utama
 
-This project is a starting point for a Flutter application.
+- **Onboarding Screen**: Tampilan awal pengenalan aplikasi.
+- **Home Page**: Tampilan awal saat pengguna masuk ke aplikasi.
+- **Pencarian Hotel**: Fitur *search* kamar hotel sesuai kebutuhan.
+- **Detail Hotel**: Informasi lengkap mengenai fasilitas dan custom bookingan (tanggal/jumlah orang/banyaknya room).
+- **Sistem Pembayaran**: Proses *checkout* pembayaran dan konfirmasi transaksi.
+- **Pop-Up Pesan Keterangan Pembayaran Berhasil**: Pesan ini ditampilkan agar pengguna dapat melihat status pembayarannya berhasil atau gagal.
+- **E-Ticket**: Menampilkan tiket digital hotel (digunakan untuk check-in) setelah pemesanan berhasil.
+- **Profil Pengguna**: Pengaturan data akun dan tema aplikasi (dark/white theme).
 
-A few resources to get you started if this is your first Flutter project:
+## Teknologi yang Digunakan
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+- **Framework**: Flutter
+- **Bahasa**: Dart
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Cara Menjalankan Project
+
+1. **Clone repository ini**
+    ```bash
+   git clone https://github.com/Lena-sites/ubulla-hotel-apps.git
