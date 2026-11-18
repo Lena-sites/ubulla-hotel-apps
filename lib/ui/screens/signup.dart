@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hotelapps/ui/screens/login.dart';
 
 class SignupPage extends StatefulWidget{
   const SignupPage({super.key});
@@ -97,6 +98,19 @@ class _SignupPageState extends State<SignupPage>{
                   ),
                 ),
                 SizedBox(height: 25),
+                //tombol submit (Login)
+                ElevatedButton(
+                    onPressed: (){
+                      //SUBMITT
+                    },
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        foregroundColor: Colors.white,
+                        minimumSize: Size(double.infinity, 45) //lebar,tinggi
+                    ),
+                    child: Text('Log In',style: TextStyle(fontSize: 15),)
+                ),
+                SizedBox(height: 25),
                 //DIVIDER untuk OR
                 Row(
                   children: [
@@ -109,7 +123,7 @@ class _SignupPageState extends State<SignupPage>{
                   ],
                 ),
                 SizedBox(height: 25),
-                //pilihan login menggunakan akun Google
+                //pilihan Signup menggunakan akun Google
                 ElevatedButton(
                     onPressed: (){
                       //Google authentication, NTRRRR
@@ -134,23 +148,15 @@ class _SignupPageState extends State<SignupPage>{
                     )
                 ),
                 SizedBox(height: 25),
-                //LUPA PASSWORD (reset password)
-                TextButton(
-                    onPressed: (){
-                      //arahin ke halaman forgot password
-                    },
-                    //supaya ga ada efek2 di pas mau mencet tulisannya
-                    style: TextButton.styleFrom(overlayColor: Colors.transparent),
-                    child: Text('Forgot Password?',style: TextStyle(color: Colors.black, fontSize: 14, decoration: TextDecoration.underline,))
-                ),
+                //tanya, already have acc supaya balik ke login lagi
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("Don't have any accound?", style: TextStyle(color: Colors.grey, fontSize: 14,)),
+                    Text("Already have an account?", style: TextStyle(color: Colors.grey, fontSize: 14,)),
                     SizedBox(width: 3,),
                     TextButton(
                       onPressed: () {
-                        // Navigate to Sign Up
+                        Navigator.pop(context, MaterialPageRoute(builder: (context) => const LoginPage()));
                       },
                       //supaya ga ada efek2 di pas mau mencet tulisannya
                       style: TextButton.styleFrom(overlayColor: Colors.transparent),

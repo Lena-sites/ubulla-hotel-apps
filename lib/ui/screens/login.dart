@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hotelapps/ui/screens/signup.dart';
 
 class LoginPage extends StatefulWidget{
   const LoginPage({super.key});
@@ -82,9 +83,10 @@ class _LoginPageState extends State<LoginPage>{
                   ),
                 ),
                 SizedBox(height: 20),
+                //tombol submit (Login)
                 ElevatedButton(
                     onPressed: (){
-                      //submitt
+                      //SUBMITT
                     },
                     style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.green,
@@ -147,7 +149,7 @@ class _LoginPageState extends State<LoginPage>{
                     SizedBox(width: 3,),
                     TextButton(
                       onPressed: () {
-                        // Navigate to Sign Up
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => const SignupPage()));
                       },
                       //supaya ga ada efek2 di pas mau mencet tulisannya
                       style: TextButton.styleFrom(overlayColor: Colors.transparent),
