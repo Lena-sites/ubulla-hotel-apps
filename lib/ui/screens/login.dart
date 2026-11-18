@@ -1,5 +1,10 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:hotelapps/ui/screens/signup.dart';
+import 'package:hotelapps/services/auth_service.dart';
+import 'package:hotelapps/ui/screens/home.dart';
+
 
 class LoginPage extends StatefulWidget{
   const LoginPage({super.key});
@@ -11,7 +16,23 @@ class _LoginPageState extends State<LoginPage>{
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
+  late final StreamSubscription<AuthState> authSubscription;
+
   bool _obscurePassword = true; //menyembunyikan password
+  bool _isNavigating = false;
+
+  @override
+  void initState() {
+    super.initState();
+    authSubscription = Supabase.instance.client.auth.onAuthStateChange.listen((data) {
+      if (data.event == AuthChangeEvent.signedIn &&
+          mounted &&
+          !_isNavigating) {
+        _isNavigating = true;
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const HomePage()));
+      }
+    });
+  }
   
   @override
   Widget build(BuildContext context){
@@ -85,8 +106,31 @@ class _LoginPageState extends State<LoginPage>{
                 SizedBox(height: 20),
                 //tombol submit (Login)
                 ElevatedButton(
-                    onPressed: (){
-                      //SUBMITT
+                    onPressed: () async {
+                      if (emailController.text.trim().isEmpty ||
+                          passwordController.text.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Email dan password wajib diisi')),
+                        );
+                        return;
+                      }
+
+                      try {
+                        await AuthService().signInWithEmail(
+                          email: emailController.text.trim(),
+                          password: passwordController.text,
+                        );
+
+                        // Navigasi ke HomePage akan dilakukan oleh authSubscription.
+                      } on AuthException catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(e.message)),
+                        );
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Terjadi kesalahan saat login')),
+                        );
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.green,
@@ -110,8 +154,9 @@ class _LoginPageState extends State<LoginPage>{
                 SizedBox(height: 20),
                 //pilihan login menggunakan akun Google
                 ElevatedButton(
-                    onPressed: (){
-                      //Google authentication, NTRRRR
+                    onPressed: () async{
+                      //Google authentication
+                      await AuthService().signInWithGoogle();
                     },
                     style: ElevatedButton.styleFrom(
                       minimumSize: Size(double.infinity, 50),

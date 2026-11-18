@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:hotelapps/ui/widgets/navigation.dart';
+import 'package:hotelapps/ui/screens/login.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -339,25 +341,88 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
 
                 // menu logout
-                Container(
-                  width: double.infinity,
-                  margin: EdgeInsets.only(bottom: 10),
-                  padding: EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-                  decoration: BoxDecoration(
-                    color: cardColor,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(Icons.logout, color: Colors.redAccent, size: 22),
-                      SizedBox(width: 16),
-                      Expanded(
-                        child: Text(
-                          'Logout',
-                          style: TextStyle(fontSize: 15, color: Colors.redAccent),
-                        ),
+                GestureDetector(
+                  onTap: () async {
+                    // Konfirmasi logout
+                    final confirm = await showDialog<bool>(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: Text('Logout'),
+                        content: Text('Are you sure you want to logout?'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context, false);
+                            },
+                            child: Text('Cancel'),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context, true);
+                            },
+                            child: Text(
+                              'Yes, Logout',
+                              style: TextStyle(color: Colors.redAccent),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
+                    );
+
+                    if (confirm == true) {
+                      try {
+                        await Supabase.instance.client.auth.signOut();
+
+                        if (!mounted) return;
+
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const LoginPage(),
+                          ),
+                              (route) => false,
+                        );
+                      } catch (e) {
+                        if (!mounted) return;
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Logout failed. Please try again.'),
+                          ),
+                        );
+                      }
+                    }
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    margin: EdgeInsets.only(bottom: 10),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 14,
+                    ),
+                    decoration: BoxDecoration(
+                      color: cardColor,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.logout,
+                          color: Colors.redAccent,
+                          size: 22,
+                        ),
+                        SizedBox(width: 16),
+                        Expanded(
+                          child: Text(
+                            'Logout',
+                            style: TextStyle(
+                              fontSize: 15,
+                              color: Colors.redAccent,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],

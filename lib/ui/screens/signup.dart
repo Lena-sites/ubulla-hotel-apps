@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:hotelapps/ui/screens/login.dart';
+import 'package:hotelapps/services/auth_service.dart';
+import 'package:hotelapps/ui/screens/home.dart';
 
 class SignupPage extends StatefulWidget{
   const SignupPage({super.key});
@@ -13,6 +16,7 @@ class _SignupPageState extends State<SignupPage>{
   final passwordController = TextEditingController();
 
   bool _obscurePassword = true; //menyembunyikan password
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context){
@@ -100,16 +104,116 @@ class _SignupPageState extends State<SignupPage>{
                 SizedBox(height: 25),
                 //tombol submit (Login)
                 ElevatedButton(
-                    onPressed: (){
-                      //SUBMITT
-                    },
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
-                        foregroundColor: Colors.white,
-                        minimumSize: Size(double.infinity, 45) //lebar,tinggi
+                  onPressed: isLoading ? null : () async {
+                    // Validasi input kosong
+                    if (emailController.text.trim().isEmpty ||
+                        usernameController.text.trim().isEmpty ||
+                        passwordController.text.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Please complete all fields!'),
+                        ),
+                      );
+                      return;
+                    }
+
+                    //validasi password (ketentuan paling dikit 6 karakter)
+                    if (passwordController.text.length < 6) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Password must be at least 6 characters!'),
+                        ),
+                      );
+                      return;
+                    }
+
+                    setState(() {
+                      isLoading = true;
+                    });
+
+                    try {
+                      final response = await AuthService().signUp(
+                        email: emailController.text.trim(),
+                        username: usernameController.text.trim(),
+                        password: passwordController.text,
+                      );
+
+                      if (!mounted) return;
+
+                      if (response.session != null) {
+                        // Jika langsung berhasil login
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Account created successfully!')),
+                        );
+
+                        Navigator.pushNamedAndRemoveUntil(
+                          context,
+                          '/',
+                              (route) => false,
+                        );
+                      } else {
+                        // Jika perlu konfirmasi email
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Account created! Please check your email for verification.',),
+                          ),
+                        );
+
+                        Navigator.pop(context);
+                      }
+                    } on AuthException catch (e) {
+                      if (!mounted) return;
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(e.message),
+                        ),
+                      );
+                    } catch (e) {
+                      if (!mounted) return;
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Something went wrong. Please try again.'),
+                        ),
+                      );
+                    } finally {
+                      if (mounted) {
+                        setState(() {
+                          isLoading = false;
+                        });
+                      }
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    foregroundColor: Colors.white,
+                    minimumSize: Size(double.infinity, 45),
+                  ),
+                  child: isLoading ? SizedBox(
+                    width: 22,
+                    height: 22,
+                    child: CircularProgressIndicator(
+                      color: Colors.white,
+                      strokeWidth: 2,
                     ),
-                    child: Text('Log In',style: TextStyle(fontSize: 15),)
+                  )
+                      : Text(
+                    'Create Account',
+                    style: TextStyle(fontSize: 15),
+                  ),
                 ),
+                // ElevatedButton(
+                //     onPressed: (){
+                //       //SUBMITT
+                //     },
+                //     style: ElevatedButton.styleFrom(
+                //         backgroundColor: Colors.green,
+                //         foregroundColor: Colors.white,
+                //         minimumSize: Size(double.infinity, 45) //lebar,tinggi
+                //     ),
+                //     child: Text('Create Account',style: TextStyle(fontSize: 15),)
+                // ),
                 SizedBox(height: 25),
                 //DIVIDER untuk OR
                 Row(
@@ -125,8 +229,9 @@ class _SignupPageState extends State<SignupPage>{
                 SizedBox(height: 25),
                 //pilihan Signup menggunakan akun Google
                 ElevatedButton(
-                    onPressed: (){
-                      //Google authentication, NTRRRR
+                    onPressed: () async {
+                      //Google authentication
+                      await AuthService().signInWithGoogle();
                     },
                     style: ElevatedButton.styleFrom(
                       minimumSize: Size(double.infinity, 50),
@@ -160,7 +265,7 @@ class _SignupPageState extends State<SignupPage>{
                       },
                       //supaya ga ada efek2 di pas mau mencet tulisannya
                       style: TextButton.styleFrom(overlayColor: Colors.transparent),
-                      child: Text('Sign Up', style: TextStyle(
+                      child: Text('Log In', style: TextStyle(
                         color: Color(0xFF10B981),
                         fontWeight: FontWeight.bold,
                         fontSize: 14,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart'; //pake shared preference karnaa onboarding2 maunya cuman tampil 1x di awal before login/msh user baru
 import 'package:hotelapps/ui/screens/login.dart';
 
 class Onboarding2 extends StatefulWidget{
@@ -43,7 +44,13 @@ class _Onboarding2State extends State<Onboarding2>{
               foregroundColor: Colors.white,
               minimumSize: Size(double.infinity, 55) //lebar,tinggi
             ),
-            onPressed: () {
+            onPressed: () async {
+              final prefs = await SharedPreferences.getInstance();
+
+              //simpan status onboarding sudah selesai
+              await prefs.setBool('hasSeenOnBoarding', true);
+
+              if (!mounted) return;
               Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginPage()));
             },
             child: Text('Get Started', style: TextStyle(fontSize: 20),),

@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hotelapps/ui/screens/onboarding2.dart';
+import 'package:hotelapps/ui/screens/home.dart';
+import 'package:hotelapps/ui/screens/login.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
@@ -9,7 +13,7 @@ class OnboardingPage extends StatefulWidget {
 }
 
 class _OnboardingPageState extends State<OnboardingPage> {
-  // variabel on boarding
+  // Variabel onboarding
   bool showLogo = false;
   bool showLoading = false;
 
@@ -17,23 +21,54 @@ class _OnboardingPageState extends State<OnboardingPage> {
   void initState() {
     super.initState();
 
+    // Animasi logo muncul setelah 300 ms
     Future.delayed(Duration(milliseconds: 300), () {
       if (!mounted) return;
       setState(() => showLogo = true);
     });
 
+    // Loading muncul setelah 1300 ms
     Future.delayed(Duration(milliseconds: 1300), () {
       if (!mounted) return;
       setState(() => showLoading = true);
     });
 
-    Future.delayed(Duration(seconds: 3), () {
-      if (!mounted) return;
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const Onboarding2()),
-      );
-    });
+    // Navigasi setelah splash screen selesai
+    navigateAfterSplash();
+  }
+
+  // Fungsi menentukan halaman selanjutnya
+  Future<void> navigateAfterSplash() async {
+    await Future.delayed(Duration(seconds: 3));
+
+    if (!mounted) return;
+
+    final prefs = await SharedPreferences.getInstance();
+
+    final hasSeenOnboarding =
+        prefs.getBool('hasSeenOnboarding') ?? false;
+
+    final session = Supabase.instance.client.auth.currentSession;
+
+    Widget nextPage;
+
+    if (session != null) {
+      // Jika sudah login, langsung ke Home
+      nextPage = const HomePage();
+    } else if (hasSeenOnboarding) {
+      // Jika sudah onboarding tetapi belum login
+      nextPage = const LoginPage();
+    } else {
+      // Jika pertama kali membuka aplikasi
+      nextPage = const Onboarding2();
+    }
+
+    if (!mounted) return;
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => nextPage),
+    );
   }
 
   @override
@@ -46,7 +81,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // logo + tulisan, fade dan membesar pelan2
+              // Logo dan tulisan dengan animasi
               AnimatedOpacity(
                 opacity: showLogo ? 1.0 : 0.0,
                 duration: Duration(milliseconds: 1000),
@@ -67,18 +102,26 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       SizedBox(height: 16),
                       Text(
                         'UBULLA',
-                        style: TextStyle(fontFamily: 'Cormorant_Garamond', fontSize: 32),
+                        style: TextStyle(
+                          fontFamily: 'Cormorant_Garamond',
+                          fontSize: 32,
+                        ),
                       ),
                       Text(
                         'Hotel and Resort',
-                        style: TextStyle(fontFamily: 'Cormorant_Garamond', fontSize: 14),
+                        style: TextStyle(
+                          fontFamily: 'Cormorant_Garamond',
+                          fontSize: 14,
+                        ),
                       ),
                     ],
                   ),
                 ),
               ),
+
               SizedBox(height: 40),
-              // loading muncul setelah logo
+
+              // Loading animation
               AnimatedOpacity(
                 opacity: showLoading ? 1.0 : 0.0,
                 duration: Duration(milliseconds: 500),
