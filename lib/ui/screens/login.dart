@@ -81,7 +81,19 @@ class _LoginPageState extends State<LoginPage>{
                       floatingLabelStyle: TextStyle(color: Colors.black) //warna labelTextnya saat floating biar tetap hitam
                   ),
                 ),
-                SizedBox(height: 25),
+                SizedBox(height: 20),
+                ElevatedButton(
+                    onPressed: (){
+                      //submitt
+                    },
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        foregroundColor: Colors.white,
+                        minimumSize: Size(double.infinity, 45) //lebar,tinggi
+                    ),
+                    child: Text('Log In',style: TextStyle(fontSize: 15),)
+                ),
+                SizedBox(height: 20),
                 //DIVIDER untuk OR
                 Row(
                   children: [
@@ -93,7 +105,7 @@ class _LoginPageState extends State<LoginPage>{
                     Expanded(child: Divider())
                   ],
                 ),
-                SizedBox(height: 25),
+                SizedBox(height: 20),
                 //pilihan login menggunakan akun Google
                 ElevatedButton(
                     onPressed: (){
@@ -140,7 +152,7 @@ class _LoginPageState extends State<LoginPage>{
                       //supaya ga ada efek2 di pas mau mencet tulisannya
                       style: TextButton.styleFrom(overlayColor: Colors.transparent),
                       child: Text('Sign Up', style: TextStyle(
-                          color: Color(0xFF10B981),
+                          color: Colors.green,
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
                         ),
