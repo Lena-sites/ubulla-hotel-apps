@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hotelapps/ui/screens/homepage.dart';
+import 'package:hotelapps/ui/screens/home.dart';
 
 class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
