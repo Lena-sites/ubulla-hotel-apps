@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hotelapps/class_list.dart';
-import 'package:hotelapps/confirmpayment.dart';
+import 'package:hotelapps/ui/screens/confirmpayment.dart';
 
 class PaymentPage extends StatefulWidget {
   //pengambilan variabel dari custom page

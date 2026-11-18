@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:hotelapps/booking.dart';
-import 'package:hotelapps/main.dart';
-import 'package:hotelapps/search.dart';
+import 'package:hotelapps/ui/screens/booking.dart';
+import 'package:hotelapps/ui/screens/homepage.dart';
+import 'package:hotelapps/ui/screens/search.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});

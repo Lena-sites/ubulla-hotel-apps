@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:hotelapps/booking.dart';
+import 'package:hotelapps/ui/screens/booking.dart';
 import 'package:hotelapps/class_list.dart';
-import 'package:hotelapps/detail.dart';
-import 'package:hotelapps/main.dart';
-import 'package:hotelapps/profile.dart';
+import 'package:hotelapps/ui/screens/detail.dart';
+import 'package:hotelapps/ui/screens/homepage.dart';
+import 'package:hotelapps/ui/screens/profile.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});

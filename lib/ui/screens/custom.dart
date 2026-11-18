@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hotelapps/class_list.dart';
-import 'package:hotelapps/payment.dart';
+import 'package:hotelapps/ui/screens/payment.dart';
 
 class CustomPage extends StatefulWidget {
   //mengambil data hotel yang telah dipilih sebelumnya di search page

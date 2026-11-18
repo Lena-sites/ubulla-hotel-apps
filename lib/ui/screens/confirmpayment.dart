@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hotelapps/class_list.dart';
-import 'package:hotelapps/main.dart';
-import 'package:hotelapps/ticket.dart';
+import 'package:hotelapps/ui/screens/homepage.dart';
+import 'package:hotelapps/ui/screens/ticket.dart';
 
 class ConfirmPage extends StatefulWidget {
   //mengambil data hotel yang telah dipilih sebelumnya

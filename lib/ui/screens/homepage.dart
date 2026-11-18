@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:hotelapps/booking.dart';
+import 'package:hotelapps/ui/screens/booking.dart';
 import 'package:hotelapps/class_list.dart';
-import 'package:hotelapps/profile.dart';
-import 'package:hotelapps/search.dart';
+import 'package:hotelapps/ui/screens/profile.dart';
+import 'package:hotelapps/ui/screens/search.dart';
 
 class HomePage extends StatefulWidget{
   const HomePage({super.key});

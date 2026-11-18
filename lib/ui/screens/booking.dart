@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:hotelapps/main.dart';
-import 'package:hotelapps/profile.dart';
-import 'package:hotelapps/search.dart';
+import 'package:hotelapps/ui/screens/homepage.dart';
+import 'package:hotelapps/ui/screens/profile.dart';
+import 'package:hotelapps/ui/screens/search.dart';
 import 'package:hotelapps/class_list.dart';
 
 class BookingPage extends StatefulWidget {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hotelapps/booking.dart';
+import 'package:hotelapps/ui/screens/booking.dart';
 import 'package:hotelapps/class_list.dart';
 
 class TicketPage extends StatefulWidget {
