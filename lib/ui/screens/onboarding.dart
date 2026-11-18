@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hotelapps/ui/screens/home.dart';
+import 'package:hotelapps/ui/screens/onboarding2.dart';
 
 class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
@@ -31,7 +31,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
       if (!mounted) return;
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const HomePage()),
+        MaterialPageRoute(builder: (context) => const Onboarding2()),
       );
     });
   }

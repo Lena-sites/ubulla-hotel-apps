@@ -15,7 +15,7 @@ class BottomNavigation extends StatelessWidget{
   @override
   Widget build(BuildContext context){
     return BottomNavigationBar(
-      currentIndex: 0,
+      currentIndex: currentIndex,
       type: BottomNavigationBarType.fixed,
       backgroundColor: Colors.white,
       selectedItemColor: Color(0xFF10B981),
