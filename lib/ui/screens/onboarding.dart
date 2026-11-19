@@ -81,8 +81,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
     //   // Jika pertama kali membuka aplikasi
     //   nextPage = const Onboarding2();
     // }
-    debugPrint('RECOVERY FLAG: $isPasswordRecovery');
-    debugPrint('CURRENT SESSION: ${session != null}');
+    // debugPrint('RECOVERY FLAG: $isPasswordRecovery');
+    // debugPrint('CURRENT SESSION: ${session != null}');
 
     if (!mounted) return;
 

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:hotelapps/class_list.dart';
 import 'package:hotelapps/ui/widgets/navigation.dart';
 import 'package:hotelapps/services/hotel_service.dart';
+import 'package:hotelapps/services/user_service.dart';
+// import 'package:supabase_flutter/supabase_flutter.dart';
 
 class HomePage extends StatefulWidget{
   const HomePage({super.key});
@@ -10,7 +12,6 @@ class HomePage extends StatefulWidget{
 }
 
 class _MyAppState extends State<HomePage>{
-
   @override
   Widget build(BuildContext context){
 
@@ -18,6 +19,10 @@ class _MyAppState extends State<HomePage>{
     final screenWidth = MediaQuery.of(context).size.width;
     //jika lebar >600 dianggap layarnya lebar/besar
     final isLargeScreen = screenWidth > 600;
+
+    //ambil hasil pengambilan di /services
+    final userService = UserService();
+    final username = userService.getUsername();
 
     return Scaffold(
       appBar: AppBar(
@@ -68,29 +73,10 @@ class _MyAppState extends State<HomePage>{
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Welcome, Lena!',
+                        Text('Welcome, $username!',
                           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                         ),
-                        SizedBox(height: 10,),
-                        Container(
-                          width: double.infinity,
-                          height: 45,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: Colors.grey[300],
-                          ),
-                          child: Row(
-                            children: [
-                              SizedBox(width: 10),
-                              Icon(Icons.search_outlined, color: Colors.grey),
-                              SizedBox(width: 5),
-                              Text('Search', style: TextStyle(color: Colors.grey)),
-                              Spacer(),
-                              Icon(Icons.tune_outlined, color: Colors.grey),
-                              SizedBox(width: 10)
-                            ],
-                          ),
-                        )
+                        SizedBox(height: 10),
                       ],
                     ),
                   ),
