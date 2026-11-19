@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hotelapps/ui/screens/onboarding2.dart';
 import 'package:hotelapps/ui/screens/home.dart';
-import 'package:hotelapps/ui/screens/login.dart';
+import 'package:hotelapps/ui/authentication/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:hotelapps/ui/authentication/resetpassword.dart';
+import 'package:hotelapps/services/auth_state.dart';
 
 class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
@@ -52,16 +54,35 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
     Widget nextPage;
 
-    if (session != null) {
-      // Jika sudah login, langsung ke Home
-      nextPage = const HomePage();
+    if (isPasswordRecovery) {
+      // Jika pengguna sedang reset password
+      nextPage = ResetPasswordPage();
+
+    } else if (session != null) {
+      // Jika sudah login
+      nextPage = HomePage();
+
     } else if (hasSeenOnboarding) {
-      // Jika sudah onboarding tetapi belum login
-      nextPage = const LoginPage();
+      // Jika sudah pernah onboarding
+      nextPage = LoginPage();
+
     } else {
       // Jika pertama kali membuka aplikasi
-      nextPage = const Onboarding2();
+      nextPage = Onboarding2();
     }
+
+    // if (session != null) {
+    //   // Jika sudah login, langsung ke Home
+    //   nextPage = const HomePage();
+    // } else if (hasSeenOnboarding) {
+    //   // Jika sudah onboarding tetapi belum login
+    //   nextPage = const LoginPage();
+    // } else {
+    //   // Jika pertama kali membuka aplikasi
+    //   nextPage = const Onboarding2();
+    // }
+    debugPrint('RECOVERY FLAG: $isPasswordRecovery');
+    debugPrint('CURRENT SESSION: ${session != null}');
 
     if (!mounted) return;
 

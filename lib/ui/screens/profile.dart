@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:hotelapps/ui/widgets/navigation.dart';
-import 'package:hotelapps/ui/screens/login.dart';
+import 'package:hotelapps/ui/authentication/login.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});

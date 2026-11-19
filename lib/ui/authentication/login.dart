@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:hotelapps/ui/screens/forgotpassword.dart';
+import 'package:hotelapps/ui/authentication/forgotpassword.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:hotelapps/ui/screens/signup.dart';
+import 'package:hotelapps/ui/authentication/signup.dart';
 import 'package:hotelapps/services/auth_service.dart';
 import 'package:hotelapps/ui/screens/home.dart';
 
