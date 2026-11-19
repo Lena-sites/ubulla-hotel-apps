@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:hotelapps/ui/authentication/login.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:hotelapps/services/auth_state.dart';
 
 class ResetPasswordPage extends StatefulWidget{
   const ResetPasswordPage({super.key});
@@ -111,7 +113,13 @@ class  _ResetPasswordPageState extends State<ResetPasswordPage>{
                           ),
                         );
 
-                        Navigator.pop(context);
+                        isPasswordRecovery = false;
+                        await Supabase.instance.client.auth.signOut();
+                        if (!mounted) return;
+                        Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(builder: (_) => const LoginPage()), // atau LoginPage
+                              (route) => false,
+                        );
 
                       } on AuthException catch (e) {
                         if (!mounted) return;
@@ -153,8 +161,14 @@ class  _ResetPasswordPageState extends State<ResetPasswordPage>{
                   ),
                   // Kembali ke login
                   TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
+                    onPressed: () async {
+                      isPasswordRecovery = false;
+                      await Supabase.instance.client.auth.signOut();
+                      if (!mounted) return;
+                      Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(builder: (_) => const LoginPage()),
+                            (route) => false,
+                      );
                     },
                     style: TextButton.styleFrom(overlayColor: Colors.transparent,),
                     child: Text('Back to Log In', style: TextStyle(color: Colors.black, fontSize: 14, decoration: TextDecoration.underline),
