@@ -1,19 +1,23 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+//all proses authentication diatur ama backend dari supabase
 //Memanggil Google OAuth melalui Supabase
 //Membuka proses login Google
 //Mengarahkan pengguna kembali ke Flutter Web setelah autentikasi (sudah tersetting juga di Supabasenya)
 class AuthService {
   final supabase = Supabase.instance.client;
 
-  Future<void> signInWithGoogle() async {
+  //login dengan google
+  Future<void> loginWithGoogle() async {
     await supabase.auth.signInWithOAuth(
       OAuthProvider.google,
       redirectTo: 'http://localhost:5000',
     );
   }
 
-  Future<AuthResponse> signInWithEmail({
+  //login dengan email (manual)
+  //return value karna hasil login digunakan Flutter untuk melakukan pemeriksaan kondisi sebelum berpindah halaman
+  Future<AuthResponse> loginWithEmail({
     required String email,
     required String password,
   }) async {
@@ -23,7 +27,15 @@ class AuthService {
     );
   }
 
-  //signup manual
+  //signup dengan google
+  Future<void> signUpWithGoogle() async {
+    await supabase.auth.signInWithOAuth(
+      OAuthProvider.google,
+      redirectTo: 'http://localhost:5000',
+    );
+  }
+
+  //signup manual (return value karna datanya mau dipake)
   Future<AuthResponse> signUp({
     required String email,
     required String username,

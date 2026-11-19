@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:hotelapps/ui/screens/login.dart';
 import 'package:hotelapps/services/auth_service.dart';
-import 'package:hotelapps/ui/screens/home.dart';
 
 class SignupPage extends StatefulWidget{
   const SignupPage({super.key});
@@ -140,6 +139,14 @@ class _SignupPageState extends State<SignupPage>{
 
                       if (!mounted) return;
 
+                      //cek email duplikat
+                      if (response.user != null && (response.user!.identities?.isEmpty ?? false)){
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('This email is already registered'))
+                        );
+                        return;
+                      }
+
                       if (response.session != null) {
                         // Jika langsung berhasil login
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -161,12 +168,16 @@ class _SignupPageState extends State<SignupPage>{
 
                         Navigator.pop(context);
                       }
-                    } on AuthException catch (e) {
+                    } on AuthException catch (e) { //error handling ketika email sudah terdaftar
                       if (!mounted) return;
-
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text(e.message),
+                          content: Text( //toLowerCase ini jaga2 aja supaya gak bentrok dengan format yang ditetapin di supabase
+                              e.message.toLowerCase().contains('already registered') ||
+                              e.message.toLowerCase().contains('already been registered')
+                                  ? 'This email is already registered!'
+                                  : e.message,
+                          ),
                         ),
                       );
                     } catch (e) {
@@ -203,17 +214,6 @@ class _SignupPageState extends State<SignupPage>{
                     style: TextStyle(fontSize: 15),
                   ),
                 ),
-                // ElevatedButton(
-                //     onPressed: (){
-                //       //SUBMITT
-                //     },
-                //     style: ElevatedButton.styleFrom(
-                //         backgroundColor: Colors.green,
-                //         foregroundColor: Colors.white,
-                //         minimumSize: Size(double.infinity, 45) //lebar,tinggi
-                //     ),
-                //     child: Text('Create Account',style: TextStyle(fontSize: 15),)
-                // ),
                 SizedBox(height: 25),
                 //DIVIDER untuk OR
                 Row(
@@ -231,7 +231,7 @@ class _SignupPageState extends State<SignupPage>{
                 ElevatedButton(
                     onPressed: () async {
                       //Google authentication
-                      await AuthService().signInWithGoogle();
+                      await AuthService().signUpWithGoogle();
                     },
                     style: ElevatedButton.styleFrom(
                       minimumSize: Size(double.infinity, 50),
@@ -248,7 +248,7 @@ class _SignupPageState extends State<SignupPage>{
                           height: 22,
                         ),
                         SizedBox(width: 12),
-                        Text('Continue with Google', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),)
+                        Text('Continue with Google', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold))
                       ],
                     )
                 ),

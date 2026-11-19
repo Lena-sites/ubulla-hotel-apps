@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:hotelapps/ui/screens/forgotpassword.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:hotelapps/ui/screens/signup.dart';
 import 'package:hotelapps/services/auth_service.dart';
@@ -116,7 +117,7 @@ class _LoginPageState extends State<LoginPage>{
                       }
 
                       try {
-                        await AuthService().signInWithEmail(
+                        await AuthService().loginWithEmail(
                           email: emailController.text.trim(),
                           password: passwordController.text,
                         );
@@ -156,7 +157,7 @@ class _LoginPageState extends State<LoginPage>{
                 ElevatedButton(
                     onPressed: () async{
                       //Google authentication
-                      await AuthService().signInWithGoogle();
+                      await AuthService().loginWithGoogle();
                     },
                     style: ElevatedButton.styleFrom(
                       minimumSize: Size(double.infinity, 50),
@@ -182,6 +183,7 @@ class _LoginPageState extends State<LoginPage>{
                 TextButton(
                     onPressed: (){
                       //arahin ke halaman forgot password
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const ForgotPasswordPage()));
                     },
                     //supaya ga ada efek2 di pas mau mencet tulisannya
                     style: TextButton.styleFrom(overlayColor: Colors.transparent),
