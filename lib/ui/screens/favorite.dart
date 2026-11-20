@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hotelapps/models/hotels.dart';
 import 'package:hotelapps/services/favorite_service.dart';
+import 'package:hotelapps/ui/screens/detail.dart';
 
 class FavoritePage extends StatefulWidget {
   const FavoritePage({super.key});
@@ -110,58 +111,97 @@ class _FavoritePageState extends State<FavoritePage> {
           : ListView.builder(
         padding: EdgeInsets.all(16),
         itemCount: favoriteHotels.length,
-
         itemBuilder: (context, index) {
           final hotel = favoriteHotels[index];
 
-          return Card(
-            margin: EdgeInsets.only(bottom: 12),
-            child: ListTile(
-              contentPadding: EdgeInsets.all(12),
-
-              title: Text(
-                hotel.name,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(height: 5),
-
-                  Text('${hotel.city}, ${hotel.country}'),
-
-                  SizedBox(height: 5),
-
-                  Text(
-                    formatRupiah(hotel.pricePerNight),
-                    style: TextStyle(
-                      color: Color(0xFF10B981),
-                      fontWeight: FontWeight.bold,
+          return GestureDetector(
+            onTap: (){
+              Navigator.push(context, MaterialPageRoute(builder: (context) => DetailPage(hotel: hotel)));
+            },
+            child: Card(
+              margin: EdgeInsets.only(bottom: 12),
+              child: Padding(
+                padding: EdgeInsets.all(10),
+                child: Row(
+                  children: [
+                    // FOTO HOTEL
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.asset(
+                        'assets/images/hotel1.jpg',
+                        width: 110,
+                        height: 120,
+                        fit: BoxFit.cover,
+                      ),
                     ),
-                  ),
 
-                  if (hotel.hotelStars != null)
-                    Row(
-                      children: [
-                        Icon(Icons.star, color: Colors.amber, size: 16),
-                        SizedBox(width: 4),
-                        Text('${hotel.hotelStars}'),
-                      ],
+                    SizedBox(width: 12),
+
+                    // INFORMASI HOTEL
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            hotel.name,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                            ),
+                          ),
+
+                          SizedBox(height: 5),
+
+                          Text(
+                            '${hotel.city}, ${hotel.country}',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 12,
+                            ),
+                          ),
+
+                          SizedBox(height: 8),
+
+                          Text(
+                            formatRupiah(hotel.pricePerNight),
+                            style: TextStyle(
+                              color: Color(0xFF10B981),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+
+                          if (hotel.hotelStars != null)
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.star,
+                                  color: Colors.amber,
+                                  size: 16,
+                                ),
+                                SizedBox(width: 4),
+                                Text('${hotel.hotelStars}'),
+                              ],
+                            ),
+                        ],
+                      ),
                     ),
-                ],
-              ),
 
-              trailing: IconButton(
-                icon: Icon(
-                  Icons.bookmark,
-                  color: Color(0xFF10B981),
+                    // TOMBOL FAVORITE
+                    IconButton(
+                      icon: Icon(
+                        Icons.bookmark,
+                        color: Color(0xFF10B981),
+                      ),
+                      onPressed: () {
+                        removeFavorite(hotel);
+                      },
+                    ),
+                  ],
                 ),
-                onPressed: () {
-                  removeFavorite(hotel);
-                },
               ),
             ),
           );

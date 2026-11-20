@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:hotelapps/class_list.dart';
+import 'package:hotelapps/models/hotels.dart';
 import 'package:hotelapps/ui/screens/custom.dart';
-
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DetailPage extends StatefulWidget {
   //mengambil data hotel yang telah dipilih sebelumnya di search page
-  final HotelList hotel;
+  final Hotels hotel;
   const DetailPage({super.key, required this.hotel});
 
   @override
@@ -13,6 +15,32 @@ class DetailPage extends StatefulWidget {
 }
 
 class _DetailPage extends State<DetailPage> {
+
+  //8000 jadi 8.000 ada titiknya
+  String formatRupiah(int harga) {
+    return harga.toString().replaceAllMapped(
+      RegExp(r'\B(?=(\d{3})+(?!\d))'),
+          (match) => '.',
+    );
+  }
+
+  //untuk buka gmapsnya
+  Future<void> bukaGoogleMaps() async {
+    final latitude = widget.hotel.latitude;
+    final longitude = widget.hotel.longitude;
+
+    final url = Uri.parse(
+      'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude',
+    );
+
+    if (await canLaunchUrl(url)) {
+      await launchUrl(
+        url,
+        mode: LaunchMode.externalApplication,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context){
 
@@ -55,21 +83,13 @@ class _DetailPage extends State<DetailPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              //ini buat tampilin foto aja untuk 2 hotel teratas, yang lain sisanya ga ada foto
-              if (widget.hotel.name == 'Four Seasons Resort Bali at Jimbaran Bay')
-                Image.asset(
-                  'assets/images/hotel5.jpg',
-                  width: double.infinity,
-                  height: 250,
-                  fit: BoxFit.cover,
-                ),
-              if (widget.hotel.name == 'Amanjiwo')
-                Image.asset(
-                  'assets/images/hotel6.jpg',
-                  width: double.infinity,
-                  height: 250,
-                  fit: BoxFit.cover,
-                ),
+              //dummy fotonyaa
+              Image.asset(
+                'assets/images/hotel5.jpg',
+                width: double.infinity,
+                height: 250,
+                fit: BoxFit.cover,
+              ),
               SizedBox(height: 10,),
               //container pembungkus elemen2 yang di bawah foto
               Container(
@@ -82,7 +102,7 @@ class _DetailPage extends State<DetailPage> {
                       children: [
                         Icon(Icons.location_on_sharp, color: Colors.red),
                         SizedBox(width: 5),
-                        Text(widget.hotel.location),
+                        Text('${widget.hotel.city}, ${widget.hotel.country}'),
                       ],
                     ),
                     SizedBox(height: 10,),
@@ -210,16 +230,75 @@ class _DetailPage extends State<DetailPage> {
                     SizedBox(height: 15,),
                     Text('Location', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),),
                     SizedBox(height: 5,),
-                    //ini maps dummy ya
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(30),
-                      child: Image.asset(
-                          'assets/images/maps.jpg',
-                          width: screenWidth,
-                          height: 230,
-                          fit: BoxFit.cover
-                      ),
-                    ),
+                    //LOKASINYAA
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          height: 220,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(15),
+                            child: FlutterMap(
+                              options: MapOptions(
+                                initialCenter: LatLng(
+                                  widget.hotel.latitude,
+                                  widget.hotel.longitude,
+                                ),
+                                initialZoom: 15,
+                              ),
+                              children: [
+                                TileLayer(
+                                  urlTemplate:
+                                  'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                                  userAgentPackageName: 'com.example.hotelapps',
+                                ),
+                                MarkerLayer(
+                                  markers: [
+                                    Marker(
+                                      point: LatLng(
+                                        widget.hotel.latitude,
+                                        widget.hotel.longitude,
+                                      ),
+                                      width: 50,
+                                      height: 50,
+                                      child: Icon(
+                                        Icons.location_on,
+                                        color: Colors.red,
+                                        size: 40,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+
+                        SizedBox(height: 10),
+
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton.icon(
+                            onPressed: bukaGoogleMaps,
+                            icon: Icon(Icons.directions),
+                            label: Text('Open in Google Maps'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.green,
+                              foregroundColor: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                    // ClipRRect(
+                    //   borderRadius: BorderRadius.circular(30),
+                    //   child: Image.asset(
+                    //       'assets/images/maps.jpg',
+                    //       width: screenWidth,
+                    //       height: 230,
+                    //       fit: BoxFit.cover
+                    //   ),
+                    // ),
                   ],
                 ),
               ),
@@ -231,7 +310,7 @@ class _DetailPage extends State<DetailPage> {
                 padding: EdgeInsets.all(20),
                 child: Row(
                   children: [
-                    Text('Rp ${widget.hotel.price}', style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),),
+                    Text('Rp ${formatRupiah(widget.hotel.pricePerNight)}', style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),),
                     Text(' / night', style: TextStyle(fontSize: 12),),
                     Spacer(),
                     ElevatedButton(

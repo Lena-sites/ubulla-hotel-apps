@@ -5,6 +5,7 @@ import 'package:hotelapps/models/hotels.dart';
 import 'package:hotelapps/ui/widgets/pricefilterpopup.dart';
 import 'package:hotelapps/services/favorite_service.dart';
 import 'package:hotelapps/ui/screens/favorite.dart';
+import 'package:hotelapps/ui/screens/detail.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -120,11 +121,9 @@ class _SearchPageState extends State<SearchPage> {
       final cocokKategori = selectedCategory == 'All' || h.category.toLowerCase()==selectedCategory.toLowerCase();
 
       final cocokHarga = selectedPrice == null || kategoriHarga(h.pricePerNight) == selectedPrice;
-      // return cocokSearch && cocokKategori;
 
       return cocokSearch && cocokKategori && cocokHarga;
 
-    // if (cari.isEmpty) return hotels;
     }).toList();
   }
 
@@ -408,83 +407,88 @@ class _SearchPageState extends State<SearchPage> {
                                 final gambar = 'assets/images/hotel${(index % 6) + 5}.jpg';
                                 final isBookmarked = bookmarkedHotels.contains(hotel.id);
 
-                                return Container(
-                                  padding: EdgeInsets.all(5),
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(10)
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      // FOTO HOTEL
-                                      ClipRRect(
-                                        borderRadius: BorderRadius.circular(8),
-                                        child: Image.asset(
-                                          gambar,
-                                          width: 80,
-                                          height: 80,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                                      SizedBox(width: 10),
-                                      //IFORMASI HOTEL
-                                      Expanded(
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Text(hotel.name,
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 13,
-                                                ),
-                                              ),
-                                              Text(
-                                                '${hotel.city}, ${hotel.country}',
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: TextStyle(fontSize: 10),
-                                              ),
-                                              SizedBox(height: 3),
-                                              Text(hotel.pricePerNight > 0
-                                                  ? 'Rp ${formatRupiah(hotel.pricePerNight)}/nigth'
-                                                  : 'Harga belum tersedia',
-                                                style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold),
-                                              )
-                                            ],
-                                          )
-                                      ),
-                                      SizedBox(width: 5),
-                                      //BINTANG DAN BOOKMARK
-                                      Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Icon(Icons.star, color: Colors.amber,size: 16),
-                                              SizedBox(width: 2),
-                                              Text(hotel.hotelStars?.toString() ?? '-', style: TextStyle(fontSize: 11))
-                                            ],
+                                return GestureDetector(
+                                  onTap: (){
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => DetailPage(hotel: hotel)));
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.all(5),
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(10)
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        // FOTO HOTEL
+                                        ClipRRect(
+                                          borderRadius: BorderRadius.circular(8),
+                                          child: Image.asset(
+                                            gambar,
+                                            width: 80,
+                                            height: 80,
+                                            fit: BoxFit.cover,
                                           ),
-                                        ],
-                                      ),
-                                      GestureDetector(
-                                        onTap: () {
-                                          toggleFavorite(hotel);
-                                        },
-                                        child: Icon(
-                                          isBookmarked
-                                              ? Icons.bookmark
-                                              : Icons.bookmark_outline,
-                                          color: isBookmarked
-                                              ? Colors.green
-                                              : Colors.black,
-                                          size: 20,
                                         ),
-                                      ),
-                                      SizedBox(width: 5)
-                                    ],
+                                        SizedBox(width: 10),
+                                        //IFORMASI HOTEL
+                                        Expanded(
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text(hotel.name,
+                                                  maxLines: 1,
+                                                  overflow: TextOverflow.ellipsis,
+                                                  style: const TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 13,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  '${hotel.city}, ${hotel.country}',
+                                                  maxLines: 1,
+                                                  overflow: TextOverflow.ellipsis,
+                                                  style: TextStyle(fontSize: 10),
+                                                ),
+                                                SizedBox(height: 3),
+                                                Text(hotel.pricePerNight > 0
+                                                    ? 'Rp ${formatRupiah(hotel.pricePerNight)}/nigth'
+                                                    : 'Harga belum tersedia',
+                                                  style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold),
+                                                )
+                                              ],
+                                            )
+                                        ),
+                                        SizedBox(width: 5),
+                                        //BINTANG DAN BOOKMARK
+                                        Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Icon(Icons.star, color: Colors.amber,size: 16),
+                                                SizedBox(width: 2),
+                                                Text(hotel.hotelStars?.toString() ?? '-', style: TextStyle(fontSize: 11))
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                        GestureDetector(
+                                          onTap: () {
+                                            toggleFavorite(hotel);
+                                          },
+                                          child: Icon(
+                                            isBookmarked
+                                                ? Icons.bookmark
+                                                : Icons.bookmark_outline,
+                                            color: isBookmarked
+                                                ? Colors.green
+                                                : Colors.black,
+                                            size: 20,
+                                          ),
+                                        ),
+                                        SizedBox(width: 5)
+                                      ],
+                                    ),
                                   ),
                                 );
                               },

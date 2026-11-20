@@ -26,6 +26,7 @@ class _ProfilePageState extends State<ProfilePage> {
     final cardColor = isDark ? Colors.grey.shade900 : Colors.white;
     final textColor = isDark ? Colors.white : Colors.black87;
     final subTextColor = isDark ? Colors.white70 : Colors.black54;
+    final dividerColor = isDark ? Colors.white12 : Colors.black12;
 
     // profile
     final avatar = Stack(
@@ -193,150 +194,223 @@ class _ProfilePageState extends State<ProfilePage> {
 
                 SizedBox(height: 24),
 
-                // menu edit profile
-                Container(
-                  width: double.infinity,
-                  margin: EdgeInsets.only(bottom: 10),
-                  padding: EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-                  decoration: BoxDecoration(
-                    color: cardColor,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(Icons.person_outline, color: textColor, size: 22),
-                      SizedBox(width: 16),
-                      Expanded(
-                        child: Text(
-                          'Edit Profile',
-                          style: TextStyle(fontSize: 15, color: textColor),
-                        ),
+                // ===== KATEGORI PERSONAL =====
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 4, bottom: 8),
+                    child: Text(
+                      'Personal',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        color: subTextColor,
                       ),
-                    ],
-                  ),
-                ),
-
-                // menu payment
-                Container(
-                  width: double.infinity,
-                  margin: EdgeInsets.only(bottom: 10),
-                  padding: EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-                  decoration: BoxDecoration(
-                    color: cardColor,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(Icons.account_balance_wallet_outlined, color: textColor, size: 22),
-                      SizedBox(width: 16),
-                      Expanded(
-                        child: Text(
-                          'Payment',
-                          style: TextStyle(fontSize: 15, color: textColor),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                // menu notifications
-                Container(
-                  width: double.infinity,
-                  margin: EdgeInsets.only(bottom: 10),
-                  padding: EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-                  decoration: BoxDecoration(
-                    color: cardColor,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(Icons.notifications_none, color: textColor, size: 22),
-                      SizedBox(width: 16),
-                      Expanded(
-                        child: Text(
-                          'Notifications',
-                          style: TextStyle(fontSize: 15, color: textColor),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                // menu security
-                Container(
-                  width: double.infinity,
-                  margin: EdgeInsets.only(bottom: 10),
-                  padding: EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-                  decoration: BoxDecoration(
-                    color: cardColor,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(Icons.shield_outlined, color: textColor, size: 22),
-                      SizedBox(width: 16),
-                      Expanded(
-                        child: Text(
-                          'Security',
-                          style: TextStyle(fontSize: 15, color: textColor),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                // menu help
-                Container(
-                  width: double.infinity,
-                  margin: EdgeInsets.only(bottom: 10),
-                  padding: EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-                  decoration: BoxDecoration(
-                    color: cardColor,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(Icons.info_outline, color: textColor, size: 22),
-                      SizedBox(width: 16),
-                      Expanded(
-                        child: Text(
-                          'Help',
-                          style: TextStyle(fontSize: 15, color: textColor),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                // menu dark theme
-                // teken biar theme berubah
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      isDark = !isDark;
-                    });
-                  },
-                  child: Container(
-                    width: double.infinity,
-                    margin: EdgeInsets.only(bottom: 10),
-                    padding: EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-                    decoration: BoxDecoration(
-                      color: cardColor,
-                      borderRadius: BorderRadius.circular(10),
                     ),
-                    child: Row(
-                      children: [
-                        Icon(Icons.remove_red_eye_outlined, color: textColor, size: 22),
-                        SizedBox(width: 16),
-                        Expanded(
-                          child: Text(
-                            'Dark Theme',
-                            style: TextStyle(fontSize: 15, color: textColor),
+                  ),
+                ),
+                Container(
+                  width: double.infinity,
+                  margin: EdgeInsets.only(bottom: 16),
+                  decoration: BoxDecoration(
+                    color: cardColor,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Column(
+                    children: [
+                      // menu edit profile
+                      Container(
+                        width: double.infinity,
+                        padding:
+                        EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+                        child: Row(
+                          children: [
+                            Icon(Icons.person_outline,
+                                color: textColor, size: 22),
+                            SizedBox(width: 16),
+                            Expanded(
+                              child: Text(
+                                'Edit Profile',
+                                style:
+                                TextStyle(fontSize: 15, color: textColor),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Divider(height: 1, color: dividerColor),
+
+                      // menu payment
+                      Container(
+                        width: double.infinity,
+                        padding:
+                        EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+                        child: Row(
+                          children: [
+                            Icon(Icons.account_balance_wallet_outlined,
+                                color: textColor, size: 22),
+                            SizedBox(width: 16),
+                            Expanded(
+                              child: Text(
+                                'Payment',
+                                style:
+                                TextStyle(fontSize: 15, color: textColor),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Divider(height: 1, color: dividerColor),
+
+                      // menu notifications
+                      Container(
+                        width: double.infinity,
+                        padding:
+                        EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+                        child: Row(
+                          children: [
+                            Icon(Icons.notifications_none,
+                                color: textColor, size: 22),
+                            SizedBox(width: 16),
+                            Expanded(
+                              child: Text(
+                                'Notifications',
+                                style:
+                                TextStyle(fontSize: 15, color: textColor),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // ===== KATEGORI DATA & SECURITY =====
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 4, bottom: 8),
+                    child: Text(
+                      'Data & Security',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        color: subTextColor,
+                      ),
+                    ),
+                  ),
+                ),
+                Container(
+                  width: double.infinity,
+                  margin: EdgeInsets.only(bottom: 16),
+                  decoration: BoxDecoration(
+                    color: cardColor,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Column(
+                    children: [
+                      // menu security
+                      Container(
+                        width: double.infinity,
+                        padding:
+                        EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+                        child: Row(
+                          children: [
+                            Icon(Icons.shield_outlined,
+                                color: textColor, size: 22),
+                            SizedBox(width: 16),
+                            Expanded(
+                              child: Text(
+                                'Security',
+                                style:
+                                TextStyle(fontSize: 15, color: textColor),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // ===== KATEGORI PREFERENCES =====
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 4, bottom: 8),
+                    child: Text(
+                      'Preferences',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        color: subTextColor,
+                      ),
+                    ),
+                  ),
+                ),
+                Container(
+                  width: double.infinity,
+                  margin: EdgeInsets.only(bottom: 16),
+                  decoration: BoxDecoration(
+                    color: cardColor,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Column(
+                    children: [
+                      // menu dark theme
+                      // teken biar theme berubah
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            isDark = !isDark;
+                          });
+                        },
+                        child: Container(
+                          width: double.infinity,
+                          color: Colors.transparent,
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 14, vertical: 14),
+                          child: Row(
+                            children: [
+                              Icon(Icons.remove_red_eye_outlined,
+                                  color: textColor, size: 22),
+                              SizedBox(width: 16),
+                              Expanded(
+                                child: Text(
+                                  'Dark Theme',
+                                  style:
+                                  TextStyle(fontSize: 15, color: textColor),
+                                ),
+                              ),
+                              darkSwitch,
+                            ],
                           ),
                         ),
-                        darkSwitch,
-                      ],
-                    ),
+                      ),
+                      Divider(height: 1, color: dividerColor),
+
+                      // menu help
+                      Container(
+                        width: double.infinity,
+                        padding:
+                        EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+                        child: Row(
+                          children: [
+                            Icon(Icons.info_outline,
+                                color: textColor, size: 22),
+                            SizedBox(width: 16),
+                            Expanded(
+                              child: Text(
+                                'Help',
+                                style:
+                                TextStyle(fontSize: 15, color: textColor),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
 
@@ -432,34 +506,6 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
       //tempat navigasi
       bottomNavigationBar: BottomNavigation(currentIndex: 3),
-      // bottomNavigationBar: BottomNavigationBar(
-      //   currentIndex: 3,
-      //   type: BottomNavigationBarType.fixed,
-      //   backgroundColor: cardColor,
-      //   selectedItemColor: Color(0xFF10B981),
-      //   unselectedItemColor: Colors.grey,
-      //   onTap: (index) {
-      //     if(index == 0){
-      //       Navigator.push(context, MaterialPageRoute(builder: (context) => const HomePage()),
-      //       );
-      //     } else if (index == 1){
-      //       Navigator.push(context, MaterialPageRoute(builder: (context) => const SearchPage()),
-      //       );
-      //     } else if (index == 2){
-      //       Navigator.push(context, MaterialPageRoute(builder: (context) => const BookingPage()),
-      //       );
-      //     } else if (index == 3){
-      //       Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfilePage()),
-      //       );
-      //     }
-      //   },
-      //   items: [
-      //     BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: 'Home'),
-      //     BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
-      //     BottomNavigationBarItem(icon: Icon(Icons.receipt_long_outlined), label: 'Booking'),
-      //     BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-      //   ],
-      // ),
     );
   }
 }

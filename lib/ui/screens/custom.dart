@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:hotelapps/class_list.dart';
 import 'package:hotelapps/ui/screens/payment.dart';
+import 'package:hotelapps/models/hotels.dart';
 
 class CustomPage extends StatefulWidget {
   //mengambil data hotel yang telah dipilih sebelumnya di search page
-  final HotelList hotel;
+  final Hotels hotel;
 
   const CustomPage({
     super.key,
@@ -21,7 +21,7 @@ class _CustomPage extends State<CustomPage> {
   int room=1;
   int day = 1; //set statis 1 hari aja
 
-  int get totalPrice => widget.hotel.price * day * room;
+  int get totalPrice => widget.hotel.pricePerNight * day * room;
 
   // Menyimpan tanggal yang dipilih
   int? selectedDate;
@@ -452,8 +452,8 @@ class _CustomPage extends State<CustomPage> {
                 Text('Rp $totalPrice', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),textAlign: TextAlign.center,),
                 ElevatedButton(
                     onPressed: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => PaymentPage(hotel: widget.hotel, guest: guest, room: room, totalPrice: totalPrice),), //KIRIM VARIABEL ke page Payment
-                      );
+                      // Navigator.push(context, MaterialPageRoute(builder: (context) => PaymentPage(hotel: widget.hotel, guest: guest, room: room, totalPrice: totalPrice),), //KIRIM VARIABEL ke page Payment
+                      // );
                     },
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.green,   minimumSize: Size(double.infinity, 50)),
                     child: Text('Continue',
