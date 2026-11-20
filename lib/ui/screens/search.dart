@@ -3,6 +3,8 @@ import 'package:hotelapps/ui/widgets/navigation.dart';
 import 'package:hotelapps/services/hotel_service.dart';
 import 'package:hotelapps/models/hotels.dart';
 import 'package:hotelapps/ui/widgets/pricefilterpopup.dart';
+import 'package:hotelapps/services/favorite_service.dart';
+import 'package:hotelapps/ui/screens/favorite.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -22,12 +24,15 @@ class _SearchPageState extends State<SearchPage> {
   List<Hotels> hotels = [];
   bool isLoading = true;
 
+  final FavoriteService favoriteService = FavoriteService();
+
   final searchController = TextEditingController();
 
   @override
   void initState(){
     super.initState();
     daftarHotel();
+    loadBookmarkedHotels();
   }
 
   Future<void> daftarHotel() async {
@@ -49,6 +54,51 @@ class _SearchPageState extends State<SearchPage> {
           isLoading = false;
         });
       }
+    }
+  }
+
+  // Mengambil daftar ID hotel yang sudah di Favorite
+  Future<void> loadBookmarkedHotels() async {
+    try {
+      final result = await favoriteService.getFavorites();
+
+      if (!mounted) return;
+
+      setState(() {
+        bookmarkedHotels = result.map((hotel) => hotel.id).toSet();
+      });
+    } catch (e) {
+      debugPrint('Gagal mengambil Favorite: $e');
+    }
+  }
+
+  // Menambahkan atau menghapus hotel dari Favorite
+  Future<void> toggleFavorite(Hotels hotel) async {
+    final isBookmarked = bookmarkedHotels.contains(hotel.id);
+
+    try {
+      if (isBookmarked) {
+        await favoriteService.removeFavorite(hotel.id);
+      } else {
+        await favoriteService.addFavorite(hotel.id);
+      }
+
+      if (!mounted) return;
+
+      setState(() {
+        if (isBookmarked) {
+          bookmarkedHotels.remove(hotel.id);
+        } else {
+          bookmarkedHotels.add(hotel.id);
+        }
+      });
+
+    } catch (e) {
+      debugPrint('Error toggleFavorite: $e');
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Gagal memperbarui Favorite')),
+      );
     }
   }
 
@@ -100,7 +150,6 @@ class _SearchPageState extends State<SearchPage> {
     return '> Rp 1.500.000';
   }
 
-
   @override
   Widget build(BuildContext context) {
 
@@ -139,9 +188,15 @@ class _SearchPageState extends State<SearchPage> {
               ),
             ),
             Spacer(),
-            Icon(Icons.notifications_none_outlined),
-            SizedBox(width: 2),
-            Icon(Icons.bookmark_outline)
+            IconButton(
+              icon: Icon(Icons.bookmark_outline),
+              onPressed: () async {
+                await Navigator.push(context, MaterialPageRoute(builder: (context) => const FavoritePage(),),);
+
+                // Perbarui status bookmark setelah kembali dari Favorite
+                await loadBookmarkedHotels();
+              },
+            ),
           ],
         ),
         automaticallyImplyLeading: false, //matiin tanda panah back otomatis
@@ -415,14 +470,8 @@ class _SearchPageState extends State<SearchPage> {
                                         ],
                                       ),
                                       GestureDetector(
-                                        onTap: (){
-                                          setState(() {
-                                            if(isBookmarked){
-                                              bookmarkedHotels.remove(hotel.id);
-                                            } else {
-                                              bookmarkedHotels.add(hotel.id);
-                                            }
-                                          });
+                                        onTap: () {
+                                          toggleFavorite(hotel);
                                         },
                                         child: Icon(
                                           isBookmarked
@@ -431,7 +480,7 @@ class _SearchPageState extends State<SearchPage> {
                                           color: isBookmarked
                                               ? Colors.green
                                               : Colors.black,
-                                          size:20,
+                                          size: 20,
                                         ),
                                       ),
                                       SizedBox(width: 5)

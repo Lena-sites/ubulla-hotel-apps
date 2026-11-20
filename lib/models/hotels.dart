@@ -43,7 +43,8 @@ class Hotels {
         : null;
 
     return Hotels(
-      id: json['geoapify_place_id'] ?? '',
+      // id: json['geoapify_place_id'] ?? '',
+      id: json['id'].toString(),
       name: json['name'] ?? 'Unnamed Hotel',
       address: json['address'] ?? '',
       city: json['city'] ?? '',
@@ -56,8 +57,6 @@ class Hotels {
       currency: price?['currency'] ?? 'IDR',
       category: json['hotel_categories']?['category_name'] ?? '',
 
-      // pricePerNight: (json['hotel_price'][0]['price_per_night'] as num).toDouble(),
-      // currency: json['hotel_prices'][0]['currency']
     );
   }
 }
