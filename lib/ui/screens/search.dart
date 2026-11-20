@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:hotelapps/class_list.dart';
 import 'package:hotelapps/ui/widgets/navigation.dart';
 import 'package:hotelapps/services/hotel_service.dart';
 import 'package:hotelapps/models/hotels.dart';
+import 'package:hotelapps/ui/widgets/pricefilterpopup.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -16,6 +16,7 @@ class _SearchPageState extends State<SearchPage> {
   bool showNotif=false;
   bool selected=false;
   String searchQuery='';
+  String selectedCategory = 'All'; //default tampilin all hotel
 
   final HotelService hotelService = HotelService();
   List<Hotels> hotels = [];
@@ -57,12 +58,23 @@ class _SearchPageState extends State<SearchPage> {
   //daftar hotel hasil pencarian (nama / kota / negara)
   List<Hotels> get filteredHotels{
     final cari = searchQuery.trim().toLowerCase();
-    if (cari.isEmpty) return hotels;
 
+    // Filter berdasarkan pencarian
     return hotels.where((h){
-      return h.name.toLowerCase().contains(cari) ||
+      final cocokSearch =
+        h.name.toLowerCase().contains(cari) ||
         h.city.toLowerCase().contains(cari) ||
         h.country.toLowerCase().contains(cari);
+
+      // Filter berdasarkan kategori
+      final cocokKategori = selectedCategory == 'All' || h.category.toLowerCase()==selectedCategory.toLowerCase();
+
+      final cocokHarga = selectedPrice == null || kategoriHarga(h.pricePerNight) == selectedPrice;
+      // return cocokSearch && cocokKategori;
+
+      return cocokSearch && cocokKategori && cocokHarga;
+
+    // if (cari.isEmpty) return hotels;
     }).toList();
   }
 
@@ -73,6 +85,21 @@ class _SearchPageState extends State<SearchPage> {
           (match) => '.',
     );
   }
+
+  //INI BAGIAN BUAT TAMPILIN POPUP CHECK BOX FILTER HARGA
+  //kategori harga yang dipilih (null = semua harga)
+  String? selectedPrice;
+  //mengatur posisi popup
+  final LayerLink filterLayerLink = LayerLink();
+  //menyimpan popup filter
+  OverlayEntry? countryFilterOverlay;
+
+  String kategoriHarga(int harga) {
+    if (harga < 500000) return '< Rp 500.000';
+    if (harga <= 1500000) return 'Rp 500.000 - 1.500.000';
+    return '> Rp 1.500.000';
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -139,12 +166,18 @@ class _SearchPageState extends State<SearchPage> {
                     decoration: InputDecoration(
                         hintText: 'Search',
                         prefixIcon: Icon(Icons.search_outlined),
-                        suffixIcon: IconButton(
-                            onPressed: (){
-                              //buka halaman filter (pake checkbox)
-                            },
-                            icon: Icon(Icons.tune)
+                        suffixIcon: CompositedTransformTarget(
+                          link: filterLayerLink,
+                          child: IconButton(
+                              onPressed: (){
+                                //memanggil function buka halaman filter
+                                bukaFilterPrice();
+                              },
+                              icon: Icon(Icons.tune)
+                          ),
                         ),
+
+
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                         //kondisi klo fieldnya ditekan, bordernya tetap warna hitam
                         focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12),borderSide: BorderSide(color: Colors.black)),
@@ -169,22 +202,19 @@ class _SearchPageState extends State<SearchPage> {
                               child:Row(
                                 children: [
                                   SizedBox(width: 20,),
-                                  //RECOMMENDED
+                                  //ALL
                                   ElevatedButton(
                                     onPressed: () {
                                       setState(() {
-                                        filtering[4].filter = !filtering[4].filter;
+                                        selectedCategory = 'All';
                                       });
                                     },
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: filtering[4].filter ? Color(0xFF10B981) : Colors.white, // Background hijau / putih
-                                      side: BorderSide(
-                                        color: Colors.green, // Warna border hijau untuk kedua kondisi
-                                        width: 1.5,
-                                      ),
+                                      backgroundColor: selectedCategory == 'All' ? Colors.green : Colors.white,
+                                      side: BorderSide(color: Colors.green, width: 1.5)
                                     ),
                                     child: Text('All', style: TextStyle(
-                                      color: filtering[4].filter? Colors.white: Colors.green,
+                                      color: selectedCategory == 'All'? Colors.white: Colors.green,
                                       fontWeight: FontWeight.w600,
                                       fontSize: 14,
                                     ),
@@ -195,18 +225,18 @@ class _SearchPageState extends State<SearchPage> {
                                   ElevatedButton(
                                     onPressed: () {
                                       setState(() {
-                                        filtering[0].filter = !filtering[0].filter;
+                                        selectedCategory = 'Recommended';
                                       });
                                     },
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: filtering[0].filter ? Color(0xFF10B981) : Colors.white, // Background hijau / putih
+                                      backgroundColor: selectedCategory == 'Recommended' ? Color(0xFF10B981) : Colors.white, // Background hijau / putih
                                       side: BorderSide(
                                         color: Colors.green, // Warna border hijau untuk kedua kondisi
                                         width: 1.5,
                                       ),
                                     ),
                                     child: Text('Recommended', style: TextStyle(
-                                      color: filtering[0].filter? Colors.white: Colors.green,
+                                      color: selectedCategory == 'Recommended'? Colors.white: Colors.green,
                                       fontWeight: FontWeight.w600,
                                       fontSize: 14,
                                     ),
@@ -217,18 +247,18 @@ class _SearchPageState extends State<SearchPage> {
                                   ElevatedButton(
                                     onPressed: () {
                                       setState(() {
-                                        filtering[1].filter = !filtering[1].filter;
+                                        selectedCategory = 'Popular';
                                       });
                                     },
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: filtering[1].filter ? Color(0xFF10B981) : Colors.white, // Background hijau / putih
+                                      backgroundColor: selectedCategory == 'Popular' ? Color(0xFF10B981) : Colors.white, // Background hijau / putih
                                       side: BorderSide(
                                         color: Colors.green, // Warna border hijau untuk kedua kondisi
                                         width: 1.5,
                                       ),
                                     ),
                                     child: Text('Popular', style: TextStyle(
-                                      color: filtering[1].filter? Colors.white: Colors.green,
+                                      color: selectedCategory == 'Popular'? Colors.white: Colors.green,
                                       fontWeight: FontWeight.w600,
                                       fontSize: 14,
                                     ),
@@ -239,18 +269,18 @@ class _SearchPageState extends State<SearchPage> {
                                   ElevatedButton(
                                     onPressed: () {
                                       setState(() {
-                                        filtering[2].filter = !filtering[2].filter;
+                                        selectedCategory = 'Trending';
                                       });
                                     },
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: filtering[2].filter ? Color(0xFF10B981) : Colors.white, // Background hijau / putih
+                                      backgroundColor: selectedCategory == 'Trending' ? Color(0xFF10B981) : Colors.white, // Background hijau / putih
                                       side: BorderSide(
                                         color: Colors.green, // Warna border hijau untuk kedua kondisi
                                         width: 1.5,
                                       ),
                                     ),
                                     child: Text('Trending', style: TextStyle(
-                                      color: filtering[2].filter? Colors.white: Colors.green,
+                                      color: selectedCategory == 'Trending'? Colors.white: Colors.green,
                                       fontWeight: FontWeight.w600,
                                       fontSize: 14,
                                     ),
@@ -261,18 +291,18 @@ class _SearchPageState extends State<SearchPage> {
                                   ElevatedButton(
                                     onPressed: () {
                                       setState(() {
-                                        filtering[3].filter = !filtering[3].filter;
+                                        selectedCategory = 'New';
                                       });
                                     },
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: filtering[3].filter ? Color(0xFF10B981) : Colors.white, // Background hijau / putih
+                                      backgroundColor: selectedCategory == 'New' ? Color(0xFF10B981) : Colors.white, // Background hijau / putih
                                       side: BorderSide(
                                         color: Colors.green, // Warna border hijau untuk kedua kondisi
                                         width: 1.5,
                                       ),
                                     ),
                                     child: Text('New', style: TextStyle(
-                                      color: filtering[3].filter? Colors.white: Colors.green,
+                                      color: selectedCategory == 'New'? Colors.white: Colors.green,
                                       fontWeight: FontWeight.w600,
                                       fontSize: 14,
                                     ),
@@ -286,7 +316,7 @@ class _SearchPageState extends State<SearchPage> {
                             children: [
                               Expanded( // mengikuti lebar sisa layar
                                 child: Text(
-                                  'Recommended (${shownHotels.length})', //tampilkan total data hotel
+                                  '$selectedCategory (${shownHotels.length})', //tampilkan total data hotel
                                   style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
                               ),
@@ -319,7 +349,7 @@ class _SearchPageState extends State<SearchPage> {
                               itemBuilder: (context, index){
                                 final hotel = shownHotels[index];
 
-                                //menggunakan gambar hotel5 duluuu
+                                //fotooo hotelnya di acak
                                 final gambar = 'assets/images/hotel${(index % 6) + 5}.jpg';
                                 final isBookmarked = bookmarkedHotels.contains(hotel.id);
 
@@ -445,5 +475,55 @@ class _SearchPageState extends State<SearchPage> {
       //tempat navigasi
       bottomNavigationBar: BottomNavigation(currentIndex: 1),
     );
+  }
+
+
+  //FUNCTION UNTUK BUKA POP UP FILTER HARGA
+  void bukaFilterPrice() {
+    if (countryFilterOverlay != null) {
+      tutupFilterPrice();
+      return;
+    }
+
+    countryFilterOverlay = OverlayEntry(
+      builder: (context) {
+        return Stack(
+          children: [
+            // Menutup popup ketika area luar ditekan
+            Positioned.fill(
+              child: GestureDetector(
+                onTap: tutupFilterPrice,
+                child: Container(color: Colors.transparent),
+              ),
+            ),
+
+            // Posisi popup mengikuti ikon filter
+            CompositedTransformFollower(
+              link: filterLayerLink,
+              showWhenUnlinked: false,
+              targetAnchor: Alignment.bottomRight,
+              followerAnchor: Alignment.topRight,
+              offset: Offset(0, 8),
+
+              child: PriceFilterPopup(
+                selectedPrice: selectedPrice,
+                onApply: (value) {
+                  setState(() => selectedPrice = value);
+                  tutupFilterPrice();
+                },
+              ),
+            ),
+          ],
+        );
+      },
+    );
+
+    Overlay.of(context).insert(countryFilterOverlay!);
+  }
+
+  //FUNCTION BUAT TUTUP POP UP FILTER NEGARA
+  void tutupFilterPrice() {
+    countryFilterOverlay?.remove();
+    countryFilterOverlay = null;
   }
 }
