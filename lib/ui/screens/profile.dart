@@ -1,7 +1,13 @@
+// import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:hotelapps/ui/widgets/navigation.dart';
 import 'package:hotelapps/ui/authentication/login.dart';
+import 'package:hotelapps/services/theme_controller.dart';
+import 'package:hotelapps/ui/screens/editpayment.dart';
+import 'package:hotelapps/ui/screens/help.dart';
+
+import 'editprofile.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -11,8 +17,6 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  // variabel kondisi untuk gesture
-  bool isDark = false;
 
   @override
   Widget build(BuildContext context) {
@@ -21,10 +25,12 @@ class _ProfilePageState extends State<ProfilePage> {
     //jika lebar >600 dianggap layarnya lebar/besar
     final isLargeScreen = screenWidth > 600;
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     // warna ikut dark theme
-    final bgColor = isDark ? Colors.black : Colors.grey.shade200;
-    final cardColor = isDark ? Colors.grey.shade900 : Colors.white;
-    final textColor = isDark ? Colors.white : Colors.black87;
+    final bgColor = isDark ? const Color(0xFF121212) : Colors.grey.shade200;
+    final cardColor = Theme.of(context).cardColor;
+    final textColor = Theme.of(context).colorScheme.onSurface;
     final subTextColor = isDark ? Colors.white70 : Colors.black54;
     final dividerColor = isDark ? Colors.white12 : Colors.black12;
 
@@ -157,14 +163,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 // judul halaman
                 Row(
                   children: [
-                    Text(
-                      'Profile',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: textColor,
-                      ),
-                    ),
+                    Text('Profile', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: textColor,)),
                     Spacer(),
                     Container(
                       padding: EdgeInsets.all(2),
@@ -219,120 +218,115 @@ class _ProfilePageState extends State<ProfilePage> {
                   child: Column(
                     children: [
                       // menu edit profile
-                      Container(
-                        width: double.infinity,
-                        padding:
-                        EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-                        child: Row(
-                          children: [
-                            Icon(Icons.person_outline,
-                                color: textColor, size: 22),
-                            SizedBox(width: 16),
-                            Expanded(
-                              child: Text(
-                                'Edit Profile',
-                                style:
-                                TextStyle(fontSize: 15, color: textColor),
+                      GestureDetector(
+                        onTap: ()async {
+                          final result = await showEditProfileDialog(context);
+                          if (result == true && mounted) {
+                            setState(() {});
+                          }
+                        },
+                        child: Container(
+                          width: double.infinity,
+                          padding:
+                          EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+                          child: Row(
+                            children: [
+                              Icon(Icons.person_outline,
+                                  color: textColor, size: 22),
+                              SizedBox(width: 16),
+                              Expanded(
+                                child: Text(
+                                  'Edit Profile',
+                                  style:
+                                  TextStyle(fontSize: 15, color: textColor),
+                                ),
                               ),
-                            ),
-                          ],
+                              Icon(Icons.chevron_right, color: Colors.grey, size: 22),
+                            ],
+                          ),
                         ),
                       ),
                       Divider(height: 1, color: dividerColor),
 
+                      GestureDetector(
+                        onTap: () async{
+                          await showEditPaymentDialog(context);
+                        },
+                        child: Container(
+                          width: double.infinity,
+                          padding:
+                          EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+                          child: Row(
+                            children: [
+                              Icon(Icons.account_balance_wallet_outlined,
+                                  color: textColor, size: 22),
+                              SizedBox(width: 16),
+                              Expanded(
+                                child: Text(
+                                  'Payment',
+                                  style:
+                                  TextStyle(fontSize: 15, color: textColor),
+                                ),
+                              ),
+                              Icon(Icons.chevron_right, color: Colors.grey, size: 22),
+                            ],
+                          ),
+                        ),
+                      ),
                       // menu payment
-                      Container(
-                        width: double.infinity,
-                        padding:
-                        EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-                        child: Row(
-                          children: [
-                            Icon(Icons.account_balance_wallet_outlined,
-                                color: textColor, size: 22),
-                            SizedBox(width: 16),
-                            Expanded(
-                              child: Text(
-                                'Payment',
-                                style:
-                                TextStyle(fontSize: 15, color: textColor),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
                       Divider(height: 1, color: dividerColor),
-
-                      // menu notifications
-                      Container(
-                        width: double.infinity,
-                        padding:
-                        EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-                        child: Row(
-                          children: [
-                            Icon(Icons.notifications_none,
-                                color: textColor, size: 22),
-                            SizedBox(width: 16),
-                            Expanded(
-                              child: Text(
-                                'Notifications',
-                                style:
-                                TextStyle(fontSize: 15, color: textColor),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
                     ],
                   ),
                 ),
 
-                // ===== KATEGORI DATA & SECURITY =====
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 4, bottom: 8),
-                    child: Text(
-                      'Data & Security',
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                        color: subTextColor,
-                      ),
-                    ),
-                  ),
-                ),
-                Container(
-                  width: double.infinity,
-                  margin: EdgeInsets.only(bottom: 16),
-                  decoration: BoxDecoration(
-                    color: cardColor,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Column(
-                    children: [
-                      // menu security
-                      Container(
-                        width: double.infinity,
-                        padding:
-                        EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-                        child: Row(
-                          children: [
-                            Icon(Icons.shield_outlined,
-                                color: textColor, size: 22),
-                            SizedBox(width: 16),
-                            Expanded(
-                              child: Text(
-                                'Security',
-                                style:
-                                TextStyle(fontSize: 15, color: textColor),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                // // ===== KATEGORI DATA & SECURITY =====
+                // Align(
+                //   alignment: Alignment.centerLeft,
+                //   child: Padding(
+                //     padding: EdgeInsets.only(left: 4, bottom: 8),
+                //     child: Text(
+                //       'Data & Security',
+                //       style: TextStyle(
+                //         fontSize: 13,
+                //         fontWeight: FontWeight.bold,
+                //         color: subTextColor,
+                //       ),
+                //     ),
+                //   ),
+                // ),
+                // Container(
+                //   width: double.infinity,
+                //   margin: EdgeInsets.only(bottom: 16),
+                //   decoration: BoxDecoration(
+                //     color: cardColor,
+                //     borderRadius: BorderRadius.circular(10),
+                //   ),
+                //   child: Column(
+                //     children: [
+                //       // menu security
+                //       Container(
+                //         width: double.infinity,
+                //         padding:
+                //         EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+                //         child: Row(
+                //           children: [
+                //             Icon(Icons.shield_outlined,
+                //                 color: textColor, size: 22),
+                //             SizedBox(width: 16),
+                //             Expanded(
+                //               child: Text(
+                //                 'Security',
+                //                 style:
+                //                 TextStyle(fontSize: 15, color: textColor),
+                //               ),
+                //             ),
+                //             Icon(Icons.chevron_right, color: Colors.grey, size: 22),
+                //           ],
+                //         ),
+                //       ),
+                //     ],
+                //   ),
+                // ),
 
                 // ===== KATEGORI PREFERENCES =====
                 Align(
@@ -358,12 +352,46 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   child: Column(
                     children: [
+                      // menu help
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const HelpPage(),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          width: double.infinity,
+                          padding:
+                          EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+                          child: Row(
+                            children: [
+                              Icon(Icons.info_outline,
+                                  color: textColor, size: 22),
+                              SizedBox(width: 16),
+                              Expanded(
+                                child: Text(
+                                  'Help',
+                                  style:
+                                  TextStyle(fontSize: 15, color: textColor),
+                                ),
+                              ),
+                              Icon(Icons.chevron_right, color: Colors.grey, size: 22),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Divider(height: 1, color: dividerColor),
                       // menu dark theme
                       // teken biar theme berubah
                       GestureDetector(
                         onTap: () {
                           setState(() {
-                            isDark = !isDark;
+                            ThemeController.setTheme(
+                              isDark ? ThemeMode.light : ThemeMode.dark,
+                            );
                           });
                         },
                         child: Container(
@@ -386,28 +414,6 @@ class _ProfilePageState extends State<ProfilePage> {
                               darkSwitch,
                             ],
                           ),
-                        ),
-                      ),
-                      Divider(height: 1, color: dividerColor),
-
-                      // menu help
-                      Container(
-                        width: double.infinity,
-                        padding:
-                        EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-                        child: Row(
-                          children: [
-                            Icon(Icons.info_outline,
-                                color: textColor, size: 22),
-                            SizedBox(width: 16),
-                            Expanded(
-                              child: Text(
-                                'Help',
-                                style:
-                                TextStyle(fontSize: 15, color: textColor),
-                              ),
-                            ),
-                          ],
                         ),
                       ),
                     ],

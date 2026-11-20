@@ -3,6 +3,7 @@ import 'package:hotelapps/ui/authentication/resetpassword.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:hotelapps/ui/screens/onboarding.dart';
 import 'package:hotelapps/services/auth_state.dart';
+import 'package:hotelapps/services/theme_controller.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
 
@@ -16,6 +17,8 @@ Future<void> main() async {
       authFlowType: AuthFlowType.implicit,
     ),
   );
+  // mengambil preferensi tema yang tersimpan
+  await ThemeController.loadTheme();
 
   runApp(const MyApp());
 }
@@ -33,7 +36,6 @@ class _MyAppState extends State<MyApp>{
     super.initState();
 
     Supabase.instance.client.auth.onAuthStateChange.listen((data){
-      // debugPrint('AUTH EVENT: ${data.event}');
       if (data.event == AuthChangeEvent.passwordRecovery) {
         isPasswordRecovery = true;
         _goToReset();
@@ -53,10 +55,59 @@ class _MyAppState extends State<MyApp>{
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      navigatorKey: navigatorKey,
-      debugShowCheckedModeBanner: false,
-      home: const OnboardingPage(),
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: ThemeController.themeNotifier,
+      builder: (context, currentTheme, child) {
+        return MaterialApp(
+          navigatorKey: navigatorKey,
+          debugShowCheckedModeBanner: false,
+
+          // LIGHT MODE
+          theme: ThemeData(
+            useMaterial3: true,
+            brightness: Brightness.light,
+            scaffoldBackgroundColor: Colors.white,
+            colorScheme: const ColorScheme.light(
+              primary: Colors.black,
+              onPrimary: Colors.white,
+              surface: Colors.white,
+              onSurface: Colors.black87,
+            ),
+            appBarTheme: const AppBarTheme(
+              backgroundColor: Colors.white,
+              foregroundColor: Colors.black,
+              elevation: 0,
+            ),
+            cardColor: Colors.white,
+            dividerColor: Colors.black12,
+          ),
+
+          // DARK MODE
+          darkTheme: ThemeData(
+            useMaterial3: true,
+            brightness: Brightness.dark,
+            scaffoldBackgroundColor: const Color(0xFF121212),
+            colorScheme: const ColorScheme.dark(
+              primary: Colors.white,
+              onPrimary: Colors.black,
+              surface: Color(0xFF1E1E1E),
+              onSurface: Colors.white,
+            ),
+            appBarTheme: const AppBarTheme(
+              backgroundColor: Color(0xFF1E1E1E),
+              foregroundColor: Colors.white,
+              elevation: 0,
+            ),
+            cardColor: const Color(0xFF1E1E1E),
+            dividerColor: Colors.white12,
+          ),
+
+          // tema yang sedang aktif
+          themeMode: currentTheme,
+
+          home: const OnboardingPage(),
+        );
+      },
     );
   }
 }
