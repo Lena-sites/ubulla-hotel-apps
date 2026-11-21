@@ -84,6 +84,14 @@ class _CustomPage extends State<CustomPage> {
     }
   }
 
+  //8000 jadi 8.000 ada titiknya
+  String formatRupiah(int harga) {
+    return harga.toString().replaceAllMapped(
+      RegExp(r'\B(?=(\d{3})+(?!\d))'),
+          (match) => '.',
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -376,10 +384,20 @@ class _CustomPage extends State<CustomPage> {
                   ],
                 ),
                 SizedBox(height: 20,),
-                Text('Rp $totalPrice', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),textAlign: TextAlign.center,),
+                Text('Rp ${formatRupiah(totalPrice)}', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),textAlign: TextAlign.center,),
                 ElevatedButton(
                     onPressed: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => PaymentPage(hotel:widget.hotel, guest: guest, room: room, totalPrice: totalPrice)) //KIRIM VARIABEL ke page Payment
+                      // Cek apakah tanggal check-in dan check-out sudah dipilih
+                      if (checkInDate == null || checkOutDate == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Please select check-in and check-out dates first.'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                        return;
+                      }
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => PaymentPage(hotel:widget.hotel, guest: guest, room: room, totalPrice: totalPrice, checkInDate: checkInDate!, checkOutDate: checkOutDate!)) //KIRIM VARIABEL ke page Payment
                       );
                     },
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.green,   minimumSize: Size(double.infinity, 50)),

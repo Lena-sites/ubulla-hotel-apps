@@ -6,11 +6,14 @@ import 'package:hotelapps/models/hotels.dart';
 
 class ConfirmPage extends StatefulWidget {
   //mengambil data hotel yang telah dipilih sebelumnya
-  final HotelList hotel;
+  final Hotels hotel;
   final int guest;
   final int room;
   final int totalPrice;
   final String payMet;
+  final DateTime checkInDate;
+  final DateTime checkOutDate;
+  final String? cardholderName; //optional karna bca ama paypal ga ada namanya
 
   const ConfirmPage({super.key,
     required this.hotel,
@@ -18,6 +21,9 @@ class ConfirmPage extends StatefulWidget {
     required this.room,
     required this.totalPrice,
     required this.payMet,
+    required this.checkInDate,
+    required this.checkOutDate,
+    this.cardholderName
   });
 
   @override
@@ -30,6 +36,23 @@ class _ConfirmPage extends State<ConfirmPage> {
   //perhitungan pajak dan juga total finalnya
   int get taxesFees => (widget.totalPrice * 0.1).round();
   int get finalPrice => widget.totalPrice + taxesFees;
+
+  String formatDate(DateTime date) {
+    const months = [
+      'January', 'February', 'March', 'April',
+      'May', 'June', 'July', 'August',
+      'September', 'October', 'November', 'December'
+    ];
+    return '${months[date.month - 1]} ${date.day}, ${date.year}';
+  }
+
+  //8000 jadi 8.000 ada titiknya
+  String formatRupiah(int harga) {
+    return harga.toString().replaceAllMapped(
+      RegExp(r'\B(?=(\d{3})+(?!\d))'),
+          (match) => '.',
+    );
+  }
 
   @override
   Widget build(BuildContext context){
@@ -104,40 +127,15 @@ class _ConfirmPage extends State<ConfirmPage> {
                               Text(widget.hotel.name,
                                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                               ),
-                              Text(widget.hotel.location, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10),),
+                              Text('${widget.hotel.city}, ${widget.hotel.country}', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10),),
                               Row(
                                 children: [
-                                  Text('Rp ${widget.hotel.price}', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
+                                  Text('Rp ${formatRupiah(widget.totalPrice)}', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
                                   Text(' / night', style: TextStyle(fontSize: 12),),
                                 ],
                               )
                             ],
                           ),
-                        ),
-                        //pengkondisian untuk posisi keterangan harga sama tanda mark nya
-                        LayoutBuilder(
-                            builder: (context, constraint){
-                              return Flex(
-                                direction: isLargeScreen? Axis.horizontal: Axis.vertical,
-                                crossAxisAlignment: isLargeScreen? CrossAxisAlignment.center: CrossAxisAlignment.end,
-                                mainAxisAlignment: isLargeScreen? MainAxisAlignment.start: MainAxisAlignment.center,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Icon(Icons.star, color: Colors.yellowAccent,size: 18,),
-                                      SizedBox(width: 3,),
-                                      Text('4.8'),
-                                    ],
-                                  ),
-                                  //ini buat geser si icon mark nya supaya aga jauh dari "/ night" saat layarnya >600
-                                  SizedBox(
-                                    width: isLargeScreen ? 20 : 0,
-                                    height: isLargeScreen ? 0 : 5,
-                                  ),
-                                  Icon(Icons.bookmark_border_outlined)
-                                ],
-                              );
-                            }
                         ),
                         SizedBox(width: 10,)
                       ],
@@ -156,7 +154,7 @@ class _ConfirmPage extends State<ConfirmPage> {
                           children: [
                             Text('Check in'),
                             Spacer(),
-                            Text('October 07, 2026', style: TextStyle(fontWeight: FontWeight.bold))
+                            Text(formatDate(widget.checkInDate), style: TextStyle(fontWeight: FontWeight.bold))
                           ],
                         ),
                         SizedBox(height: 5,),
@@ -164,7 +162,7 @@ class _ConfirmPage extends State<ConfirmPage> {
                           children: [
                             Text('Check out'),
                             Spacer(),
-                            Text('October 08, 2026', style: TextStyle(fontWeight: FontWeight.bold))
+                            Text(formatDate(widget.checkOutDate), style: TextStyle(fontWeight: FontWeight.bold))
                           ],
                         ),
                         SizedBox(height: 5,),
@@ -199,7 +197,7 @@ class _ConfirmPage extends State<ConfirmPage> {
                           children: [
                             Text('Taxes & Fees (10%)'),
                             Spacer(),
-                            Text('Rp $taxesFees', style: TextStyle(fontWeight: FontWeight.bold))
+                            Text('Rp ${formatRupiah(taxesFees)}', style: TextStyle(fontWeight: FontWeight.bold))
                           ],
                         ),
                         SizedBox(height: 5,),
@@ -209,7 +207,7 @@ class _ConfirmPage extends State<ConfirmPage> {
                           children: [
                             Text('Total',style: TextStyle(fontWeight: FontWeight.bold)),
                             Spacer(),
-                            Text('Rp $finalPrice', style: TextStyle(fontWeight: FontWeight.bold))
+                            Text('Rp ${formatRupiah(finalPrice)}', style: TextStyle(fontWeight: FontWeight.bold))
                           ],
                         ),
                       ],
@@ -226,8 +224,16 @@ class _ConfirmPage extends State<ConfirmPage> {
                         children: [
                           if(widget.payMet=='Paypal')
                             Icon(Icons.paypal),
-                          if(widget.payMet=='Credit Card')
+                          if(widget.payMet.startsWith('Credit Card'))
                             Image.asset('assets/images/cc.jpg', width: 50, height: 50),
+                            SizedBox(height: 4),
+                            Text(
+                              widget.cardholderName!,
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey,
+                              ),
+                            ),
                           if(widget.payMet=='BCA M-Banking')
                             Image.asset('assets/images/bca.jpg', width: 50, height: 50),
                           SizedBox(width: 10),
@@ -311,12 +317,12 @@ class _ConfirmPage extends State<ConfirmPage> {
                   height: 50,
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.pop(dialogContext); // tutup popup
-                      //KE HALAMAN TIKET NTR
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => TicketPage(hotel: widget.hotel, guest: widget.guest, room: widget.room, totalPrice: widget.totalPrice, payMet: widget.payMet)),
-                      );
+                      // Navigator.pop(dialogContext); // tutup popup
+                      // //KE HALAMAN TIKET NTR
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(builder: (context) => TicketPage(hotel: widget.hotel, guest: widget.guest, room: widget.room, totalPrice: widget.totalPrice, payMet: widget.payMet)),
+                      // );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color(0xFF10B981),
@@ -339,7 +345,7 @@ class _ConfirmPage extends State<ConfirmPage> {
                   height: 50,
                   child: ElevatedButton(
                     onPressed: () {
-                      bookingList.add(widget.hotel); //walaupun pengguna tekan cancel, bukan view ticket, data bookingnya tetap disimpan karna udah pembayaran
+                      // bookingList.add(widget.hotel); //walaupun pengguna tekan cancel, bukan view ticket, data bookingnya tetap disimpan karna udah pembayaran
                       Navigator.pop(dialogContext); // tutup popup
                       //KE HALAMAN HOME PAGE klo dia tekan cancel
                       Navigator.push(

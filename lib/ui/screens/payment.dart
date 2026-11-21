@@ -11,6 +11,8 @@ class PaymentPage extends StatefulWidget {
   final int guest;
   final int room;
   final int totalPrice;
+  final DateTime checkInDate;
+  final DateTime checkOutDate;
 
   const PaymentPage({
     super.key,
@@ -18,6 +20,8 @@ class PaymentPage extends StatefulWidget {
     required this.guest,
     required this.room,
     required this.totalPrice,
+    required this.checkInDate,
+    required this.checkOutDate,
   });
 
   @override
@@ -220,20 +224,25 @@ class _PaymentPage extends State<PaymentPage> {
                 //tombol continue
                 ElevatedButton(
                   onPressed: () {
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //     builder: (context) => ConfirmPage( //lanjut ke halaman Confirm page dan membawa variabel2nya juga
-                    //       hotel: widget.hotel,
-                    //       guest: widget.guest,
-                    //       room: widget.room,
-                    //       totalPrice: widget.totalPrice,
-                    //       payMet: selected == 1 && defaultPayment != null
-                    //           ? '${paymentMethod[selected].method} - ${defaultPayment!.cardType} •••• ${defaultPayment!.cardLast4}'
-                    //           : paymentMethod[selected].method,
-                    //     ),
-                    //   ),
-                    // );
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ConfirmPage( //lanjut ke halaman Confirm page dan membawa variabel2nya juga
+                          hotel: widget.hotel,
+                          guest: widget.guest,
+                          room: widget.room,
+                          totalPrice: widget.totalPrice,
+                          payMet: selected == 1 && defaultPayment != null
+                              ? '${paymentMethod[selected].method} - ${defaultPayment!.cardType} •••• ${defaultPayment!.cardLast4}'
+                              : paymentMethod[selected].method,
+                          checkInDate: widget.checkInDate,
+                          checkOutDate: widget.checkOutDate,
+                          cardholderName: selected == 1
+                              ? defaultPayment!.cardholderName
+                              : null,
+                        ),
+                      ),
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFF10B981),
