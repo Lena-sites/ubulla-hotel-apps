@@ -9,7 +9,6 @@ import 'package:hotelapps/ui/screens/editprofile.dart';
 import 'package:hotelapps/services/theme_controller.dart';
 import 'package:hotelapps/services/user_service.dart';
 
-
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 

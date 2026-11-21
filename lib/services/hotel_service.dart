@@ -9,9 +9,18 @@ class HotelService {
     required double longitude,
   })async {
     // Mengambil data hotel langsung dari tabel di Supabase
+
     final response = await supabase
         .from('hotels')
-        .select('*, hotel_prices(price_per_night, currency), hotel_categories(category_name)');
+        .select('*, hotel_rooms(*, hotel_prices(*)), hotel_categories(category_name)');
+
+    // debugPrint('Jumlah: ${response.length}');
+    // final response = await supabase
+    //     .from('hotels')
+    //     .select('*, hotel_rooms(room_type, hotel_prices(price_per_night, currency)), hotel_categories(category_name)');
+    // final response = await supabase
+    //     .from('hotels')
+    //     .select('*, hotel_prices(price_per_night, currency), hotel_categories(category_name)');
 
     //mengubah data JSON menjadi objek Hotels. jadi tinggal panggil aja misal hotel.category
     return response.map<Hotels>((hotel){

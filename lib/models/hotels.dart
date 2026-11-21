@@ -1,4 +1,6 @@
 //ini atribut data hotels
+import 'package:hotelapps/models/hotelrooms.dart';
+
 class Hotels {
   final String id;
   final String name;
@@ -27,23 +29,31 @@ class Hotels {
   });
 
   //mengubah menjadi objek hotel supaya bisa di pake ama flutter (ini dia ngambil datanya uda dari tabel supabase)
-  factory Hotels.fromJson(Map<String, dynamic> json){
-    // final properties = json['properties'] ?? {};
-    // final accommodation = properties['accommodation'] ?? {};
 
-    final rawPrices = json['hotel_prices'];
-    // Mengubah data harga menjadi Map agar mudah dibaca
-    final Map<String, dynamic>? price =
-    rawPrices is List
-        ? (rawPrices.isNotEmpty
-        ? Map<String, dynamic>.from(rawPrices[0])
-        : null)
-        : rawPrices is Map
-        ? Map<String, dynamic>.from(rawPrices)
+  factory Hotels.fromJson(Map<String, dynamic> json) {
+    final rawRooms = json['hotel_rooms'];
+
+    final rooms = rawRooms is List
+        ? rawRooms
+        : rawRooms is Map
+        ? [rawRooms]
+        : [];
+
+    final hotelRooms = rooms.map((room) {
+      return HotelRooms.fromJson(
+        Map<String, dynamic>.from(room),
+      );
+    }).toList();
+
+    final standardRoom = hotelRooms.where(
+          (room) => room.roomType == 'Standard',
+    ).toList();
+
+    final standardPrice = standardRoom.isNotEmpty
+        ? standardRoom.first
         : null;
 
     return Hotels(
-      // id: json['geoapify_place_id'] ?? '',
       id: json['id'].toString(),
       name: json['name'] ?? 'Unnamed Hotel',
       address: json['address'] ?? '',
@@ -53,10 +63,9 @@ class Hotels {
       longitude: (json['longitude'] as num?)?.toDouble() ?? 0.0,
       hotelStars: json['hotel_stars'] as int?,
 
-      pricePerNight: (price?['price_per_night'] as num?)?.toInt() ?? 0,
-      currency: price?['currency'] ?? 'IDR',
+      pricePerNight: standardPrice?.pricePerNight ?? 0,
+      currency: standardPrice?.currency ?? 'IDR',
       category: json['hotel_categories']?['category_name'] ?? '',
-
     );
   }
 }

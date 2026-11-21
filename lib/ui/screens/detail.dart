@@ -4,6 +4,8 @@ import 'package:hotelapps/ui/screens/custom.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:hotelapps/models/hotelrooms.dart';
+import 'package:hotelapps/services/hotelroom_service.dart';
 
 class DetailPage extends StatefulWidget {
   //mengambil data hotel yang telah dipilih sebelumnya di search page
@@ -15,6 +17,11 @@ class DetailPage extends StatefulWidget {
 }
 
 class _DetailPage extends State<DetailPage> {
+  //PENAMPILAN TIPE KAMAR (ROOMS)
+  final HotelRoomService hotelRoomService = HotelRoomService();
+  List<HotelRooms> hotelRooms = [];
+  HotelRooms? selectedRoom;
+  bool isLoadingRooms = true;
 
   //8000 jadi 8.000 ada titiknya
   String formatRupiah(int harga) {
@@ -38,6 +45,45 @@ class _DetailPage extends State<DetailPage> {
         url,
         mode: LaunchMode.externalApplication,
       );
+    }
+  }
+
+  //LOAD DATA TIPE KAMAR (ROOM)
+  @override
+  void initState() {
+    super.initState();
+    loadHotelRooms();
+  }
+
+  Future<void> loadHotelRooms() async {
+    try {
+      final rooms = await hotelRoomService.getHotelRooms(widget.hotel.id);
+
+      if (!mounted) return;
+
+      setState(() {
+        hotelRooms = rooms;
+
+        if (rooms.isNotEmpty) {
+          selectedRoom = rooms.firstWhere(
+                (room) => room.roomType == 'Standard' && room.totalRooms > 0,
+            orElse: () => rooms.firstWhere(
+                  (room) => room.totalRooms > 0,
+              orElse: () => rooms.first,
+            ),
+          );
+        }
+
+        isLoadingRooms = false;
+      });
+    } catch (e) {
+      debugPrint('Gagal mengambil tipe kamar: $e');
+
+      if (!mounted) return;
+
+      setState(() {
+        isLoadingRooms = false;
+      });
     }
   }
 
@@ -227,6 +273,103 @@ class _DetailPage extends State<DetailPage> {
                         )
                       ],
                     ),
+                    //menampilkan tipe kamar
+
+                    SizedBox(height: 20),
+
+                    Text(
+                      'Room Type',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+
+                    SizedBox(height: 10),
+
+                    if (isLoadingRooms)
+                      Center(child: CircularProgressIndicator())
+                    else if (hotelRooms.isEmpty)
+                      Text('Tipe kamar belum tersedia')
+                    else
+                      Wrap(
+                        spacing: 10,
+                        runSpacing: 10,
+                        children: hotelRooms.map((room) {
+                          final isSelected = selectedRoom?.id == room.id;
+                          final isAvailable = room.totalRooms > 0;
+
+                          return GestureDetector(
+                            onTap: isAvailable
+                                ? () {
+                              setState(() {
+                                selectedRoom = room;
+                              });
+                            }
+                                : null,
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 12,
+                              ),
+                              decoration: BoxDecoration(
+                                color: !isAvailable
+                                    ? Colors.grey[300]
+                                    : isSelected
+                                    ? Colors.green
+                                    : Colors.white,
+                                border: Border.all(
+                                  color: !isAvailable
+                                      ? Colors.grey
+                                      : Colors.green,
+                                ),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Column(
+                                children: [
+                                  Text(
+                                    room.roomType,
+                                    style: TextStyle(
+                                      color: !isAvailable
+                                          ? Colors.grey
+                                          : isSelected
+                                          ? Colors.white
+                                          : Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  SizedBox(height: 5),
+                                  Text(
+                                    isAvailable
+                                        ? '${room.totalRooms} rooms available'
+                                        : 'Sold Out',
+                                    style: TextStyle(
+                                      color: !isAvailable
+                                          ? Colors.red
+                                          : isSelected
+                                          ? Colors.white
+                                          : Colors.black,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                  SizedBox(height: 5),
+                                  Text(
+                                    'Rp ${formatRupiah(room.pricePerNight)}',
+                                    style: TextStyle(
+                                      color: !isAvailable
+                                          ? Colors.grey
+                                          : isSelected
+                                          ? Colors.white
+                                          : Colors.black,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
                     SizedBox(height: 15,),
                     Text('Location', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),),
                     SizedBox(height: 5,),
@@ -310,12 +453,12 @@ class _DetailPage extends State<DetailPage> {
                 padding: EdgeInsets.all(20),
                 child: Row(
                   children: [
-                    Text('Rp ${formatRupiah(widget.hotel.pricePerNight)}', style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),),
+                    Text('Rp ${formatRupiah(selectedRoom!.pricePerNight)}', style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),),
                     Text(' / night', style: TextStyle(fontSize: 12),),
                     Spacer(),
                     ElevatedButton(
                       onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => CustomPage(hotel: widget.hotel),), //mempassing data hotel ke halaman custom
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => CustomPage(hotel: widget.hotel, selectedRoom: selectedRoom!),), //mempassing data hotel ke halaman custom
                         );
                       },
                       style: ElevatedButton.styleFrom(backgroundColor: Colors.green),

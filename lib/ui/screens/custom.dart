@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:hotelapps/ui/screens/payment.dart';
 import 'package:hotelapps/models/hotels.dart';
+import 'package:hotelapps/models/hotelrooms.dart';
 
 class CustomPage extends StatefulWidget {
   //mengambil data hotel yang telah dipilih sebelumnya di search page
   final Hotels hotel;
+  final HotelRooms selectedRoom;
 
   const CustomPage({
     super.key,
     required this.hotel,
+    required this.selectedRoom,
   });
 
   @override
@@ -19,41 +22,65 @@ class _CustomPage extends State<CustomPage> {
   //variabel
   int guest=1;
   int room=1;
-  int day = 1; //set statis 1 hari aja
+  int day=1;
+  DateTime? checkInDate;
+  DateTime? checkOutDate;
 
-  int get totalPrice => widget.hotel.pricePerNight * day * room;
+  int get totalPrice => widget.selectedRoom.pricePerNight * day * room;
 
-  // Menyimpan tanggal yang dipilih
-  int? selectedDate;
+  //fungsi pilih tanggal Check-in
+  Future<void> pilihCheckIn() async {
+    final now = DateTime.now();
 
-  // Function untuk membuat tanggal kalender
-  Widget calendarDate(int date) {
-    // Mengecek apakah tanggal sedang dipilih
-    bool selected = selectedDate == date;
-
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          selectedDate = date;
-        });
-      },
-      child: Container(
-        margin: EdgeInsets.all(3),
-        decoration: BoxDecoration(
-          color: selected ? Colors.green : Colors.transparent,
-          shape: BoxShape.circle,
-        ),
-        child: Center(
-          child: Text(
-            '$date',
-            style: TextStyle(
-              color: selected ? Colors.white : Colors.black,
-              fontWeight: selected ? FontWeight.bold : FontWeight.normal,
-            ),
-          ),
-        ),
-      ),
+    //Membuka kalender bawaan Flutter
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: checkInDate ?? now, //Tidak mengizinkan pengguna memilih tanggal yang sudah lewat.
+      firstDate: DateTime(now.year, now.month, now.day),
+      lastDate: DateTime(now.year + 2),
     );
+
+    //Mengosongkan tanggal check-out jika tanggalnya tidak lagi valid setelah check-in diubah
+    if (picked != null) {
+      setState(() {
+        checkInDate = picked;
+
+        if (checkOutDate != null &&
+            !checkOutDate!.isAfter(picked)) {
+          checkOutDate = null;
+        }
+      });
+    }
+  }
+
+  //pilih tanggal Check-out
+  Future<void> pilihCheckOut() async {
+
+    //Check-out hanya bisa dipilih setelah Check-in
+    if (checkInDate == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Pilih tanggal check-in terlebih dahulu'),
+        ),
+      );
+      return;
+    }
+
+    //Tanggal check-out harus minimal satu hari setelah check-in
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: checkOutDate ?? checkInDate!.add(Duration(days: 1)),
+      firstDate: checkInDate!.add(Duration(days: 1)),
+      lastDate: DateTime.now().add(Duration(days: 365 * 2)),
+    );
+
+    //day otomatis menghitung jumlah malam
+    if (picked != null) {
+      setState(() {
+        checkOutDate = picked;
+        day = checkOutDate!.difference(checkInDate!).inDays;
+      });
+    }
   }
 
   @override
@@ -95,125 +122,6 @@ class _CustomPage extends State<CustomPage> {
                 Text('Select Date', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold,)),
                 SizedBox(height: 20),
                 // CALENDAR
-                Container(
-                  padding: EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Colors.greenAccent[100],
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Column(
-                    children: [
-                      // BULAN
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('October 2026', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,)),
-                          Row(
-                            children: [
-                              Icon(Icons.chevron_left, color: Colors.green),
-                              Icon(Icons.chevron_right, color: Colors.green),
-                            ],
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 20),
-                      // NAMA HARI
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Center(
-                              child: Text('Mo'),
-                            ),
-                          ),
-                          Expanded(
-                            child: Center(
-                              child: Text('Tu'),
-                            ),
-                          ),
-                          Expanded(
-                            child: Center(
-                              child: Text('We'),
-                            ),
-                          ),
-                          Expanded(
-                            child: Center(
-                              child: Text('Th'),
-                            ),
-                          ),
-                          Expanded(
-                            child: Center(
-                              child: Text('Fr'),
-                            ),
-                          ),
-                          Expanded(
-                            child: Center(
-                              child: Text('Sa'),
-                            ),
-                          ),
-                          Expanded(
-                            child: Center(
-                              child: Text('Su'),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 10),
-                      // TANGGAL
-                      GridView.count(
-                        crossAxisCount: 7,
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        children: [
-                          // MINGGU PERTAMA
-                          // dummy
-                          Container(),
-                          Container(),
-                          Container(),
-                          Container(),
-                          Container(),
-                          Container(),
-
-                          calendarDate(1),
-                          // MINGGU KEDUA
-                          calendarDate(2),
-                          calendarDate(3),
-                          calendarDate(4),
-                          calendarDate(5),
-                          calendarDate(6),
-                          calendarDate(7),
-                          calendarDate(8),
-                          // MINGGU KETIGA
-                          calendarDate(9),
-                          calendarDate(10),
-                          calendarDate(11),
-                          calendarDate(12),
-                          calendarDate(13),
-                          calendarDate(14),
-                          calendarDate(15),
-                          // MINGGU KEEMPAT
-                          calendarDate(16),
-                          calendarDate(17),
-                          calendarDate(18),
-                          calendarDate(19),
-                          calendarDate(20),
-                          calendarDate(21),
-                          calendarDate(22),
-                          // MINGGU KELIMA
-                          calendarDate(23),
-                          calendarDate(24),
-                          calendarDate(25),
-                          calendarDate(26),
-                          calendarDate(27),
-                          calendarDate(28),
-                          calendarDate(29),
-                          // MINGGU KEENAM
-                          calendarDate(30),
-                          calendarDate(31),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
                 SizedBox(height: 20,),
                 Row(
                   children: [
@@ -224,19 +132,28 @@ class _CustomPage extends State<CustomPage> {
                         children: [
                           Text('Check in', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,),),
                           SizedBox(height: 10),
-                          Container(
-                            height: 50,
-                            padding: EdgeInsets.symmetric(horizontal: 15),
-                            decoration: BoxDecoration(
-                              color: Colors.grey[100],
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Row(
-                              children: [
-                                Text('Oct 07'),
-                                Spacer(),
-                                Icon(Icons.calendar_month_outlined, size: 20,),
-                              ],
+                          GestureDetector(
+                            onTap: pilihCheckIn,
+                            child: Container(
+                              height: 50,
+                              padding: EdgeInsets.symmetric(horizontal: 15),
+                              decoration: BoxDecoration(
+                                color: Colors.grey[100],
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    checkInDate == null
+                                        ? 'Select date'
+                                        : '${checkInDate!.day.toString().padLeft(2, '0')}/'
+                                        '${checkInDate!.month.toString().padLeft(2, '0')}/'
+                                        '${checkInDate!.year}',
+                                  ),
+                                  Spacer(),
+                                  Icon(Icons.calendar_month_outlined, size: 20),
+                                ],
+                              ),
                             ),
                           ),
                         ],
@@ -256,19 +173,28 @@ class _CustomPage extends State<CustomPage> {
                         children: [
                           Text('Check out', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,),),
                           SizedBox(height: 10),
-                          Container(
-                            height: 50,
-                            padding: EdgeInsets.symmetric(horizontal: 15),
-                            decoration: BoxDecoration(
-                              color: Colors.grey[100],
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Row(
-                              children: [
-                                Text('Oct 08'),
-                                Spacer(),
-                                Icon(Icons.calendar_month_outlined, size: 20),
-                              ],
+                          GestureDetector(
+                            onTap: pilihCheckOut,
+                            child: Container(
+                              height: 50,
+                              padding: EdgeInsets.symmetric(horizontal: 15),
+                              decoration: BoxDecoration(
+                                color: Colors.grey[100],
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    checkOutDate == null
+                                        ? 'Select date'
+                                        : '${checkOutDate!.day.toString().padLeft(2, '0')}/'
+                                        '${checkOutDate!.month.toString().padLeft(2, '0')}/'
+                                        '${checkOutDate!.year}',
+                                  ),
+                                  Spacer(),
+                                  Icon(Icons.calendar_month_outlined, size: 20),
+                                ],
+                              ),
                             ),
                           ),
                         ],
@@ -298,7 +224,7 @@ class _CustomPage extends State<CustomPage> {
                           // TOMBOL MINUS
                           GestureDetector(
                             onTap: () {
-                              if (guest > 0) {
+                              if (guest > 1) {
                                 setState(() {
                                   guest--;
                                 });
@@ -384,7 +310,7 @@ class _CustomPage extends State<CustomPage> {
                           // TOMBOL MINUS
                           GestureDetector(
                             onTap: () {
-                              if (room > 0) {
+                              if (room > 1) {
                                 setState(() {
                                   room--;
                                 });

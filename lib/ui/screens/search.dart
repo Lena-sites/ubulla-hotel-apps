@@ -106,7 +106,6 @@ class _SearchPageState extends State<SearchPage> {
   //BUAT APA INI? HMM
   Set<String> bookmarkedHotels = {};
 
-  //daftar hotel hasil pencarian (nama / kota / negara)
   List<Hotels> get filteredHotels{
     final cari = searchQuery.trim().toLowerCase();
 
