@@ -1,13 +1,14 @@
-// import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:hotelapps/ui/widgets/navigation.dart';
 import 'package:hotelapps/ui/authentication/login.dart';
-import 'package:hotelapps/services/theme_controller.dart';
 import 'package:hotelapps/ui/screens/editpayment.dart';
 import 'package:hotelapps/ui/screens/help.dart';
+import 'package:hotelapps/ui/screens/editprofile.dart';
+import 'package:hotelapps/services/theme_controller.dart';
+import 'package:hotelapps/services/user_service.dart';
 
-import 'editprofile.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -18,6 +19,110 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
 
+  final userService = UserService();
+
+  Future<void> _changeProfilePhoto() async {
+    final picker = ImagePicker();
+
+    final XFile? image = await picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 80,
+    );
+
+    if (image == null) return;
+
+    try {
+      await userService.updateProfilePhoto(image);
+
+      if (!mounted) return;
+
+      setState(() {});
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Foto profil berhasil diperbarui!'),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Gagal memperbarui foto: $e'),
+        ),
+      );
+    }
+  }
+
+  Future<void> _deleteProfilePhoto() async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Hapus Foto Profil'),
+        content: const Text('Yakin ingin menghapus foto profil?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Batal'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Hapus',
+                style: TextStyle(color: Colors.redAccent)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm != true) return;
+
+    try {
+      await userService.deleteProfilePhoto();
+      if (!mounted) return;
+      setState(() {});
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Foto profil dihapus.')),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Gagal menghapus foto: $e')),
+      );
+    }
+  }
+
+  void _showPhotoOptions() {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.photo_library_outlined),
+              title: const Text('Ganti foto'),
+              onTap: () {
+                Navigator.pop(context);
+                _changeProfilePhoto();
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.delete_outline, color: Colors.redAccent),
+              title: const Text('Hapus foto',
+                  style: TextStyle(color: Colors.redAccent)),
+              onTap: () {
+                Navigator.pop(context);
+                _deleteProfilePhoto();
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     // mengambil ukuran layar
@@ -26,6 +131,11 @@ class _ProfilePageState extends State<ProfilePage> {
     final isLargeScreen = screenWidth > 600;
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    //ambil hasil pengambilan di /services
+    final username = userService.getUsername();
+    final email = Supabase.instance.client.auth.currentUser?.email ?? '';
+    final avatarUrl = userService.getProfilePhotoUrl();
 
     // warna ikut dark theme
     final bgColor = isDark ? const Color(0xFF121212) : Colors.grey.shade200;
@@ -38,20 +148,24 @@ class _ProfilePageState extends State<ProfilePage> {
     final avatar = Stack(
       children: [
         ClipOval(
-          // foto dari asset
-          child: Image.asset(
-            'assets/images/profil.jpg',
+          child: avatarUrl.startsWith('assets/')
+              ? Image.asset(
+            avatarUrl,
+            width: 120,
+            height: 120,
+            fit: BoxFit.cover,
+          )
+              : Image.network(
+            avatarUrl,
             width: 120,
             height: 120,
             fit: BoxFit.cover,
             errorBuilder: (context, error, stackTrace) {
-              return Container(
+              return Image.asset(
+                'assets/images/dummy.jpg',
                 width: 120,
                 height: 120,
-                color: Colors.grey.shade300,
-                child: Center(
-                  child: Text('Foto belum ada', style: TextStyle(fontSize: 11)),
-                ),
+                fit: BoxFit.cover,
               );
             },
           ),
@@ -59,14 +173,20 @@ class _ProfilePageState extends State<ProfilePage> {
         Positioned(
           right: 4,
           bottom: 4,
-          child: Container(
-            padding: EdgeInsets.all(6),
-            decoration: BoxDecoration(
-              color: Color(0xFF10B981),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: bgColor, width: 2),
+          child: GestureDetector(
+            onTap: _showPhotoOptions,
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: const BoxDecoration(
+                color: Colors.black,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.edit,
+                color: Colors.white,
+                size: 14,
+              ),
             ),
-            child: Icon(Icons.edit, color: Colors.white, size: 14),
           ),
         ),
       ],
@@ -76,19 +196,9 @@ class _ProfilePageState extends State<ProfilePage> {
       crossAxisAlignment:
       isLargeScreen ? CrossAxisAlignment.start : CrossAxisAlignment.center,
       children: [
-        Text(
-          'Lena',
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: textColor,
-          ),
-        ),
+        Text(username, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: textColor,),),
         SizedBox(height: 4),
-        Text(
-          'lena@gmail.com',
-          style: TextStyle(fontSize: 13, color: subTextColor),
-        ),
+        Text(email, style: TextStyle(fontSize: 13, color: subTextColor),),
       ],
     );
     // tombol dark theme
@@ -117,6 +227,7 @@ class _ProfilePageState extends State<ProfilePage> {
         ],
       ),
     );
+
     return Scaffold(
       backgroundColor: bgColor,
       appBar: AppBar(
@@ -145,10 +256,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ],
             ),
-            Spacer(),
-            Icon(Icons.notifications_none_outlined),
-            SizedBox(width: 2),
-            Icon(Icons.bookmark_outline),
           ],
         ),
         automaticallyImplyLeading: false, //matiin tanda panah back otomatis
@@ -160,21 +267,6 @@ class _ProfilePageState extends State<ProfilePage> {
             padding: EdgeInsets.all(20),
             child: Column(
               children: [
-                // judul halaman
-                Row(
-                  children: [
-                    Text('Profile', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: textColor,)),
-                    Spacer(),
-                    Container(
-                      padding: EdgeInsets.all(2),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(color: textColor, width: 1.5),
-                      ),
-                      child: Icon(Icons.more_horiz, size: 18, color: textColor),
-                    ),
-                  ],
-                ),
                 SizedBox(height: 20),
                 // profile agar sesuai layar
                 Flex(
