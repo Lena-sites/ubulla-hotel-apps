@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:hotelapps/ui/screens/confirmpayment.dart';
 import 'package:hotelapps/models/hotels.dart';
 import 'package:hotelapps/class_list.dart';
+import 'package:hotelapps/models/paymentuser.dart';
+import 'package:hotelapps/services/paymentuser_service.dart';
 
 class PaymentPage extends StatefulWidget {
   //pengambilan variabel dari custom page
-  final HotelList hotel;
+  final Hotels hotel;
   final int guest;
   final int room;
   final int totalPrice;
@@ -24,6 +26,45 @@ class PaymentPage extends StatefulWidget {
 
 class _PaymentPage extends State<PaymentPage> {
   int selected=0; //inisialisasi variabel selected untuk pemilihan method
+
+  final PaymentUserService paymentService = PaymentUserService();
+
+  PaymentUser? defaultPayment;
+  bool isLoadingPayment = true;
+
+  @override
+  void initState() {
+    super.initState();
+    loadDefaultPayment();
+  }
+
+  Future<void> loadDefaultPayment() async {
+    try {
+      final payments = await paymentService.getPayments();
+
+      if (!mounted) return;
+
+      setState(() {
+        final defaultCards = payments.where(
+              (payment) => payment.isDefault,
+        ).toList();
+
+        defaultPayment = defaultCards.isNotEmpty
+            ? defaultCards.first
+            : null;
+
+        isLoadingPayment = false;
+      });
+    } catch (e) {
+      debugPrint('Gagal mengambil kartu default: $e');
+
+      if (!mounted) return;
+
+      setState(() {
+        isLoadingPayment = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,18 +103,10 @@ class _PaymentPage extends State<PaymentPage> {
           child:  Padding(
             padding: EdgeInsets.all(20),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                //tulisan payment methods dan add new card
-                Row(
-                  children: [
-                    Text('Payment Methods', style: TextStyle(fontWeight: FontWeight.bold)),
-                    Spacer(),
-                    Text(
-                      'Add New Card',
-                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
-                    ),
-                  ],
-                ),
+                //tulisan payment methods
+                Text('Payment Methods', style: TextStyle(fontWeight: FontWeight.bold)),
                 SizedBox(height: 20),
                 //paypal
                 GestureDetector(
@@ -122,10 +155,32 @@ class _PaymentPage extends State<PaymentPage> {
                       children: [
                         Image.asset('assets/images/cc.jpg', width: 28, height: 28),
                         SizedBox(width: 12),
-                        Text(paymentMethod[1].method, style: TextStyle(fontWeight: FontWeight.bold)),
-                        Spacer(),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                paymentMethod[1].method,
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              if (defaultPayment != null) ...[
+                                SizedBox(height: 5),
+                                Text(
+                                  '${defaultPayment!.cardType} •••• ${defaultPayment!.cardLast4}',
+                                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                                ),
+                                Text(
+                                  defaultPayment!.cardholderName,
+                                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
                         Icon(
-                          selected == 1 ? Icons.radio_button_checked : Icons.radio_button_unchecked,
+                          selected == 1
+                              ? Icons.radio_button_checked
+                              : Icons.radio_button_unchecked,
                           color: Color(0xFF10B981),
                         ),
                       ],
@@ -165,18 +220,20 @@ class _PaymentPage extends State<PaymentPage> {
                 //tombol continue
                 ElevatedButton(
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ConfirmPage( //lanjut ke halaman Confirm page dan membawa variabel2nya juga
-                          hotel: widget.hotel,
-                          guest: widget.guest,
-                          room: widget.room,
-                          totalPrice: widget.totalPrice,
-                          payMet: paymentMethod[selected].method,
-                        ),
-                      ),
-                    );
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(
+                    //     builder: (context) => ConfirmPage( //lanjut ke halaman Confirm page dan membawa variabel2nya juga
+                    //       hotel: widget.hotel,
+                    //       guest: widget.guest,
+                    //       room: widget.room,
+                    //       totalPrice: widget.totalPrice,
+                    //       payMet: selected == 1 && defaultPayment != null
+                    //           ? '${paymentMethod[selected].method} - ${defaultPayment!.cardType} •••• ${defaultPayment!.cardLast4}'
+                    //           : paymentMethod[selected].method,
+                    //     ),
+                    //   ),
+                    // );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFF10B981),

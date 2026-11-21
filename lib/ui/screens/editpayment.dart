@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 // import 'package:hotelapps/services/profile_service.dart';
 import 'package:hotelapps/services/paymentuser_service.dart';
+import 'package:hotelapps/models/paymentuser.dart';
 
 
 Future<bool?> showEditPaymentDialog(BuildContext context) async {
@@ -33,7 +34,7 @@ class _EditPaymentDialogState extends State<_EditPaymentDialog> {
   final cardNumberController = TextEditingController();
   final expiryController = TextEditingController();
 
-  List<Map<String, dynamic>> payments = [];
+  List<PaymentUser> payments = [];
 
   String cardType = 'Visa';
   bool isLoading = true;
@@ -257,10 +258,10 @@ class _EditPaymentDialogState extends State<_EditPaymentDialog> {
                 )
               else
                 ...payments.map((payment) {
-                  final isDefault = payment['is_default'] == true;
+                  final isDefault = payment.isDefault;
 
                   // kartu baru tampil nomor penuh, kartu lama tetap 4 digit terakhir
-                  final cardText = '${payment['card_type']} •••• ${payment['card_last4']}';
+                  final cardText = '${payment.cardType} •••• ${payment.cardLast4}';
                   // final cardText = payment['card_number'] != null
                   //     ? '${payment['card_type']}  ${formatCardNumber(payment['card_number'].toString())}'
                   //     : '${payment['card_type']} •••• ${payment['card_last4']}';
@@ -297,7 +298,7 @@ class _EditPaymentDialogState extends State<_EditPaymentDialog> {
                                 ),
                               ),
                               Text(
-                                payment['cardholder_name'],
+                                payment.cardholderName,
                                 style: TextStyle(
                                   color: subTextColor,
                                   fontSize: 12,
@@ -316,7 +317,7 @@ class _EditPaymentDialogState extends State<_EditPaymentDialog> {
                         ),
                         PopupMenuButton<String>(
                           onSelected: (value) {
-                            final id = payment['id'] as int;
+                            final id = payment.id;
 
                             if (value == 'default') {
                               setDefaultPayment(id);

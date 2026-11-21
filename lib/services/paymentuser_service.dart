@@ -1,11 +1,16 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:hotelapps/models/paymentuser.dart';
 
 class PaymentUserService {
   final supabase = Supabase.instance.client;
 
   // Mengambil semua kartu milik user yang sedang login
-  Future<List<Map<String, dynamic>>> getPayments() async {
-    final user = supabase.auth.currentUser!;
+  Future<List<PaymentUser>> getPayments() async {
+    final user = supabase.auth.currentUser;
+
+    if (user == null) {
+      return [];
+    }
 
     final response = await supabase
         .from('payment_user')
@@ -13,7 +18,9 @@ class PaymentUserService {
         .eq('user_id', user.id)
         .order('created_at', ascending: false);
 
-    return List<Map<String, dynamic>>.from(response);
+    return response.map<PaymentUser>((payment) {
+      return PaymentUser.fromJson(payment);
+    }).toList();
   }
 
   // Menambahkan kartu baru
