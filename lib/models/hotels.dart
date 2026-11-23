@@ -2,7 +2,8 @@
 import 'package:hotelapps/models/hotelrooms.dart';
 
 class Hotels {
-  final String id;
+  // final String id;
+  final int id;
   final String name;
   final String address;
   final String city;
@@ -54,7 +55,8 @@ class Hotels {
         : null;
 
     return Hotels(
-      id: json['id'].toString(),
+      // id: json['id'].toString(),
+      id: (json['id'] as num).toInt(),
       name: json['name'] ?? 'Unnamed Hotel',
       address: json['address'] ?? '',
       city: json['city'] ?? '',

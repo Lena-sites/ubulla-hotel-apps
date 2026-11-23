@@ -104,7 +104,7 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   //BUAT APA INI? HMM
-  Set<String> bookmarkedHotels = {};
+  Set<int> bookmarkedHotels = {};
 
   List<Hotels> get filteredHotels{
     final cari = searchQuery.trim().toLowerCase();

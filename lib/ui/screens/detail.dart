@@ -92,6 +92,7 @@ class _DetailPage extends State<DetailPage> {
 
     // mengambil ukuran layar
     final screenWidth = MediaQuery.of(context).size.width;
+    final room = selectedRoom;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -446,7 +447,16 @@ class _DetailPage extends State<DetailPage> {
                 ),
               ),
               //pilihan lanjut ke proses booking
-              Container(
+              if (isLoadingRooms) //loading sampai datanya ada dulu
+                Container(
+                  width: screenWidth,
+                  height: 70,
+                  color: Colors.grey[400],
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                ) else
+              Container( //ttampilan
                 width: screenWidth,
                 height: 70,
                 color: Colors.grey[400],

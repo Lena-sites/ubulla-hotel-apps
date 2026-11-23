@@ -4,7 +4,7 @@ import 'package:hotelapps/models/hotelrooms.dart';
 class HotelRoomService {
   final supabase = Supabase.instance.client;
 
-  Future<List<HotelRooms>> getHotelRooms(String hotelId) async {
+  Future<List<HotelRooms>> getHotelRooms(int hotelId) async {
     final response = await supabase
         .from('hotel_rooms')
         .select('*, hotel_prices(*)')

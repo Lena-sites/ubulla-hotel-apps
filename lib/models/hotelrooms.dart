@@ -1,7 +1,6 @@
-
 class HotelRooms {
   final String id;
-  final String hotelId;
+  final int hotelId;
   final String roomType;
   final int capacity;
   final int totalRooms;
@@ -29,7 +28,7 @@ class HotelRooms {
 
     return HotelRooms(
       id: json['id'].toString(),
-      hotelId: json['hotel_id'].toString(),
+      hotelId: (json['hotel_id'] as num).toInt(),
       roomType: json['room_type'] ?? '',
       capacity: (json['capacity'] as num?)?.toInt() ?? 0,
       totalRooms: (json['total_rooms'] as num?)?.toInt() ?? 0,

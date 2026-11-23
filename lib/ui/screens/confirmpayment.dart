@@ -3,6 +3,7 @@ import 'package:hotelapps/class_list.dart';
 import 'package:hotelapps/ui/screens/home.dart';
 import 'package:hotelapps/ui/screens/ticket.dart';
 import 'package:hotelapps/models/hotels.dart';
+import 'package:hotelapps/models/hotels.dart';
 
 class ConfirmPage extends StatefulWidget {
   //mengambil data hotel yang telah dipilih sebelumnya

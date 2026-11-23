@@ -20,19 +20,19 @@ class FavoriteService {
 
 
   //menambahkan hotel ke favorite
-  Future<void> addFavorite(String hotelId) async{
+  Future<void> addFavorite(int hotelId) async{
     final user = supabase.auth.currentUser!;
 
     await supabase.from('favorites').insert({
       'user_id': user.id,
-      'hotel_id': int.parse(hotelId),
+      'hotel_id': hotelId,
     });
   }
 
   //Menghapus hotel dari Favorite
-  Future<void> removeFavorite(String hotelId) async{
+  Future<void> removeFavorite(int hotelId) async{
     final user = supabase.auth.currentUser!;
 
-    await supabase.from('favorites').delete().eq('user_id', user.id).eq('hotel_id', int.parse(hotelId));
+    await supabase.from('favorites').delete().eq('user_id', user.id).eq('hotel_id', hotelId);
   }
 }
