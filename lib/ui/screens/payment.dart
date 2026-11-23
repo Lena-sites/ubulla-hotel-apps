@@ -143,51 +143,63 @@ class _PaymentPage extends State<PaymentPage> {
                 SizedBox(height: 15),
 
                 //metode payment ke dua (Credit Card)
+                // metode payment ke dua (Credit Card)
                 GestureDetector(
-                  onTap: () {
+                  onTap: defaultPayment != null && !isLoadingPayment
+                      ? () {
                     setState(() {
                       selected = 1;
                     });
-                  },
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 22),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: Row(
-                      children: [
-                        Image.asset('assets/images/cc.jpg', width: 28, height: 28),
-                        SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                paymentMethod[1].method,
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              if (defaultPayment != null) ...[
-                                SizedBox(height: 5),
+                  }
+                      : null,
+                  child: Opacity(
+                    opacity: defaultPayment != null && !isLoadingPayment ? 1.0 : 0.4,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 22),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: Row(
+                        children: [
+                          Image.asset('assets/images/cc.jpg', width: 28, height: 28),
+                          SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
                                 Text(
-                                  '${defaultPayment!.cardType} •••• ${defaultPayment!.cardLast4}',
-                                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                                  paymentMethod[1].method,
+                                  style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
-                                Text(
-                                  defaultPayment!.cardholderName,
-                                  style: TextStyle(fontSize: 12, color: Colors.grey),
-                                ),
+                                if (defaultPayment != null) ...[
+                                  SizedBox(height: 5),
+                                  Text(
+                                    '${defaultPayment!.cardType} •••• ${defaultPayment!.cardLast4}',
+                                    style: TextStyle(fontSize: 12, color: Colors.grey),
+                                  ),
+                                  Text(
+                                    defaultPayment!.cardholderName,
+                                    style: TextStyle(fontSize: 12, color: Colors.grey),
+                                  ),
+                                ] else if (!isLoadingPayment) ...[
+                                  SizedBox(height: 5),
+                                  Text(
+                                    'No saved card available',
+                                    style: TextStyle(fontSize: 12, color: Colors.grey),
+                                  ),
+                                ],
                               ],
-                            ],
+                            ),
                           ),
-                        ),
-                        Icon(
-                          selected == 1
-                              ? Icons.radio_button_checked
-                              : Icons.radio_button_unchecked,
-                          color: Color(0xFF10B981),
-                        ),
-                      ],
+                          Icon(
+                            selected == 1
+                                ? Icons.radio_button_checked
+                                : Icons.radio_button_unchecked,
+                            color: Color(0xFF10B981),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -224,6 +236,9 @@ class _PaymentPage extends State<PaymentPage> {
                 //tombol continue
                 ElevatedButton(
                   onPressed: () {
+                    if (selected == 1 && defaultPayment == null) {
+                      return;
+                    }
                     Navigator.push(
                       context,
                       MaterialPageRoute(

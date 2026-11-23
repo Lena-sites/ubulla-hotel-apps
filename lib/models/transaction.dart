@@ -30,6 +30,9 @@ class Transaction {
       'check_out': checkOut.toIso8601String().split('T')[0],
       'total_price': totalPrice,
       'payment_method': paymentMethod,
+
+      'status': 'success',
+      'booking_status': 'ongoing',
     };
   }
 }

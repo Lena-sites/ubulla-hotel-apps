@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class HotelService {
   final supabase = Supabase.instance.client;
 
+  //mengambil semua hotel
   Future<List<Hotels>> getHotels({
     required double latitude,
     required double longitude,
@@ -26,5 +27,16 @@ class HotelService {
     return response.map<Hotels>((hotel){
       return Hotels.fromJson(hotel);
     }).toList();
+  }
+
+  // function untuk mengambil detail hotel berdasarkan ID (mengambil satu hotel berdasarkan ID)
+  Future<Hotels> getHotelById(int hotelId) async {
+    final response = await supabase
+        .from('hotels')
+        .select('*, hotel_rooms(*, hotel_prices(*)), hotel_categories(category_name)')
+        .eq('id', hotelId)
+        .single();
+
+    return Hotels.fromJson(response);
   }
 }

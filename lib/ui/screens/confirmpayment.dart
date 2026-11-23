@@ -3,7 +3,8 @@ import 'package:hotelapps/class_list.dart';
 import 'package:hotelapps/ui/screens/home.dart';
 import 'package:hotelapps/ui/screens/ticket.dart';
 import 'package:hotelapps/models/hotels.dart';
-import 'package:hotelapps/models/hotels.dart';
+import 'package:hotelapps/models/transaction.dart';
+import 'package:hotelapps/services/transaction_service.dart';
 
 class ConfirmPage extends StatefulWidget {
   //mengambil data hotel yang telah dipilih sebelumnya
@@ -33,6 +34,9 @@ class ConfirmPage extends StatefulWidget {
 
 
 class _ConfirmPage extends State<ConfirmPage> {
+  // untuk proses penyimpanan transaksi ke dalam tabel transaksi di supabase
+  final TransactionService transactionService = TransactionService();
+  bool isLoading = false;
 
   //perhitungan pajak dan juga total finalnya
   int get taxesFees => (widget.totalPrice * 0.1).round();
@@ -53,6 +57,49 @@ class _ConfirmPage extends State<ConfirmPage> {
       RegExp(r'\B(?=(\d{3})+(?!\d))'),
           (match) => '.',
     );
+  }
+
+  // function untuk menyimpan transaksi ke Supabase
+  Future<void> confirmPayment() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      final transaction = Transaction(
+        hotelId: widget.hotel.id,
+        hotelName: widget.hotel.name,
+        guest: widget.guest,
+        room: widget.room,
+        checkIn: widget.checkInDate,
+        checkOut: widget.checkOutDate,
+        totalPrice: finalPrice, //masukin yg uda final (uda include pajak)
+        paymentMethod: widget.payMet,
+      );
+
+      await transactionService.addTransaction(transaction);
+
+      if (!mounted) return;
+
+      setState(() {
+        isLoading = false;
+      });
+
+      showPaymentSuccessDialog();
+
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        isLoading = false;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Gagal menyimpan transaksi: $e'),
+        ),
+      );
+    }
   }
 
   @override
@@ -229,7 +276,7 @@ class _ConfirmPage extends State<ConfirmPage> {
                             Image.asset('assets/images/cc.jpg', width: 50, height: 50),
                             SizedBox(height: 4),
                             Text(
-                              widget.cardholderName!,
+                              widget.cardholderName ?? '',
                               style: TextStyle(
                                 fontSize: 12,
                                 color: Colors.grey,
@@ -244,13 +291,13 @@ class _ConfirmPage extends State<ConfirmPage> {
                   ),
                   SizedBox(height: 20,),
                   ElevatedButton(
-                    onPressed: (){
-                      showPaymentSuccessDialog(); //panggil function yang uda di buat
+                    onPressed: () {
+                      if (!isLoading) {
+                        confirmPayment();
+                      }
                     },
                     style: ElevatedButton.styleFrom(backgroundColor: Colors.green, minimumSize: Size(double.infinity, 50)),
-                    child: Text('Confirm Payment',
-                      style: TextStyle(color: Colors.white, fontSize: 20),
-                    ),
+                    child: isLoading ? CircularProgressIndicator(color: Colors.white) : Text('Confirm Payment', style: TextStyle(color: Colors.white, fontSize: 20),)
                   )
                 ],
               ),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:hotelapps/class_list.dart';
 import 'package:hotelapps/ui/widgets/navigation.dart';
+import 'package:hotelapps/services/transaction_service.dart';
+import 'package:hotelapps/models/hotels.dart';
+import 'package:hotelapps/services/hotel_service.dart';
 
 class BookingPage extends StatefulWidget {
   const BookingPage({super.key});
@@ -10,13 +12,99 @@ class BookingPage extends StatefulWidget {
 }
 
 class _BookingPage extends State<BookingPage> {
-  // variabel kondisi untuk tombol tab
-  bool ongoing = true;
-  bool completed = false;
-  bool canceled = false;
+  // variabel kondisi untuk tombol2 filter status booking
+  String selectedStatus = 'ongoing';
+
+  //inisialisasi untuk proses pengambilan data transaksi
+  final TransactionService transactionService = TransactionService();
+  List<Map<String, dynamic>> transactions = [];
+  bool isLoading = true;
+
+  final HotelService hotelService = HotelService();
+  Map<int, Hotels> hotelsById = {}; //untuk menyimpan detail hotel berdasarkan ID-nya
+
+  @override
+  void initState() {
+    super.initState();
+    loadTransactions(); //load ato ambil data transaksinya dari supabase
+  }
+
+  // function untuk mengambil data transaksi dari Supabase
+  Future<void> loadTransactions() async {
+    try {
+      // mengambil transaksi pengguna
+      final data = await transactionService.getTransactions();
+
+      // mengambil detail hotel berdasarkan hotel_id
+      Map<int, Hotels> hotelMap = {};
+
+      for (final transaction in data) {
+        final hotelId = (transaction['hotel_id'] as num).toInt();
+
+        // supaya hotel yang sama tidak diambil berulang kali (menghemat proses pengambilan data)
+        if (!hotelMap.containsKey(hotelId)) {
+          try {
+            final hotel = await hotelService.getHotelById(hotelId);
+            hotelMap[hotelId] = hotel;
+          } catch (e) {
+            debugPrint('Gagal mengambil detail hotel: $e');
+          }
+        }
+      }
+
+      if (!mounted) return;
+
+      setState(() {
+        transactions = data;
+        hotelsById = hotelMap;
+        isLoading = false;
+      });
+
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        isLoading = false;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Gagal mengambil data booking: $e'),
+        ),
+      );
+    }
+  }
+
+  // function untuk memproses pembatalan booking
+  Future<void> cancelBooking(int transactionId) async {
+    try {
+      await transactionService.cancelBooking(transactionId);
+
+      await loadTransactions();
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Booking berhasil dibatalkan.'),
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Gagal membatalkan booking: $e'),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+
+    final filteredTransactions = transactions.where((transaction) {
+      return transaction['booking_status'] == selectedStatus;
+    }).toList();
+
     return Scaffold(
       backgroundColor: Colors.grey[200],
       appBar: AppBar(
@@ -45,10 +133,6 @@ class _BookingPage extends State<BookingPage> {
                 ],
               ),
             ),
-            Spacer(),
-            Icon(Icons.notifications_none_outlined),
-            SizedBox(width: 2),
-            Icon(Icons.bookmark_outline)
           ],
         ),
       ),
@@ -60,18 +144,9 @@ class _BookingPage extends State<BookingPage> {
               child: Column(
                 children: [
                   //judul halaman
-                  Container(
-                    padding: EdgeInsets.all(20),
-                    child: Row(
-                      children: [
-                        Text('My Booking',
-                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                        ),
-                        Spacer(),
-                        Icon(Icons.search),
-                      ],
-                    ),
-                  ),
+                  SizedBox(height: 10),
+                  Text('My Booking', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  SizedBox(height: 10),
                   //Row ini bisa scroll ke samping
                   SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
@@ -82,18 +157,15 @@ class _BookingPage extends State<BookingPage> {
                           ElevatedButton(
                             onPressed: () {
                               setState(() {
-                                ongoing = !ongoing;
+                                selectedStatus = 'ongoing';
                               });
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: ongoing ? Color(0xFF10B981) : Colors.white, // Background hijau / putih
-                              side: BorderSide(
-                                color: Colors.green, // Warna border hijau untuk kedua kondisi
-                                width: 1.5,
-                              ),
+                              backgroundColor: selectedStatus=='ongoing' ? Color(0xFF10B981) : Colors.white, // Background hijau / putih
+                              side: BorderSide(color: Colors.green, width: 1.5) // Warna border hijau untuk kedua kondisi
                             ),
                             child: Text('Ongoing', style: TextStyle(
-                              color: ongoing ? Colors.white: Colors.green,
+                              color: selectedStatus == 'ongoing' ? Colors.white: Colors.green,
                               fontWeight: FontWeight.w600,
                               fontSize: 14,
                             ),
@@ -104,18 +176,15 @@ class _BookingPage extends State<BookingPage> {
                           ElevatedButton(
                             onPressed: () {
                               setState(() {
-                                completed = !completed;
+                                selectedStatus = 'completed';
                               });
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: completed ? Color(0xFF10B981) : Colors.white, // Background hijau / putih
-                              side: BorderSide(
-                                color: Colors.green, // Warna border hijau untuk kedua kondisi
-                                width: 1.5,
-                              ),
+                                backgroundColor: selectedStatus=='completed' ? Color(0xFF10B981) : Colors.white, // Background hijau / putih
+                                side: BorderSide(color: Colors.green, width: 1.5) // Warna border hijau untuk kedua kondisi
                             ),
                             child: Text('Completed', style: TextStyle(
-                              color: completed ? Colors.white: Colors.green,
+                              color: selectedStatus == 'completed' ? Colors.white: Colors.green,
                               fontWeight: FontWeight.w600,
                               fontSize: 14,
                             ),
@@ -126,18 +195,15 @@ class _BookingPage extends State<BookingPage> {
                           ElevatedButton(
                             onPressed: () {
                               setState(() {
-                                canceled = !canceled;
+                                selectedStatus = 'canceled';
                               });
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: canceled ? Color(0xFF10B981) : Colors.white, // Background hijau / putih
-                              side: BorderSide(
-                                color: Colors.green, // Warna border hijau untuk kedua kondisi
-                                width: 1.5,
-                              ),
+                                backgroundColor: selectedStatus=='canceled' ? Color(0xFF10B981) : Colors.white, // Background hijau / putih
+                                side: BorderSide(color: Colors.green, width: 1.5) // Warna border hijau untuk kedua kondisi
                             ),
                             child: Text('Canceled', style: TextStyle(
-                              color: canceled ? Colors.white: Colors.green,
+                              color: selectedStatus == 'canceled' ? Colors.white: Colors.green,
                               fontWeight: FontWeight.w600,
                               fontSize: 14,
                             ),
@@ -150,91 +216,185 @@ class _BookingPage extends State<BookingPage> {
                   //kartu booking
                   Container(
                     padding: EdgeInsets.all(20),
-                    child: Column(
+                    child: isLoading
+                        ? Center(
+                      child: CircularProgressIndicator(),
+                    )
+                        : filteredTransactions.isEmpty
+                        ? Center(
+                      child: Text(
+                        'You have no bookings yet.',
+                        style: TextStyle(fontSize: 14),
+                      ),
+                    )
+                        : Column(
                       children: [
-                        ...bookingList.map((hotel) => Container(
-                          margin: EdgeInsets.only(bottom: 20),
-                          padding: EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Column(
-                            children: [
-                              // gambar + teks
-                              Row(
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: Image.asset('assets/images/hotel1.jpg',
-                                        width: 80, height: 80, fit: BoxFit.cover),
-                                  ),
-                                  SizedBox(width: 10),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(hotel.name,
-                                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
-                                        Text(hotel.location,
-                                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10)),
-                                        SizedBox(height: 6),
-                                        Container(
-                                          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                                          decoration: BoxDecoration(
-                                            color: Color(0xFFD1FAE5),
-                                            borderRadius: BorderRadius.circular(4),
-                                          ),
-                                          child: Text('Paid',
-                                              style: TextStyle(fontSize: 10, color: Colors.green)),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 10),
-                              //garis pemisah
-                              Container(height: 1, color: Colors.grey[300]),
-                              SizedBox(height: 10),
-                              // tombol
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: ElevatedButton(
-                                      onPressed: () {},
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.white,
-                                        side: BorderSide(color: Colors.green, width: 1.5),
+                        ...filteredTransactions.map((transaction) {
+                          final hotelId =
+                          (transaction['hotel_id'] as num).toInt();
+
+                          final hotel = hotelsById[hotelId];
+
+                          if (hotel == null) {
+                            return SizedBox();
+                          }
+
+                          return Container(
+                            margin: EdgeInsets.only(bottom: 20),
+                            padding: EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Column(
+                              children: [
+                                // gambar + teks
+                                Row(
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: Image.asset(
+                                        'assets/images/hotel1.jpg',
+                                        width: 80,
+                                        height: 80,
+                                        fit: BoxFit.cover,
                                       ),
-                                      child: Text('Cancel Booking',
-                                          style: TextStyle(
+                                    ),
+                                    SizedBox(width: 10),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            hotel.name,
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 15,
+                                            ),
+                                          ),
+                                          Text(
+                                            '${hotel.city}, ${hotel.country}',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 10,
+                                            ),
+                                          ),
+                                          SizedBox(height: 6),
+                                          Container(
+                                            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                                            decoration: BoxDecoration(
+                                              color: transaction['booking_status']=='canceled' ? Colors.red: Color(0xFFD1FAE5),
+                                              borderRadius:
+                                              BorderRadius.circular(4),
+                                            ),
+                                            child: Text(
+                                              transaction['booking_status'] ?? 'ongoing',
+                                              style: TextStyle(
+                                                fontSize: 10,
+                                                color: transaction['booking_status']=='canceled' ? Colors.white: Colors.green,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 10),
+                                // garis pemisah
+                                Container(
+                                  height: 1,
+                                  color: Colors.grey[300],
+                                ),
+                                SizedBox(height: 10),
+                                // tombol
+                                if (transaction['booking_status']=='ongoing')
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: ElevatedButton(
+                                          onPressed: () async {
+                                            // konfirmasi pembatalan booking
+                                            final confirm = await showDialog<bool>(
+                                              context: context,
+                                              builder: (dialogContext) {
+                                                return AlertDialog(
+                                                  title: Text('Cancel Booking'),
+                                                  content: Text(
+                                                    'Are you sure you want to cancel this booking?',
+                                                  ),
+                                                  actions: [
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        Navigator.pop(dialogContext, false);
+                                                      },
+                                                      child: Text('No'),
+                                                    ),
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        Navigator.pop(dialogContext, true);
+                                                      },
+                                                      child: Text(
+                                                        'Yes, Cancel',
+                                                        style: TextStyle(color: Colors.red),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                );
+                                              },
+                                            );
+                                            if (confirm == true) {
+                                              await cancelBooking(
+                                                (transaction['id'] as num).toInt(),
+                                              );
+                                            }
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.white,
+                                            side: BorderSide(
+                                              color: Colors.green,
+                                              width: 1.5,
+                                            ),
+                                          ),
+                                          child: Text(
+                                            'Cancel Booking',
+                                            style: TextStyle(
                                               color: Colors.green,
                                               fontWeight: FontWeight.w600,
-                                              fontSize: 12)),
-                                    ),
-                                  ),
-                                  SizedBox(width: 10),
-                                  Expanded(
-                                    child: ElevatedButton(
-                                      onPressed: () {},
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Color(0xFF10B981),
-                                        side: BorderSide(color: Colors.green, width: 1.5),
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                        ),
                                       ),
-                                      child: Text('View Ticket',
-                                          style: TextStyle(
+                                      SizedBox(width: 10),
+                                      Expanded(
+                                        child: ElevatedButton(
+                                          onPressed: () {},
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Color(0xFF10B981),
+                                            side: BorderSide(
+                                              color: Colors.green,
+                                              width: 1.5,
+                                            ),
+                                          ),
+                                          child: Text(
+                                            'View Ticket',
+                                            style: TextStyle(
                                               color: Colors.white,
                                               fontWeight: FontWeight.w600,
-                                              fontSize: 12)),
-                                    ),
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        )),
-                        SizedBox(height: 20,),
+                              ],
+                            ),
+                          );
+                        }),
+                        SizedBox(height: 20),
                       ],
                     ),
                   )
