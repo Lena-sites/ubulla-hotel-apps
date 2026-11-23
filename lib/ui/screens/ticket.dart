@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import 'package:hotelapps/ui/screens/booking.dart';
-import 'package:hotelapps/class_list.dart';
+import 'package:hotelapps/models/hotels.dart';
+import 'package:hotelapps/services/ticket_service.dart';
 
 class TicketPage extends StatefulWidget {
   //mengambil data hotel yang telah dipilih sebelumnya
-  final HotelList hotel;
+  final Hotels hotel;
   final int guest;
   final int room;
   final int totalPrice;
   final String payMet;
+  final DateTime checkInDate;
+  final DateTime checkOutDate;
+  final int transactionId;
 
   const TicketPage({super.key,
     required this.hotel,
@@ -16,6 +22,9 @@ class TicketPage extends StatefulWidget {
     required this.room,
     required this.totalPrice,
     required this.payMet,
+    required this.checkInDate,
+    required this.checkOutDate,
+    required this.transactionId,
   });
 
   @override
@@ -23,8 +32,14 @@ class TicketPage extends StatefulWidget {
 }
 
 class _TicketPage extends State<TicketPage> {
+  final TicketService ticketService = TicketService();
+
   @override
   Widget build(BuildContext context){
+    //Ambil email user
+    final userEmail = Supabase.instance.client.auth.currentUser!.email!;
+    final username = Supabase.instance.client.auth.currentUser!.userMetadata!['username'];
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.grey,
@@ -33,7 +48,6 @@ class _TicketPage extends State<TicketPage> {
             //tombol untuk keluar (diarahkan ke booking page)
             GestureDetector(
               onTap: (){
-                bookingList.add(widget.hotel); //penyimpanan data booking ke list
                 Navigator.push(context, MaterialPageRoute(builder: (context) => const BookingPage()),
                 );
               },
@@ -67,24 +81,25 @@ class _TicketPage extends State<TicketPage> {
           child: SingleChildScrollView(
             child: Container(
               color: Colors.white,
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center, // Bikin konten utama rata tengah
                 children: [
-                  const SizedBox(height: 10),
-                  const Text(
+                  SizedBox(height: 10),
+                  Text(
                     'CHECK-IN TICKET',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
-                  const SizedBox(height: 10),
+                  SizedBox(height: 10),
                   Divider(color: Colors.grey[300], thickness: 1, height: 30),
-                  Image.asset(
-                    'assets/images/qr.jpg',
-                    width: 250,
-                    height: 250,
+                  //isi dari QR Code nya ini kode booking yaa
+                  QrImageView(
+                    data: widget.transactionId.toString(), //isi QR Code, yaitu ID transaksi
+                    version: QrVersions.auto, //menentukan versi QR secara otomatis
+                    size: 250,
                   ),
                   Divider(color: Colors.grey[300], thickness: 1, height: 30),
-                  const SizedBox(height: 10),
+                  SizedBox(height: 10),
                   // Informasi Tiket
                   Column(
                     children: [
@@ -95,9 +110,9 @@ class _TicketPage extends State<TicketPage> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                const Text('Name', style: TextStyle(color: Colors.grey, fontSize: 12)),
-                                const SizedBox(height: 4),
-                                const Text('Lena', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600), textAlign: TextAlign.center),
+                                Text('Name', style: TextStyle(color: Colors.grey, fontSize: 12)),
+                                SizedBox(height: 4),
+                                Text(username, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600), textAlign: TextAlign.center),
                               ],
                             ),
                           ),
@@ -105,15 +120,15 @@ class _TicketPage extends State<TicketPage> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                const Text('Phone Number', style: TextStyle(color: Colors.grey, fontSize: 12)),
-                                const SizedBox(height: 4),
-                                const Text('+62xxxxxxxxxxx', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600), textAlign: TextAlign.center),
+                                Text('Email', style: TextStyle(color: Colors.grey, fontSize: 12)),
+                                SizedBox(height: 4),
+                                Text(userEmail, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600), textAlign: TextAlign.center),
                               ],
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 25),
+                      SizedBox(height: 25),
                       // baris 2
                       Row(
                         children: [
@@ -121,9 +136,10 @@ class _TicketPage extends State<TicketPage> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                const Text('Check in', style: TextStyle(color: Colors.grey, fontSize: 12)),
-                                const SizedBox(height: 4),
-                                const Text('Oct 07, 2026', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600), textAlign: TextAlign.center),
+                                Text('Check in', style: TextStyle(color: Colors.grey, fontSize: 12)),
+                                SizedBox(height: 4),
+                                //memisahkan tanggal dan waktu pake spasi lalu ambil hanya yg di index 0 aja, yaitu tglnya doang
+                                Text('${widget.checkInDate}'.split(' ')[0], style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600), textAlign: TextAlign.center),
                               ],
                             ),
                           ),
@@ -131,15 +147,15 @@ class _TicketPage extends State<TicketPage> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                const Text('Check out', style: TextStyle(color: Colors.grey, fontSize: 12)),
-                                const SizedBox(height: 4),
-                                const Text('Oct 08, 2026', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600), textAlign: TextAlign.center),
+                                Text('Check out', style: TextStyle(color: Colors.grey, fontSize: 12)),
+                                SizedBox(height: 4),
+                                Text('${widget.checkOutDate}'.split(' ')[0], style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600), textAlign: TextAlign.center),
                               ],
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 25),
+                      SizedBox(height: 25),
                       // baris 3
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -148,9 +164,9 @@ class _TicketPage extends State<TicketPage> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                const Text('Hotel', style: TextStyle(color: Colors.grey, fontSize: 12)),
-                                const SizedBox(height: 4),
-                                Text(widget.hotel.name, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600), textAlign: TextAlign.center),
+                                Text('Hotel', style: TextStyle(color: Colors.grey, fontSize: 12)),
+                                SizedBox(height: 4),
+                                Text(widget.hotel.name, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600), textAlign: TextAlign.center),
                               ],
                             ),
                           ),
@@ -158,9 +174,9 @@ class _TicketPage extends State<TicketPage> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                const Text('Guest', style: TextStyle(color: Colors.grey, fontSize: 12)),
-                                const SizedBox(height: 4),
-                                Text('${widget.guest}', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600), textAlign: TextAlign.center),
+                                Text('Guest', style: TextStyle(color: Colors.grey, fontSize: 12)),
+                                SizedBox(height: 4),
+                                Text('${widget.guest}', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600), textAlign: TextAlign.center),
                               ],
                             ),
                           ),
@@ -168,14 +184,24 @@ class _TicketPage extends State<TicketPage> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 30),
+                  SizedBox(height: 30),
                   SizedBox(
                     width: double.infinity,
                     height: 50,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () async {
+                        await ticketService.downloadTicket(
+                          transactionId: widget.transactionId,
+                          username: username?.toString() ?? '',
+                          email: userEmail,
+                          hotelName: widget.hotel.name,
+                          guest: widget.guest,
+                          checkInDate: widget.checkInDate,
+                          checkOutDate: widget.checkOutDate,
+                        );
+                      },
                       style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-                      child: const Text(
+                      child: Text(
                         'Download Ticket',
                         style: TextStyle(
                           color: Colors.white,

@@ -4,7 +4,7 @@ import 'package:hotelapps/models/transaction.dart';
 class TransactionService {
   final SupabaseClient supabase = Supabase.instance.client;
 
-  Future<void> addTransaction(Transaction transaction) async {
+  Future<int> addTransaction(Transaction transaction) async {
     // Mengambil user yang sedang login
     final user = supabase.auth.currentUser;
 
@@ -13,9 +13,13 @@ class TransactionService {
     }
 
     // Mengirim data transaksi ke Supabase
-    await supabase
+    final response = await supabase
         .from('transactions')
-        .insert(transaction.toJson(user.id));
+        .insert(transaction.toJson(user.id))
+        .select('id')
+        .single(); //memberi tahu Supabase bahwa kita mengharapkan tepat satu baris data sebagai hasil query
+
+    return (response['id'] as num).toInt(); //kembaliin hasil ID untuk dipake jd isi QR CODE
   }
 
   // function untuk mengambil transaksi milik user yang sedang login
@@ -37,6 +41,7 @@ class TransactionService {
   }
 
   // function untuk membatalkan booking
+  // function untuk membatalkan booking
   Future<void> cancelBooking(int transactionId) async {
     final user = supabase.auth.currentUser;
 
@@ -44,12 +49,12 @@ class TransactionService {
       throw Exception('User belum login.');
     }
 
-    await supabase
-        .from('transactions')
-        .update({
-      'booking_status': 'canceled',
-    })
-        .eq('id', transactionId) //hapus berdasarkan transcation id
-        .eq('user_id', user.id);
+    // Memanggil function cancel_booking di Supabase
+    await supabase.rpc(
+      'cancel_booking',
+      params: {
+        'p_transaction_id': transactionId,
+      },
+    );
   }
 }

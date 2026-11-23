@@ -397,7 +397,7 @@ class _CustomPage extends State<CustomPage> {
                         );
                         return;
                       }
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => PaymentPage(hotel:widget.hotel, guest: guest, room: room, totalPrice: totalPrice, checkInDate: checkInDate!, checkOutDate: checkOutDate!)) //KIRIM VARIABEL ke page Payment
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => PaymentPage(hotel:widget.hotel, guest: guest, room: room, roomId: widget.selectedRoom.id, totalPrice: totalPrice, checkInDate: checkInDate!, checkOutDate: checkOutDate!)) //KIRIM VARIABEL ke page Payment
                       );
                     },
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.green,   minimumSize: Size(double.infinity, 50)),

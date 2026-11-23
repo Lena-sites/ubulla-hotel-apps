@@ -1,5 +1,6 @@
 class Transaction {
   final int hotelId;
+  final int roomId;
   final String hotelName;
   final int guest;
   final int room;
@@ -10,6 +11,7 @@ class Transaction {
 
   Transaction({
     required this.hotelId,
+    required this.roomId,
     required this.hotelName,
     required this.guest,
     required this.room,
@@ -22,6 +24,7 @@ class Transaction {
   Map<String, dynamic> toJson(String userId) { //toJson itu mengubah data menjadi format yang bisa dikirim ke Supabase
     return {
       'user_id': userId,
+      'room_id': roomId,
       'hotel_id': hotelId,
       'hotel_name': hotelName,
       'guest': guest,

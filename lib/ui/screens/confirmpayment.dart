@@ -5,12 +5,14 @@ import 'package:hotelapps/ui/screens/ticket.dart';
 import 'package:hotelapps/models/hotels.dart';
 import 'package:hotelapps/models/transaction.dart';
 import 'package:hotelapps/services/transaction_service.dart';
+import 'package:hotelapps/services/hotelroom_service.dart';
 
 class ConfirmPage extends StatefulWidget {
   //mengambil data hotel yang telah dipilih sebelumnya
   final Hotels hotel;
   final int guest;
   final int room;
+  final int roomId;
   final int totalPrice;
   final String payMet;
   final DateTime checkInDate;
@@ -21,6 +23,7 @@ class ConfirmPage extends StatefulWidget {
     required this.hotel,
     required this.guest,
     required this.room,
+    required this.roomId,
     required this.totalPrice,
     required this.payMet,
     required this.checkInDate,
@@ -36,7 +39,10 @@ class ConfirmPage extends StatefulWidget {
 class _ConfirmPage extends State<ConfirmPage> {
   // untuk proses penyimpanan transaksi ke dalam tabel transaksi di supabase
   final TransactionService transactionService = TransactionService();
+  final HotelRoomService hotelRoomService = HotelRoomService(); //buat pengurangan jumlah kamarnya
   bool isLoading = false;
+
+  int? transactionId;
 
   //perhitungan pajak dan juga total finalnya
   int get taxesFees => (widget.totalPrice * 0.1).round();
@@ -68,6 +74,7 @@ class _ConfirmPage extends State<ConfirmPage> {
     try {
       final transaction = Transaction(
         hotelId: widget.hotel.id,
+        roomId: widget.roomId,
         hotelName: widget.hotel.name,
         guest: widget.guest,
         room: widget.room,
@@ -77,7 +84,14 @@ class _ConfirmPage extends State<ConfirmPage> {
         paymentMethod: widget.payMet,
       );
 
-      await transactionService.addTransaction(transaction);
+      //setelah transaksi berhasil disimpan, ID transaksi barunya akan tersimpan di variabel transactionId
+      transactionId = await transactionService.addTransaction(transaction);
+
+      // Mengurangi stok kamar setelah transaksi berhasil disimpan
+      await hotelRoomService.reduceRoomStock(
+        widget.roomId,
+        widget.room,
+      );
 
       if (!mounted) return;
 
@@ -365,12 +379,22 @@ class _ConfirmPage extends State<ConfirmPage> {
                   height: 50,
                   child: ElevatedButton(
                     onPressed: () {
-                      // Navigator.pop(dialogContext); // tutup popup
-                      // //KE HALAMAN TIKET NTR
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(builder: (context) => TicketPage(hotel: widget.hotel, guest: widget.guest, room: widget.room, totalPrice: widget.totalPrice, payMet: widget.payMet)),
-                      // );
+                      Navigator.pop(dialogContext);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => TicketPage(
+                            hotel: widget.hotel,
+                            guest: widget.guest,
+                            room: widget.room,
+                            totalPrice: widget.totalPrice,
+                            payMet: widget.payMet,
+                            checkInDate: widget.checkInDate,
+                            checkOutDate: widget.checkOutDate,
+                            transactionId: transactionId!,
+                          ),
+                        ),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color(0xFF10B981),

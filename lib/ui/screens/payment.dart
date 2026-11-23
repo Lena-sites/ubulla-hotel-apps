@@ -10,6 +10,7 @@ class PaymentPage extends StatefulWidget {
   final Hotels hotel;
   final int guest;
   final int room;
+  final int roomId;
   final int totalPrice;
   final DateTime checkInDate;
   final DateTime checkOutDate;
@@ -19,6 +20,7 @@ class PaymentPage extends StatefulWidget {
     required this.hotel,
     required this.guest,
     required this.room,
+    required this.roomId,
     required this.totalPrice,
     required this.checkInDate,
     required this.checkOutDate,
@@ -246,6 +248,7 @@ class _PaymentPage extends State<PaymentPage> {
                           hotel: widget.hotel,
                           guest: widget.guest,
                           room: widget.room,
+                          roomId: widget.roomId,
                           totalPrice: widget.totalPrice,
                           payMet: selected == 1 && defaultPayment != null
                               ? '${paymentMethod[selected].method} - ${defaultPayment!.cardType} •••• ${defaultPayment!.cardLast4}'
