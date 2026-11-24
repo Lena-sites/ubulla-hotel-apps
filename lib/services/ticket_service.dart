@@ -1,7 +1,8 @@
 import 'dart:typed_data';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
-import 'package:printing/printing.dart';
+// import 'package:printing/printing.dart';
+import 'package:file_saver/file_saver.dart';
 
 class TicketService {
   Future<void> downloadTicket({
@@ -62,8 +63,13 @@ class TicketService {
       ),
     );
 
-    await Printing.layoutPdf(
-      onLayout: (format) async => pdf.save(),
+    final pdfBytes = await pdf.save();
+
+    await FileSaver.instance.saveToDownloads(
+      name: 'ticket_$transactionId',
+      bytes: pdfBytes,
+      fileExtension: 'pdf',
+      mimeType: MimeType.pdf,
     );
   }
 }

@@ -14,6 +14,9 @@ class Hotels {
   final int pricePerNight;
   final String currency;
   final String category;
+  final String imageUrl;
+  final String details;
+  final List<String> facilities;
 
   Hotels({
       required this.id,
@@ -26,7 +29,10 @@ class Hotels {
       required this.hotelStars,
       required this.pricePerNight,
       required this.currency,
-      required this.category
+      required this.category,
+      required this.imageUrl,
+      required this.details,
+      required this.facilities,
   });
 
   //mengubah menjadi objek hotel supaya bisa di pake ama flutter (ini dia ngambil datanya uda dari tabel supabase)
@@ -68,6 +74,10 @@ class Hotels {
       pricePerNight: standardPrice?.pricePerNight ?? 0,
       currency: standardPrice?.currency ?? 'IDR',
       category: json['hotel_categories']?['category_name'] ?? '',
+      // imageUrl: (json['image_url'] ?? '').toString(),
+      imageUrl: json['image_url'] ?? '',
+      details: json['details'] ?? '',
+      facilities: List<String>.from(json['facilities'] ?? []),
     );
   }
 }

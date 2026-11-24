@@ -174,11 +174,22 @@ class _ConfirmPage extends State<ConfirmPage> {
                       children: [
                         ClipRRect(
                           borderRadius: BorderRadius.circular(10),
-                          child: Image.asset(
-                              'assets/images/hotel8.jpg', //dummy-in aja
-                              width: 80,
-                              height: 80,
-                              fit: BoxFit.cover
+                          child: Image.network(
+                            widget.hotel.imageUrl,
+                            width: 80,
+                            height: 80,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Container(
+                                width: 80,
+                                height: 80,
+                                color: Colors.grey.shade300,
+                                child: Icon(
+                                  Icons.image_not_supported,
+                                  color: Colors.grey,
+                                ),
+                              );
+                            },
                           ),
                         ),
                         SizedBox(width: 10,),

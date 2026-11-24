@@ -51,10 +51,6 @@ class _MyAppState extends State<HomePage>{
                 ],
               ),
             ),
-            Spacer(),
-            Icon(Icons.notifications_none_outlined),
-            SizedBox(width: 2),
-            Icon(Icons.bookmark_outline)
           ],
         ),
         automaticallyImplyLeading: false, //matiin tanda panah back otomatis
@@ -80,103 +76,6 @@ class _MyAppState extends State<HomePage>{
                       ],
                     ),
                   ),
-                  //Row ini bisa scroll ke samping
-                  SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child:Row(
-                        children: [
-                          SizedBox(width: 20,),
-                          //RECOMMENDED
-                          ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                filtering[0].filter = !filtering[0].filter;
-                              });
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: filtering[0].filter ? Color(0xFF10B981) : Colors.white, // Background hijau / putih
-                              side: BorderSide(
-                                color: Colors.green, // Warna border hijau untuk kedua kondisi
-                                width: 1.5,
-                              ),
-                            ),
-                            child: Text('Recommended', style: TextStyle(
-                              color: filtering[0].filter? Colors.white: Colors.green,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 14,
-                            ),
-                            ),
-                          ),
-                          SizedBox(width: 15,),
-                          //POPULAR
-                          ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                filtering[1].filter = !filtering[1].filter;
-                              });
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: filtering[1].filter ? Color(0xFF10B981) : Colors.white, // Background hijau / putih
-                              side: BorderSide(
-                                color: Colors.green, // Warna border hijau untuk kedua kondisi
-                                width: 1.5,
-                              ),
-                            ),
-                            child: Text('Popular', style: TextStyle(
-                              color: filtering[1].filter? Colors.white: Colors.green,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 14,
-                            ),
-                            ),
-                          ),
-                          SizedBox(width: 15,),
-                          //TRENDING
-                          ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                filtering[2].filter = !filtering[2].filter;
-                              });
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: filtering[2].filter ? Color(0xFF10B981) : Colors.white, // Background hijau / putih
-                              side: BorderSide(
-                                color: Colors.green, // Warna border hijau untuk kedua kondisi
-                                width: 1.5,
-                              ),
-                            ),
-                            child: Text('Trending', style: TextStyle(
-                              color: filtering[2].filter? Colors.white: Colors.green,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 14,
-                            ),
-                            ),
-                          ),
-                          SizedBox(width: 15,),
-                          //NEW
-                          ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                filtering[3].filter = !filtering[3].filter;
-                              });
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: filtering[3].filter ? Color(0xFF10B981) : Colors.white, // Background hijau / putih
-                              side: BorderSide(
-                                color: Colors.green, // Warna border hijau untuk kedua kondisi
-                                width: 1.5,
-                              ),
-                            ),
-                            child: Text('New', style: TextStyle(
-                              color: filtering[3].filter? Colors.white: Colors.green,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 14,
-                            ),
-                            ),
-                          )
-                        ],
-                      )
-                  ),
-                  SizedBox(height: 20,),
                   //item2 hotel hasil dari filtering dan bisa di scroll ke samping
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,

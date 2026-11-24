@@ -3,6 +3,7 @@ import 'package:hotelapps/ui/widgets/navigation.dart';
 import 'package:hotelapps/services/transaction_service.dart';
 import 'package:hotelapps/models/hotels.dart';
 import 'package:hotelapps/services/hotel_service.dart';
+import 'package:hotelapps/ui/screens/ticket.dart';
 
 class BookingPage extends StatefulWidget {
   const BookingPage({super.key});
@@ -253,11 +254,22 @@ class _BookingPage extends State<BookingPage> {
                                   children: [
                                     ClipRRect(
                                       borderRadius: BorderRadius.circular(10),
-                                      child: Image.asset(
-                                        'assets/images/hotel1.jpg',
+                                      child: Image.network(
+                                        hotel.imageUrl,
                                         width: 80,
                                         height: 80,
                                         fit: BoxFit.cover,
+                                        errorBuilder: (context, error, stackTrace) {
+                                          return Container(
+                                            width: 80,
+                                            height: 80,
+                                            color: Colors.grey.shade300,
+                                            child: Icon(
+                                              Icons.image_not_supported,
+                                              color: Colors.grey,
+                                            ),
+                                          );
+                                        },
                                       ),
                                     ),
                                     SizedBox(width: 10),
@@ -312,6 +324,7 @@ class _BookingPage extends State<BookingPage> {
                                 if (transaction['booking_status']=='ongoing')
                                   Row(
                                     children: [
+                                      //TOMBOL CANCEL BOOKING
                                       Expanded(
                                         child: ElevatedButton(
                                           onPressed: () async {
@@ -368,9 +381,26 @@ class _BookingPage extends State<BookingPage> {
                                         ),
                                       ),
                                       SizedBox(width: 10),
+                                      //TOMBOL VIEW TICKET
                                       Expanded(
                                         child: ElevatedButton(
-                                          onPressed: () {},
+                                          onPressed: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) => TicketPage(
+                                                  hotel: hotel,
+                                                  guest: (transaction['guest'] as num).toInt(),
+                                                  room: (transaction['room'] as num).toInt(),
+                                                  totalPrice: (transaction['total_price'] as num).toInt(),
+                                                  payMet: transaction['payment_method'],
+                                                  checkInDate: DateTime.parse(transaction['check_in']),
+                                                  checkOutDate: DateTime.parse(transaction['check_out']),
+                                                  transactionId: (transaction['id'] as num).toInt(),
+                                                ),
+                                              ),
+                                            );
+                                          },
                                           style: ElevatedButton.styleFrom(
                                             backgroundColor: Color(0xFF10B981),
                                             side: BorderSide(

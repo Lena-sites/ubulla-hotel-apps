@@ -44,6 +44,7 @@ dependencies:
   qr_flutter: ^4.1.0
   pdf: ^3.13.1
   printing: ^5.15.1
+  file_saver: ^0.7.0
 
 dev_dependencies:
   flutter_test:

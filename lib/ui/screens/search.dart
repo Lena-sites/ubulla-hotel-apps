@@ -403,7 +403,7 @@ class _SearchPageState extends State<SearchPage> {
                                 final hotel = shownHotels[index];
 
                                 //fotooo hotelnya di acak
-                                final gambar = 'assets/images/hotel${(index % 6) + 5}.jpg';
+                                // final gambar = 'assets/images/hotel${(index % 6) + 5}.jpg';
                                 final isBookmarked = bookmarkedHotels.contains(hotel.id);
 
                                 return GestureDetector(
@@ -419,13 +419,35 @@ class _SearchPageState extends State<SearchPage> {
                                     child: Row(
                                       children: [
                                         // FOTO HOTEL
+                                        // FOTO HOTEL
                                         ClipRRect(
                                           borderRadius: BorderRadius.circular(8),
-                                          child: Image.asset(
-                                            gambar,
+                                          child: hotel.imageUrl.isNotEmpty
+                                              ? Image.network(
+                                            hotel.imageUrl,
                                             width: 80,
                                             height: 80,
                                             fit: BoxFit.cover,
+                                            loadingBuilder: (context, child, progress) {
+                                              if (progress == null) return child;
+                                              return const SizedBox(
+                                                width: 80,
+                                                height: 80,
+                                                child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+                                              );
+                                            },
+                                            errorBuilder: (context, error, stackTrace) => Container(
+                                              width: 80,
+                                              height: 80,
+                                              color: Colors.grey[300],
+                                              child: const Icon(Icons.hotel, color: Colors.grey),
+                                            ),
+                                          )
+                                              : Container(
+                                            width: 80,
+                                            height: 80,
+                                            color: Colors.grey[300],
+                                            child: const Icon(Icons.hotel, color: Colors.grey),
                                           ),
                                         ),
                                         SizedBox(width: 10),

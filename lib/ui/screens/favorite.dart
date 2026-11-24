@@ -127,11 +127,19 @@ class _FavoritePageState extends State<FavoritePage> {
                     // FOTO HOTEL
                     ClipRRect(
                       borderRadius: BorderRadius.circular(12),
-                      child: Image.asset(
-                        'assets/images/hotel1.jpg',
+                      child: Image.network(
+                        hotel.imageUrl,
                         width: 110,
                         height: 120,
                         fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            width: 110,
+                            height: 120,
+                            color: Colors.grey.shade300,
+                            child: Icon(Icons.image_not_supported, color: Colors.grey),
+                          );
+                        },
                       ),
                     ),
 

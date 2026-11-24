@@ -6,6 +6,8 @@ import 'package:latlong2/latlong.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:hotelapps/models/hotelrooms.dart';
 import 'package:hotelapps/services/hotelroom_service.dart';
+import 'package:hotelapps/models/hotelgallery.dart';
+import 'package:hotelapps/services/hotelgalerry_service.dart';
 
 class DetailPage extends StatefulWidget {
   //mengambil data hotel yang telah dipilih sebelumnya di search page
@@ -19,6 +21,12 @@ class DetailPage extends StatefulWidget {
 class _DetailPage extends State<DetailPage> {
   //PENAMPILAN TIPE KAMAR (ROOMS)
   final HotelRoomService hotelRoomService = HotelRoomService();
+
+  // PENAMPILAN GALERI HOTEL
+  final HotelGalleryService hotelGalleryService = HotelGalleryService();
+  List<HotelGallery> hotelGallery = [];
+  bool isLoadingGallery = true;
+
   List<HotelRooms> hotelRooms = [];
   HotelRooms? selectedRoom;
   bool isLoadingRooms = true;
@@ -53,6 +61,7 @@ class _DetailPage extends State<DetailPage> {
   void initState() {
     super.initState();
     loadHotelRooms();
+    loadHotelGallery();
   }
 
   Future<void> loadHotelRooms() async {
@@ -84,6 +93,49 @@ class _DetailPage extends State<DetailPage> {
       setState(() {
         isLoadingRooms = false;
       });
+    }
+  }
+
+  //fungsi untuk mengambil foto galeri hotel
+  Future<void> loadHotelGallery() async {
+    try {
+      final photos = await hotelGalleryService.getHotelGallery(
+        widget.hotel.id,
+      );
+
+      if (!mounted) return;
+
+      setState(() {
+        hotelGallery = photos;
+        isLoadingGallery = false;
+      });
+    } catch (e) {
+      debugPrint('Gagal mengambil foto galeri: $e');
+
+      if (!mounted) return;
+
+      setState(() {
+        isLoadingGallery = false;
+      });
+    }
+  }
+
+  IconData getFacilityIcon(String facility) {
+    switch (facility) {
+      case 'Swimming Pool':
+        return Icons.pool;
+      case 'WiFi':
+        return Icons.wifi;
+      case 'Restaurant':
+        return Icons.restaurant;
+      case 'Parking':
+        return Icons.local_parking;
+      case 'Meeting Room':
+        return Icons.door_sliding;
+      case 'Fitness Center':
+        return Icons.fitness_center;
+      default:
+        return Icons.check_circle_outline;
     }
   }
 
@@ -130,12 +182,24 @@ class _DetailPage extends State<DetailPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              //dummy fotonyaa
-              Image.asset(
-                'assets/images/hotel5.jpg',
+              // Foto hotel dari Supabase
+              Image.network(
+                widget.hotel.imageUrl,
                 width: double.infinity,
                 height: 250,
                 fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    width: double.infinity,
+                    height: 250,
+                    color: Colors.grey.shade300,
+                    child: Icon(
+                      Icons.image_not_supported,
+                      color: Colors.grey,
+                      size: 50,
+                    ),
+                  );
+                },
               ),
               SizedBox(height: 10,),
               //container pembungkus elemen2 yang di bawah foto
@@ -163,69 +227,62 @@ class _DetailPage extends State<DetailPage> {
                       ],
                     ),
                     SizedBox(height: 5,),
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(30),
-                            child: Image.asset(
-                                'assets/images/fasilitas1.jpg',
-                                width: 190,
-                                height: 190,
-                                fit: BoxFit.cover
-                            ),
-                          ),
-                          SizedBox(width: 15,),
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(30),
-                            child: Image.asset(
-                                'assets/images/fasilitas2.jpg',
-                                width: 190,
-                                height: 190,
-                                fit: BoxFit.cover
-                            ),
-                          ),
-                          SizedBox(width: 15,),
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(30),
-                            child: Image.asset(
-                                'assets/images/fasilitas3.jpg',
-                                width: 190,
-                                height: 190,
-                                fit: BoxFit.cover
-                            ),
-                          ),
-                          SizedBox(width: 15,),
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(30),
-                            child: Image.asset(
-                                'assets/images/fasilitas4.jpg',
-                                width: 190,
-                                height: 190,
-                                fit: BoxFit.cover
-                            ),
-                          ),
-                          SizedBox(width: 15,),
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(30),
-                            child: Image.asset(
-                                'assets/images/fasilitas5.jpg',
-                                width: 190,
-                                height: 190,
-                                fit: BoxFit.cover
-                            ),
-                          ),
-                        ],
+                    if (isLoadingGallery)
+                      Center(
+                        child: CircularProgressIndicator(),
+                      )
+                    else if (hotelGallery.isEmpty)
+                      Container(
+                        height: 100,
+                        alignment: Alignment.center,
+                        child: Text('Belum ada foto galeri'),
+                      )
+                    else
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: hotelGallery.map((photo) {
+                            return Padding(
+                              padding: EdgeInsets.only(right: 15),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(30),
+                                child: Image.network(
+                                  photo.imageUrl,
+                                  width: 190,
+                                  height: 190,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Container(
+                                      width: 190,
+                                      height: 190,
+                                      color: Colors.grey.shade300,
+                                      child: Icon(
+                                        Icons.image_not_supported,
+                                        color: Colors.grey,
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        ),
                       ),
-                    ),
                     Divider(color: Colors.grey[300], thickness: 1,height: 30,),
                     SizedBox(height: 20,),
                     Text('Details', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),),
                     SizedBox(height: 5,),
                     //Deskripsi
-                    Text('Offers a comfortable and relaxing stay in the heart of this room. Featuring modern rooms, cozy facilities, and convenient access to popular attractions, this hotel is a great choice for both business and leisure travelers. Enjoy a pleasant atmosphere, quality service, and a memorable stay.',
+                    Text(
+                      widget.hotel.details.isNotEmpty
+                          ? widget.hotel.details
+                          : 'Deskripsi hotel belum tersedia.',
                       textAlign: TextAlign.justify,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey.shade700,
+                        height: 1.5,
+                      ),
                     ),
                     SizedBox(height: 15,),
                     Text('Facilities', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),),
@@ -233,46 +290,20 @@ class _DetailPage extends State<DetailPage> {
                     //fasilitas
                     Wrap(
                       alignment: WrapAlignment.start,
-                      spacing: 25, //jarak kiri kanan
-                      runSpacing: 20, //jarak atas bawah
-                      children: [
-                        Column(
+                      spacing: 25,
+                      runSpacing: 20,
+                      children: widget.hotel.facilities.map((facility) {
+                        return Column(
                           children: [
-                            Icon(Icons.pool, color: Colors.green, size: 35),
-                            Text('Swimming Pool')
+                            Icon(
+                              getFacilityIcon(facility),
+                              color: Colors.green,
+                              size: 35,
+                            ),
+                            Text(facility),
                           ],
-                        ),
-                        Column(
-                          children: [
-                            Icon(Icons.wifi, color: Colors.green,size: 35),
-                            Text('WiFi')
-                          ],
-                        ),
-                        Column(
-                          children: [
-                            Icon(Icons.restaurant, color: Colors.green,size: 35),
-                            Text('Restaurant')
-                          ],
-                        ),
-                        Column(
-                          children: [
-                            Icon(Icons.local_parking, color: Colors.green,size: 35),
-                            Text('Parking')
-                          ],
-                        ),
-                        Column(
-                          children: [
-                            Icon(Icons.door_sliding, color: Colors.green,size: 35),
-                            Text('Meeting Room')
-                          ],
-                        ),
-                        Column(
-                          children: [
-                            Icon(Icons.fitness_center, color: Colors.green,size: 35),
-                            Text('Fitness Center')
-                          ],
-                        )
-                      ],
+                        );
+                      }).toList(),
                     ),
                     //menampilkan tipe kamar
 
