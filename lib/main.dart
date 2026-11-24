@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:hotelapps/ui/authentication/resetpassword.dart';
+import 'package:hotelapps/ui_customer/authentication/resetpassword.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:hotelapps/ui/screens/onboarding.dart';
+import 'package:hotelapps/ui_customer/screens/onboarding.dart';
 import 'package:hotelapps/services/auth_state.dart';
 import 'package:hotelapps/services/theme_controller.dart';
 

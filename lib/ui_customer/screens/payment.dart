@@ -1,6 +1,5 @@
-
 import 'package:flutter/material.dart';
-import 'package:hotelapps/ui/screens/confirmpayment.dart';
+import 'package:hotelapps/ui_customer/screens/confirmpayment.dart';
 import 'package:hotelapps/models/hotels.dart';
 import 'package:hotelapps/models/paymentuser.dart';
 import 'package:hotelapps/services/paymentuser_service.dart';

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:hotelapps/ui/widgets/navigation.dart';
-import 'package:hotelapps/ui/authentication/login.dart';
-import 'package:hotelapps/ui/screens/editpayment.dart';
-import 'package:hotelapps/ui/screens/help.dart';
-import 'package:hotelapps/ui/screens/editprofile.dart';
+import 'package:hotelapps/ui_customer/widgets/navigation.dart';
+import 'package:hotelapps/ui_customer/authentication/login.dart';
+import 'package:hotelapps/ui_customer/screens/editpayment.dart';
+import 'package:hotelapps/ui_customer/screens/help.dart';
+import 'package:hotelapps/ui_customer/screens/editprofile.dart';
 import 'package:hotelapps/services/theme_controller.dart';
 import 'package:hotelapps/services/user_service.dart';
 

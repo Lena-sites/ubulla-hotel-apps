@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:hotelapps/ui/screens/home.dart';
-import 'package:hotelapps/ui/screens/search.dart';
-import 'package:hotelapps/ui/screens/booking.dart';
-import 'package:hotelapps/ui/screens/profile.dart';
+import 'package:hotelapps/ui_customer/screens/home.dart';
+import 'package:hotelapps/ui_customer/screens/search.dart';
+import 'package:hotelapps/ui_customer/screens/booking.dart';
+import 'package:hotelapps/ui_customer/screens/profile.dart';
 
 class BottomNavigation extends StatelessWidget{
   final int currentIndex;

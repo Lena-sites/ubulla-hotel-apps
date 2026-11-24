@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hotelapps/ui/screens/payment.dart';
+import 'package:hotelapps/ui_customer/screens/payment.dart';
 import 'package:hotelapps/models/hotels.dart';
 import 'package:hotelapps/models/hotelrooms.dart';
 

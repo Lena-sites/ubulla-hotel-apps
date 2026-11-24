@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hotelapps/ui/screens/home.dart';
-import 'package:hotelapps/ui/screens/ticket.dart';
+import 'package:hotelapps/ui_customer/screens/home.dart';
+import 'package:hotelapps/ui_customer/screens/ticket.dart';
 import 'package:hotelapps/models/hotels.dart';
 import 'package:hotelapps/models/transaction.dart';
 import 'package:hotelapps/services/transaction_service.dart';

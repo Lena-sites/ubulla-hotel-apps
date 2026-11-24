@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:hotelapps/ui/authentication/login.dart';
+import 'package:hotelapps/ui_customer/authentication/login.dart';
 import 'package:hotelapps/services/auth_service.dart';
 
 class SignupPage extends StatefulWidget{

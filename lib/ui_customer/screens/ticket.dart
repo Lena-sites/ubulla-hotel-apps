@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:hotelapps/ui/screens/booking.dart';
+import 'package:hotelapps/ui_customer/screens/booking.dart';
 import 'package:hotelapps/models/hotels.dart';
 import 'package:hotelapps/services/ticket_service.dart';
 

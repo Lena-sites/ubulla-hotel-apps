@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:hotelapps/ui/widgets/navigation.dart';
+import 'package:hotelapps/ui_customer/widgets/navigation.dart';
 import 'package:hotelapps/services/transaction_service.dart';
 import 'package:hotelapps/models/hotels.dart';
 import 'package:hotelapps/services/hotel_service.dart';
-import 'package:hotelapps/ui/screens/ticket.dart';
+import 'package:hotelapps/ui_customer/screens/ticket.dart';
 
 class BookingPage extends StatefulWidget {
   const BookingPage({super.key});

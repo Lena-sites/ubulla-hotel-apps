@@ -13,8 +13,6 @@ class PaymentMethodService {
         .eq('is_active', true)
         .order('id');
 
-    print('PAYMENT METHODS RESPONSE: $response');
-
     return response
         .map((data) => PaymentMethods.fromJson(data))
         .toList();

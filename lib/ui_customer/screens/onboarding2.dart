@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart'; //pake shared preference karnaa onboarding2 maunya cuman tampil 1x di awal before login/msh user baru
-import 'package:hotelapps/ui/authentication/login.dart';
+import 'package:hotelapps/ui_customer/authentication/login.dart';
 
 class Onboarding2 extends StatefulWidget{
   const Onboarding2({super.key});
