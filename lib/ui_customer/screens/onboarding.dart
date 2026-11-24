@@ -71,19 +71,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
       nextPage = Onboarding2();
     }
 
-    // if (session != null) {
-    //   // Jika sudah login, langsung ke Home
-    //   nextPage = const HomePage();
-    // } else if (hasSeenOnboarding) {
-    //   // Jika sudah onboarding tetapi belum login
-    //   nextPage = const LoginPage();
-    // } else {
-    //   // Jika pertama kali membuka aplikasi
-    //   nextPage = const Onboarding2();
-    // }
-    // debugPrint('RECOVERY FLAG: $isPasswordRecovery');
-    // debugPrint('CURRENT SESSION: ${session != null}');
-
     if (!mounted) return;
 
     Navigator.pushReplacement(
@@ -94,8 +81,14 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
   @override
   Widget build(BuildContext context) {
+
+    //dark atau light mode
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bgColor = isDark ? const Color(0xFF121212) : Colors.white;
+    final textColor = Theme.of(context).colorScheme.onSurface;
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: bgColor,
       body: SafeArea(
         child: SizedBox(
           width: double.infinity,
@@ -126,6 +119,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                         style: TextStyle(
                           fontFamily: 'Cormorant_Garamond',
                           fontSize: 32,
+                          color: textColor,
                         ),
                       ),
                       Text(
@@ -133,6 +127,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                         style: TextStyle(
                           fontFamily: 'Cormorant_Garamond',
                           fontSize: 14,
+                          color: textColor,
                         ),
                       ),
                     ],

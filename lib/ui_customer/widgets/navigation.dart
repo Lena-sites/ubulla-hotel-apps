@@ -14,12 +14,15 @@ class BottomNavigation extends StatelessWidget{
 
   @override
   Widget build(BuildContext context){
+    //dark atau light mode
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return BottomNavigationBar(
       currentIndex: currentIndex,
       type: BottomNavigationBarType.fixed,
-      backgroundColor: Colors.white,
-      selectedItemColor: Color(0xFF10B981),
-      unselectedItemColor: Colors.grey,
+      backgroundColor: Theme.of(context).cardColor,
+      selectedItemColor: const Color(0xFF10B981),
+      unselectedItemColor: isDark ? Colors.white60 : Colors.grey,
       onTap: (index) {
         if(index == 0){
           Navigator.push(context, MaterialPageRoute(builder: (context) => const HomePage()),

@@ -201,36 +201,54 @@ class _ProfilePageState extends State<ProfilePage> {
       ],
     );
     // tombol dark theme
-    final darkSwitch = Container(
-      width: 44,
-      height: 24,
-      decoration: BoxDecoration(
-        color: isDark ? Color(0xFF10B981) : Colors.grey.shade400,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Stack(
-        children: [
-          // buat geser
-          Positioned(
-            left: isDark ? 22 : 2,
-            top: 2,
-            child: Container(
-              width: 20,
-              height: 20,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
-              ),
+
+    final darkSwitch = GestureDetector(
+      onHorizontalDragEnd: (details) {
+        if (details.primaryVelocity == null) return;
+
+        if (details.primaryVelocity! > 0 && !isDark) {
+          ThemeController.setTheme(ThemeMode.dark);
+        } else if (details.primaryVelocity! < 0 && isDark) {
+          ThemeController.setTheme(ThemeMode.light);
+        }
+      },
+      onTap: () {
+        ThemeController.setTheme(
+          isDark ? ThemeMode.light : ThemeMode.dark,
+        );
+      },
+      child: Container(
+        width: 44,
+        height: 24,
+        decoration: BoxDecoration(
+          color: isDark
+              ? const Color(0xFF10B981)
+              : Colors.grey.shade400,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: AnimatedAlign(
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeInOut,
+          alignment:
+          isDark ? Alignment.centerRight : Alignment.centerLeft,
+          child: Container(
+            width: 20,
+            height: 20,
+            margin: const EdgeInsets.symmetric(horizontal: 2),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
             ),
           ),
-        ],
+        ),
       ),
     );
+
 
     return Scaffold(
       backgroundColor: bgColor,
       appBar: AppBar(
-        backgroundColor: Colors.grey,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         title: Row(
           children: [
             ClipRRect(
@@ -477,34 +495,32 @@ class _ProfilePageState extends State<ProfilePage> {
                       Divider(height: 1, color: dividerColor),
                       // menu dark theme
                       // teken biar theme berubah
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            ThemeController.setTheme(
-                              isDark ? ThemeMode.light : ThemeMode.dark,
-                            );
-                          });
-                        },
-                        child: Container(
-                          width: double.infinity,
-                          color: Colors.transparent,
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 14, vertical: 14),
-                          child: Row(
-                            children: [
-                              Icon(Icons.remove_red_eye_outlined,
-                                  color: textColor, size: 22),
-                              SizedBox(width: 16),
-                              Expanded(
-                                child: Text(
-                                  'Dark Theme',
-                                  style:
-                                  TextStyle(fontSize: 15, color: textColor),
+
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 14,
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.remove_red_eye_outlined,
+                              color: textColor,
+                              size: 22,
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Text(
+                                'Dark Theme',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  color: textColor,
                                 ),
                               ),
-                              darkSwitch,
-                            ],
-                          ),
+                            ),
+                            darkSwitch,
+                          ],
                         ),
                       ),
                     ],

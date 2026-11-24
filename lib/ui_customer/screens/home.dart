@@ -92,9 +92,18 @@ class _MyAppState extends State<HomePage>{
         ? recentTransactions
         : recentTransactions.take(3).toList(); //ambil 3 dulu
 
+    //dark atau light mode
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bgColor = isDark ? const Color(0xFF121212) : Colors.grey[200];
+    final cardColor = Theme.of(context).cardColor;
+
+    final placeholderColor = isDark
+        ? const Color(0xFF333333)
+        : Colors.grey[300];
+
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.grey,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         title: Row(
           children: [
             ClipRRect(
@@ -128,7 +137,7 @@ class _MyAppState extends State<HomePage>{
           //container terluar (basenya)
           child: Container(
               width: double.infinity,
-              color: Colors.grey[200],
+              color: bgColor,
               child: Column(
                 children: [
                   //container untuk menampung "hello.." dan search bar"
@@ -275,8 +284,8 @@ class _MyAppState extends State<HomePage>{
                   //tulisan Recenlty Booked dan see all
                   Row(
                     children: [
-                      const SizedBox(width: 20),
-                      const Text(
+                      SizedBox(width: 20),
+                      Text(
                         'Recently Booked',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
@@ -367,7 +376,7 @@ class _MyAppState extends State<HomePage>{
                                   margin: const EdgeInsets.only(bottom: 20),
                                   padding: const EdgeInsets.all(5),
                                   decoration: BoxDecoration(
-                                    color: Colors.white,
+                                    color: cardColor,
                                     borderRadius: BorderRadius.circular(10),
                                   ),
                                   child: Row(
@@ -384,19 +393,19 @@ class _MyAppState extends State<HomePage>{
                                             return Container(
                                               width: 80,
                                               height: 80,
-                                              color: Colors.grey[300],
-                                              child: const Icon(Icons.hotel),
+                                              color: placeholderColor,
+                                              child: Icon(Icons.hotel),
                                             );
                                           },
                                         )
                                             : Container(
                                           width: 80,
                                           height: 80,
-                                          color: Colors.grey[300],
-                                          child: const Icon(Icons.hotel),
+                                          color: placeholderColor,
+                                          child: Icon(Icons.hotel),
                                         ),
                                       ),
-                                      const SizedBox(width: 10),
+                                      SizedBox(width: 10),
                                       Expanded(
                                         child: Column(
                                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -441,13 +450,15 @@ class _MyAppState extends State<HomePage>{
                                           vertical: 8,
                                         ),
                                         decoration: BoxDecoration(
-                                          color: Colors.green.shade50,
+                                          color: isDark ? Color(0xFF164B38) : Colors.green.shade50,
                                           borderRadius: BorderRadius.circular(10),
                                         ),
                                         child: Text(
                                           roomType,
                                           style: TextStyle(
-                                            color: Colors.green.shade800,
+                                            color: isDark
+                                                ? Colors.green.shade100
+                                                : Colors.green.shade800,
                                             fontSize: 12,
                                             fontWeight: FontWeight.bold,
                                           ),

@@ -94,9 +94,20 @@ class _CustomPage extends State<CustomPage> {
   @override
   Widget build(BuildContext context) {
 
+    //dark mode and light mode
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bgColor = isDark ? const Color(0xFF121212) : Colors.white;
+    final cardColor = Theme.of(context).cardColor;
+    final textColor = Theme.of(context).colorScheme.onSurface;
+    final secondaryTextColor = Theme.of(context).colorScheme.onSurfaceVariant;
+    final borderColor = isDark ? Colors.white24 : Colors.grey.shade200;
+    final dateBoxColor = isDark ? const Color(0xFF2A2A2A) : Colors.grey.shade100;
+    final counterButtonColor = isDark ? const Color(0xFF164B38) : Colors.greenAccent.shade100;
+
     return Scaffold(
+      backgroundColor: bgColor,
       appBar: AppBar(
-        backgroundColor: Colors.grey,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         title: Row(
           children: [
             Expanded(
@@ -127,7 +138,14 @@ class _CustomPage extends State<CustomPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text('Select Date', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold,)),
+                Text(
+                  'Select Date',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: textColor,
+                  ),
+                ),
                 SizedBox(height: 20),
                 // CALENDAR
                 SizedBox(height: 20,),
@@ -146,7 +164,7 @@ class _CustomPage extends State<CustomPage> {
                               height: 50,
                               padding: EdgeInsets.symmetric(horizontal: 15),
                               decoration: BoxDecoration(
-                                color: Colors.grey[100],
+                                color: dateBoxColor,
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Row(
@@ -157,6 +175,7 @@ class _CustomPage extends State<CustomPage> {
                                         : '${checkInDate!.day.toString().padLeft(2, '0')}/'
                                         '${checkInDate!.month.toString().padLeft(2, '0')}/'
                                         '${checkInDate!.year}',
+                                    style: TextStyle(color: textColor),
                                   ),
                                   Spacer(),
                                   Icon(Icons.calendar_month_outlined, size: 20),
@@ -187,7 +206,7 @@ class _CustomPage extends State<CustomPage> {
                               height: 50,
                               padding: EdgeInsets.symmetric(horizontal: 15),
                               decoration: BoxDecoration(
-                                color: Colors.grey[100],
+                                color: dateBoxColor,
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Row(
@@ -198,6 +217,7 @@ class _CustomPage extends State<CustomPage> {
                                         : '${checkOutDate!.day.toString().padLeft(2, '0')}/'
                                         '${checkOutDate!.month.toString().padLeft(2, '0')}/'
                                         '${checkOutDate!.year}',
+                                    style: TextStyle(color: textColor),
                                   ),
                                   Spacer(),
                                   Icon(Icons.calendar_month_outlined, size: 20),
@@ -215,16 +235,16 @@ class _CustomPage extends State<CustomPage> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Guest', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,)),
+                    Text('Guest', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,color: textColor,)),
                     SizedBox(height: 10),
                     Container(
                       width: double.infinity,
                       height: 70,
                       padding: EdgeInsets.symmetric(horizontal: 20),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: cardColor,
                         borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: Colors.grey[200]!,),
+                        border: Border.all(color: borderColor),
                       ),
                       child:Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -242,14 +262,14 @@ class _CustomPage extends State<CustomPage> {
                               width: 50,
                               height: 50,
                               decoration: BoxDecoration(
-                                color: Colors.greenAccent[100],
+                                color: counterButtonColor,
                                 borderRadius: BorderRadius.circular(15),
                               ),
                               child: Center(
                                 child: Text(
                                   '−',
                                   style: TextStyle(
-                                    color: Colors.green,
+                                    color: isDark ? Colors.greenAccent.shade100 : Colors.green,
                                     fontSize: 24,
                                   ),
                                 ),
@@ -263,6 +283,7 @@ class _CustomPage extends State<CustomPage> {
                             style: TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
+                              color: textColor,
                             ),
                           ),
                           SizedBox(width: 40),
@@ -277,7 +298,7 @@ class _CustomPage extends State<CustomPage> {
                               width: 50,
                               height: 50,
                               decoration: BoxDecoration(
-                                color: Colors.greenAccent[100],
+                                color: counterButtonColor,
                                 borderRadius: BorderRadius.circular(15),
                               ),
                               child: Center(
@@ -301,16 +322,16 @@ class _CustomPage extends State<CustomPage> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Room', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,)),
+                    Text('Room', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,color: textColor,)),
                     SizedBox(height: 10),
                     Container(
                       width: double.infinity,
                       height: 70,
                       padding: EdgeInsets.symmetric(horizontal: 20),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: cardColor,
                         borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: Colors.grey[200]!,),
+                        border: Border.all(color: borderColor),
                       ),
                       child:Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -328,14 +349,14 @@ class _CustomPage extends State<CustomPage> {
                               width: 50,
                               height: 50,
                               decoration: BoxDecoration(
-                                color: Colors.greenAccent[100],
+                                color: counterButtonColor,
                                 borderRadius: BorderRadius.circular(15),
                               ),
                               child: Center(
                                 child: Text(
                                   '−',
                                   style: TextStyle(
-                                    color: Colors.green,
+                                    color: isDark ? Colors.greenAccent.shade100 : Colors.green,
                                     fontSize: 24,
                                   ),
                                 ),
@@ -349,6 +370,7 @@ class _CustomPage extends State<CustomPage> {
                             style: TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
+                              color: textColor,
                             ),
                           ),
                           SizedBox(width: 40),
@@ -363,14 +385,14 @@ class _CustomPage extends State<CustomPage> {
                               width: 50,
                               height: 50,
                               decoration: BoxDecoration(
-                                color: Colors.greenAccent[100],
+                                color: counterButtonColor,
                                 borderRadius: BorderRadius.circular(15),
                               ),
                               child: Center(
                                 child: Text(
                                   '+',
                                   style: TextStyle(
-                                    color: Colors.green,
+                                    color: isDark ? Colors.greenAccent.shade100 : Colors.green,
                                     fontSize: 24,
                                   ),
                                 ),
@@ -383,7 +405,7 @@ class _CustomPage extends State<CustomPage> {
                   ],
                 ),
                 SizedBox(height: 20,),
-                Text('Rp ${formatRupiah(totalPrice)}', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),textAlign: TextAlign.center,),
+                Text('Rp ${formatRupiah(totalPrice)}', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: textColor),textAlign: TextAlign.center,),
                 ElevatedButton(
                     onPressed: (){
                       // Cek apakah tanggal check-in dan check-out sudah dipilih

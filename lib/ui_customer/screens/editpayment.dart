@@ -188,13 +188,16 @@ class _EditPaymentDialogState extends State<_EditPaymentDialog> {
 
   @override
   Widget build(BuildContext context) {
+    //dark or light mode
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDark ? Colors.white : Colors.black87;
-    final subTextColor = isDark ? Colors.white60 : Colors.black54;
-    final fieldColor = isDark ? Colors.grey.shade900 : Colors.grey.shade100;
+    final textColor = Theme.of(context).colorScheme.onSurface;
+    final subTextColor = Theme.of(context).colorScheme.onSurfaceVariant;
+    final fieldColor = isDark ? const Color(0xFF2A2A2A) : Colors.grey.shade100;
+    final borderColor = isDark ? Colors.white24 : Colors.grey.shade300;
+    final dialogColor = Theme.of(context).dialogBackgroundColor;
 
     return Dialog(
-      backgroundColor: isDark ? Colors.grey.shade50 : Colors.white,
+      backgroundColor: dialogColor,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
       ),
@@ -274,8 +277,8 @@ class _EditPaymentDialogState extends State<_EditPaymentDialog> {
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                         color: isDefault
-                            ? Colors.black54
-                            : Colors.transparent,
+                            ? const Color(0xFF10B981)
+                            : borderColor,
                       ),
                     ),
                     child: Row(
@@ -310,6 +313,7 @@ class _EditPaymentDialogState extends State<_EditPaymentDialog> {
                                   style: TextStyle(
                                     fontSize: 11,
                                     fontWeight: FontWeight.bold,
+                                    color: Color(0xFF10B981),
                                   ),
                                 ),
                             ],
@@ -363,6 +367,7 @@ class _EditPaymentDialogState extends State<_EditPaymentDialog> {
                   controller: cardholderController,
                   decoration: InputDecoration(
                     labelText: 'Cardholder Name',
+                    labelStyle: TextStyle(color: subTextColor),
                     filled: true,
                     fillColor: fieldColor,
                     border: OutlineInputBorder(
@@ -395,6 +400,7 @@ class _EditPaymentDialogState extends State<_EditPaymentDialog> {
                 DropdownButtonFormField<String>(
                   value: cardType,
                   decoration: InputDecoration(
+                    labelStyle: TextStyle(color: subTextColor),
                     labelText: 'Card Type',
                     filled: true,
                     fillColor: fieldColor,

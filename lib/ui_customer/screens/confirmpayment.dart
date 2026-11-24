@@ -122,10 +122,20 @@ class _ConfirmPage extends State<ConfirmPage> {
     //jika lebar >600 dianggap layarnya lebar/besar
     final isLargeScreen = screenWidth > 600;
 
+    //dark atau light mode
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bgColor = isDark ? const Color(0xFF121212) : Colors.grey[200];
+    final cardColor = Theme.of(context).cardColor;
+    final textColor = Theme.of(context).colorScheme.onSurface;
+    final secondaryTextColor = Theme.of(context).colorScheme.onSurfaceVariant;
+    final placeholderColor = isDark ? const Color(0xFF333333) : Colors.grey.shade300;
+    final dividerColor = isDark ? Colors.white12 : Colors.grey.shade300;
+
     return Scaffold(
-      backgroundColor: Colors.grey[200],
+      backgroundColor: bgColor,
       appBar: AppBar(
-        backgroundColor: Colors.grey,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+        foregroundColor: textColor,
         title: Row(
           children: [
             Expanded(
@@ -157,17 +167,20 @@ class _ConfirmPage extends State<ConfirmPage> {
           child: SingleChildScrollView(
             child: Container(
               padding: EdgeInsets.all(20),
-              color: Colors.grey[100],
+              color: bgColor,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Booking Details', style: TextStyle(fontWeight: FontWeight.bold),),
+                  Text('Booking Details', style: TextStyle(fontWeight: FontWeight.bold, color: textColor,),),
                   SizedBox(height: 10,),
                   Container(
                     padding: EdgeInsets.all(5),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: cardColor,
                       borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: isDark ? Colors.white12 : Colors.grey.shade200,
+                      ),
                     ),
                     child: Row(
                       children: [
@@ -182,10 +195,10 @@ class _ConfirmPage extends State<ConfirmPage> {
                               return Container(
                                 width: 80,
                                 height: 80,
-                                color: Colors.grey.shade300,
+                                color: placeholderColor,
                                 child: Icon(
                                   Icons.image_not_supported,
-                                  color: Colors.grey,
+                                  color: secondaryTextColor,
                                 ),
                               );
                             },
@@ -197,13 +210,13 @@ class _ConfirmPage extends State<ConfirmPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(widget.hotel.name,
-                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: textColor,),
                               ),
-                              Text('${widget.hotel.city}, ${widget.hotel.country}', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10),),
+                              Text('${widget.hotel.city}, ${widget.hotel.country}', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10, color: secondaryTextColor,),),
                               Row(
                                 children: [
-                                  Text('Rp ${formatRupiah(widget.totalPrice)}', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
-                                  Text(' / night', style: TextStyle(fontSize: 12),),
+                                  Text('Rp ${formatRupiah(widget.totalPrice)}', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: textColor,),),
+                                  Text(' / night', style: TextStyle(fontSize: 12,  color: secondaryTextColor,),),
                                 ],
                               )
                             ],
@@ -217,8 +230,11 @@ class _ConfirmPage extends State<ConfirmPage> {
                   Container(
                     padding: EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: cardColor,
                       borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: isDark ? Colors.white12 : Colors.grey.shade200,
+                        )
                     ),
                     child: Column(
                       children: [
@@ -252,8 +268,11 @@ class _ConfirmPage extends State<ConfirmPage> {
                   Container(
                     padding: EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: cardColor,
                       borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: isDark ? Colors.white12 : Colors.grey.shade200,
+                      ),
                     ),
                     child: Column(
                       children: [
@@ -273,7 +292,7 @@ class _ConfirmPage extends State<ConfirmPage> {
                           ],
                         ),
                         SizedBox(height: 5,),
-                        Divider(color: Colors.grey[300], thickness: 1,height: 30,),
+                        Divider(color: dividerColor, thickness: 1,height: 30,),
                         SizedBox(height: 5,),
                         Row(
                           children: [
@@ -287,31 +306,67 @@ class _ConfirmPage extends State<ConfirmPage> {
                   ),
                   SizedBox(height: 30,),
                   Container(
-                      padding: EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
+                    padding: EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: cardColor,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: isDark ? Colors.white12 : Colors.grey.shade200,
                       ),
-                      child: Row(
-                        children: [
-                          if(widget.payMet=='Paypal')
-                            Icon(Icons.paypal),
-                          if(widget.payMet.startsWith('Credit Card'))
-                            Image.asset('assets/images/cc.jpg', width: 50, height: 50),
-                            SizedBox(height: 4),
-                            Text(
-                              widget.cardholderName ?? '',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey,
+                    ),
+                    child: Row(
+                      children: [
+                        if (widget.payMet == 'Paypal')
+                          Icon(
+                            Icons.paypal,
+                            size: 40,
+                            color: textColor,
+                          ),
+
+                        if (widget.payMet.startsWith('Credit Card'))
+                          Image.asset(
+                            'assets/images/cc.jpg',
+                            width: 50,
+                            height: 50,
+                            fit: BoxFit.contain,
+                          ),
+
+                        if (widget.payMet == 'BCA M-Banking')
+                          Image.asset(
+                            'assets/images/bca.jpg',
+                            width: 50,
+                            height: 50,
+                            fit: BoxFit.contain,
+                          ),
+
+                        SizedBox(width: 10),
+
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                widget.payMet,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: textColor,
+                                ),
                               ),
-                            ),
-                          if(widget.payMet=='BCA M-Banking')
-                            Image.asset('assets/images/bca.jpg', width: 50, height: 50),
-                          SizedBox(width: 10),
-                          Text(widget.payMet, style: TextStyle(fontWeight: FontWeight.bold),)
-                        ],
-                      )
+
+                              if (widget.cardholderName != null &&
+                                  widget.cardholderName!.isNotEmpty)
+                                Text(
+                                  widget.cardholderName!,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: secondaryTextColor,
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                   SizedBox(height: 20,),
                   ElevatedButton(
@@ -338,7 +393,7 @@ class _ConfirmPage extends State<ConfirmPage> {
       barrierDismissible: false, // tidak bisa ditutup dengan tap di luar
       builder: (dialogContext) {
         return Dialog(
-          backgroundColor: Colors.white,
+          backgroundColor: Theme.of(context).cardColor,
           insetPadding: EdgeInsets.symmetric(horizontal: 40),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(25),
@@ -380,7 +435,7 @@ class _ConfirmPage extends State<ConfirmPage> {
                 // DESKRIPSI
                 Text('Successfully made payment and hotel booking',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 14),
+                  style: TextStyle(fontSize: 14, color: Theme.of(context).colorScheme.onSurface),
                 ),
                 SizedBox(height: 25),
                 // TOMBOL VIEW TICKET
@@ -436,7 +491,9 @@ class _ConfirmPage extends State<ConfirmPage> {
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFFE8F7EF),
+                      backgroundColor: Theme.of(context).brightness == Brightness.dark
+                          ? const Color(0xFF164B38)
+                          : const Color(0xFFE8F7EF),
                       foregroundColor: Color(0xFF10B981),
                       elevation: 0,
                       shape: RoundedRectangleBorder(

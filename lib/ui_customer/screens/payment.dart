@@ -155,11 +155,22 @@ class _PaymentPage extends State<PaymentPage> {
 
   @override
   Widget build(BuildContext context) {
+
+    //dark dan light mode
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bgColor = isDark ? const Color(0xFF121212) : Colors.grey[200];
+    final cardColor = Theme.of(context).cardColor;
+    final textColor = Theme.of(context).colorScheme.onSurface;
+    final secondaryTextColor = Theme.of(context).colorScheme.onSurfaceVariant;
+    final disabledCardColor = isDark ? const Color(0xFF292929) : Colors.grey.shade200;
+
+
     return Scaffold(
-      backgroundColor: Colors.grey[200],
+      backgroundColor: bgColor,
 
       appBar: AppBar(
-        backgroundColor: Colors.grey,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+        foregroundColor: textColor,
         title: Row(
           children: [
             Expanded(
@@ -205,7 +216,7 @@ class _PaymentPage extends State<PaymentPage> {
               // Judul Payment Methods
               Text(
                 'Payment Methods',
-                style: TextStyle(fontWeight: FontWeight.bold),
+                style: TextStyle(fontWeight: FontWeight.bold, color: textColor,),
               ),
 
               SizedBox(height: 20),
@@ -218,7 +229,7 @@ class _PaymentPage extends State<PaymentPage> {
                 )
                     : paymentMethods.isEmpty
                     ? Center(
-                  child: Text('No payment methods available'),
+                  child: Text('No payment methods available', style: TextStyle(color: textColor)),
                 )
                     : ListView.builder(
                   itemCount: paymentMethods.length,
@@ -252,11 +263,13 @@ class _PaymentPage extends State<PaymentPage> {
                           ),
                           decoration: BoxDecoration(
                             color: isCardUnavailable
-                                ? Colors.grey.shade200
-                                : Colors.white,
+                                ? disabledCardColor
+                                : cardColor,
                             borderRadius: BorderRadius.circular(15),
+                            border: Border.all(
+                              color: isDark ? Colors.white12 : Colors.grey.shade200,
+                            ),
                           ),
-
                           child: Row(
                             children: [
                               Icon(
@@ -359,8 +372,9 @@ class _PaymentPage extends State<PaymentPage> {
                     : continuePayment,
 
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF10B981),
-                  disabledBackgroundColor: Colors.grey,
+                  backgroundColor: Color(0xFF10B981),disabledBackgroundColor: isDark
+                    ? Colors.grey.shade800
+                    : Colors.grey,
                   minimumSize: Size(double.infinity, 55),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),

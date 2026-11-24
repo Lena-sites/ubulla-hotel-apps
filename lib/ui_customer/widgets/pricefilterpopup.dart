@@ -1,20 +1,21 @@
+
 import 'package:flutter/material.dart';
 
-class PriceFilterPopup extends StatefulWidget{
+class PriceFilterPopup extends StatefulWidget {
   final String? selectedPrice;
   final Function(String?) onApply;
 
   const PriceFilterPopup({
-      super.key,
-      required this.selectedPrice,
-      required this.onApply
+    super.key,
+    required this.selectedPrice,
+    required this.onApply,
   });
 
   @override
   State<PriceFilterPopup> createState() => _PriceFilterPopupState();
 }
 
-class _PriceFilterPopupState extends State<PriceFilterPopup>{
+class _PriceFilterPopupState extends State<PriceFilterPopup> {
   static const categories = [
     '< Rp 500.000',
     'Rp 500.000 - 1.500.000',
@@ -24,17 +25,24 @@ class _PriceFilterPopupState extends State<PriceFilterPopup>{
   String? selected;
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     selected = widget.selectedPrice;
   }
 
   @override
   Widget build(BuildContext context) {
+    final isDark =
+        Theme.of(context).brightness == Brightness.dark;
+
+    final textColor = Theme.of(context).colorScheme.onSurface;
+
     return Card(
-      color: Colors.white,
+      color: Theme.of(context).cardColor,
       elevation: 8,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: Container(
         width: 260,
         padding: const EdgeInsets.all(12),
@@ -42,8 +50,14 @@ class _PriceFilterPopupState extends State<PriceFilterPopup>{
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Harga / malam',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            Text(
+              'Harga / malam',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                color: textColor,
+              ),
+            ),
             const Divider(),
             RadioGroup<String>(
               groupValue: selected,
@@ -54,8 +68,14 @@ class _PriceFilterPopupState extends State<PriceFilterPopup>{
                     RadioListTile<String>(
                       dense: true,
                       contentPadding: EdgeInsets.zero,
-                      activeColor: Colors.green,
-                      title: Text(c, style: const TextStyle(fontSize: 13)),
+                      activeColor: const Color(0xFF10B981),
+                      title: Text(
+                        c,
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: textColor,
+                        ),
+                      ),
                       value: c,
                     ),
                 ],
@@ -66,14 +86,18 @@ class _PriceFilterPopupState extends State<PriceFilterPopup>{
               children: [
                 TextButton(
                   onPressed: () => setState(() => selected = null),
-                  child: const Text('Reset',
-                      style: TextStyle(color: Colors.grey)),
+                  child: const Text(
+                    'Reset',
+                    style: TextStyle(
+                      color: Colors.grey,
+                    ),
+                  ),
                 ),
                 const Spacer(),
                 ElevatedButton(
                   onPressed: () => widget.onApply(selected),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
+                    backgroundColor: const Color(0xFF10B981),
                     foregroundColor: Colors.white,
                   ),
                   child: const Text('Apply'),

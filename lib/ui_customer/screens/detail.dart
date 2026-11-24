@@ -146,10 +146,19 @@ class _DetailPage extends State<DetailPage> {
     final screenWidth = MediaQuery.of(context).size.width;
     final room = selectedRoom;
 
+    //dark mode atau light mode
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bgColor = isDark ? const Color(0xFF121212) : Colors.white;
+    final cardColor = Theme.of(context).cardColor;
+    final textColor = Theme.of(context).colorScheme.onSurface;
+    final secondaryTextColor = Theme.of(context).colorScheme.onSurfaceVariant;
+    final placeholderColor = isDark ? const Color(0xFF333333) : Colors.grey.shade300;
+    final bottomBarColor = isDark ? const Color(0xFF1E1E1E) : Colors.grey.shade300;
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: bgColor,
       appBar: AppBar(
-        backgroundColor: Colors.grey,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         title: Row(
           children: [
             Expanded(
@@ -192,10 +201,10 @@ class _DetailPage extends State<DetailPage> {
                   return Container(
                     width: double.infinity,
                     height: 250,
-                    color: Colors.grey.shade300,
+                    color: placeholderColor,
                     child: Icon(
                       Icons.image_not_supported,
-                      color: Colors.grey,
+                      color: secondaryTextColor,
                       size: 50,
                     ),
                   );
@@ -205,23 +214,42 @@ class _DetailPage extends State<DetailPage> {
               //container pembungkus elemen2 yang di bawah foto
               Container(
                 padding: EdgeInsets.all(25),
+                color: bgColor,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(widget.hotel.name, style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold)),
+                    Text(
+                      widget.hotel.name,
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: textColor,
+                      ),
+                    ),
                     Row(
                       children: [
                         Icon(Icons.location_on_sharp, color: Colors.red),
                         SizedBox(width: 5),
-                        Text('${widget.hotel.city}, ${widget.hotel.country}'),
+                        Text('${widget.hotel.city}, ${widget.hotel.country}',  style: TextStyle(color: secondaryTextColor),),
                       ],
                     ),
                     SizedBox(height: 10,),
                     //buat nambah garis abu2
-                    Divider(color: Colors.grey[300], thickness: 1,height: 30,),
+                    Divider(
+                      color: isDark ? Colors.white12 : Colors.grey[300],
+                      thickness: 1,
+                      height: 30,
+                    ),
                     Row(
                       children: [
-                        Text('Gallery Photos', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),),
+                        Text(
+                          'Gallery Photos',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            color: textColor,
+                          ),
+                        ),
                         Spacer(),
                         Text('See All', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),)
                       ],
@@ -255,10 +283,10 @@ class _DetailPage extends State<DetailPage> {
                                     return Container(
                                       width: 190,
                                       height: 190,
-                                      color: Colors.grey.shade300,
+                                      color: placeholderColor,
                                       child: Icon(
                                         Icons.image_not_supported,
-                                        color: Colors.grey,
+                                        color: secondaryTextColor,
                                       ),
                                     );
                                   },
@@ -268,7 +296,11 @@ class _DetailPage extends State<DetailPage> {
                           }).toList(),
                         ),
                       ),
-                    Divider(color: Colors.grey[300], thickness: 1,height: 30,),
+                    Divider(
+                      color: isDark ? Colors.white12 : Colors.grey[300],
+                      thickness: 1,
+                      height: 30,
+                    ),
                     SizedBox(height: 20,),
                     Text('Details', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),),
                     SizedBox(height: 5,),
@@ -280,7 +312,7 @@ class _DetailPage extends State<DetailPage> {
                       textAlign: TextAlign.justify,
                       style: TextStyle(
                         fontSize: 14,
-                        color: Colors.grey.shade700,
+                        color: secondaryTextColor,
                         height: 1.5,
                       ),
                     ),
@@ -346,14 +378,14 @@ class _DetailPage extends State<DetailPage> {
                               ),
                               decoration: BoxDecoration(
                                 color: !isAvailable
-                                    ? Colors.grey[300]
+                                    ? (isDark ? const Color(0xFF333333) : Colors.grey[300])
                                     : isSelected
-                                    ? Colors.green
-                                    : Colors.white,
+                                    ? const Color(0xFF10B981)
+                                    : cardColor,
                                 border: Border.all(
                                   color: !isAvailable
                                       ? Colors.grey
-                                      : Colors.green,
+                                      : const Color(0xFF10B981),
                                 ),
                                 borderRadius: BorderRadius.circular(10),
                               ),
@@ -366,7 +398,7 @@ class _DetailPage extends State<DetailPage> {
                                           ? Colors.grey
                                           : isSelected
                                           ? Colors.white
-                                          : Colors.black,
+                                          : textColor,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -380,7 +412,7 @@ class _DetailPage extends State<DetailPage> {
                                           ? Colors.red
                                           : isSelected
                                           ? Colors.white
-                                          : Colors.black,
+                                          : textColor,
                                       fontSize: 12,
                                     ),
                                   ),
@@ -392,7 +424,7 @@ class _DetailPage extends State<DetailPage> {
                                           ? Colors.grey
                                           : isSelected
                                           ? Colors.white
-                                          : Colors.black,
+                                          : textColor,
                                       fontSize: 12,
                                     ),
                                   ),
@@ -482,7 +514,7 @@ class _DetailPage extends State<DetailPage> {
                 Container(
                   width: screenWidth,
                   height: 70,
-                  color: Colors.grey[400],
+                  color: bottomBarColor,
                   child: Center(
                     child: CircularProgressIndicator(),
                   ),
@@ -490,12 +522,25 @@ class _DetailPage extends State<DetailPage> {
               Container( //ttampilan
                 width: screenWidth,
                 height: 70,
-                color: Colors.grey[400],
+                color: bottomBarColor,
                 padding: EdgeInsets.all(20),
                 child: Row(
                   children: [
-                    Text('Rp ${formatRupiah(selectedRoom!.pricePerNight)}', style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),),
-                    Text(' / night', style: TextStyle(fontSize: 12),),
+                    Text(
+                      'Rp ${formatRupiah(selectedRoom!.pricePerNight)}',
+                      style: TextStyle(
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold,
+                        color: textColor,
+                      ),
+                    ),
+                    Text(
+                      ' / night',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: secondaryTextColor,
+                      ),
+                    ),
                     Spacer(),
                     ElevatedButton(
                       onPressed: () {

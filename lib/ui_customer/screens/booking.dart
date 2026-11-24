@@ -106,10 +106,21 @@ class _BookingPage extends State<BookingPage> {
       return transaction['booking_status'] == selectedStatus;
     }).toList();
 
+    // dark atau light mode
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bgColor = isDark ? const Color(0xFF121212) : Colors.grey[200];
+    final cardColor = Theme.of(context).cardColor;
+    final textColor = Theme.of(context).colorScheme.onSurface;
+    final secondaryTextColor = Theme.of(context).colorScheme.onSurfaceVariant;
+    final dividerColor = isDark ? Colors.white12 : Colors.grey.shade300;
+    final placeholderColor = isDark ? const Color(0xFF333333) : Colors.grey.shade300;
+    final dialogColor = Theme.of(context).dialogBackgroundColor;
+
     return Scaffold(
-      backgroundColor: Colors.grey[200],
+      backgroundColor: bgColor,
       appBar: AppBar(
-        backgroundColor: Colors.grey,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+        foregroundColor: textColor,
         title: Row(
           children: [
             ClipRRect(
@@ -146,7 +157,7 @@ class _BookingPage extends State<BookingPage> {
                 children: [
                   //judul halaman
                   SizedBox(height: 10),
-                  Text('My Booking', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  Text('My Booking', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: textColor,)),
                   SizedBox(height: 10),
                   //Row ini bisa scroll ke samping
                   SingleChildScrollView(
@@ -162,7 +173,7 @@ class _BookingPage extends State<BookingPage> {
                               });
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: selectedStatus=='ongoing' ? Color(0xFF10B981) : Colors.white, // Background hijau / putih
+                              backgroundColor: selectedStatus=='ongoing' ? Color(0xFF10B981) : cardColor,// Background hijau / putih
                               side: BorderSide(color: Colors.green, width: 1.5) // Warna border hijau untuk kedua kondisi
                             ),
                             child: Text('Ongoing', style: TextStyle(
@@ -181,7 +192,7 @@ class _BookingPage extends State<BookingPage> {
                               });
                             },
                             style: ElevatedButton.styleFrom(
-                                backgroundColor: selectedStatus=='completed' ? Color(0xFF10B981) : Colors.white, // Background hijau / putih
+                                backgroundColor: selectedStatus=='completed' ? Color(0xFF10B981) : cardColor, // Background hijau / putih
                                 side: BorderSide(color: Colors.green, width: 1.5) // Warna border hijau untuk kedua kondisi
                             ),
                             child: Text('Completed', style: TextStyle(
@@ -200,7 +211,7 @@ class _BookingPage extends State<BookingPage> {
                               });
                             },
                             style: ElevatedButton.styleFrom(
-                                backgroundColor: selectedStatus=='canceled' ? Color(0xFF10B981) : Colors.white, // Background hijau / putih
+                                backgroundColor: selectedStatus=='canceled' ? Color(0xFF10B981)  : cardColor, // Background hijau / putih
                                 side: BorderSide(color: Colors.green, width: 1.5) // Warna border hijau untuk kedua kondisi
                             ),
                             child: Text('Canceled', style: TextStyle(
@@ -219,13 +230,13 @@ class _BookingPage extends State<BookingPage> {
                     padding: EdgeInsets.all(20),
                     child: isLoading
                         ? Center(
-                      child: CircularProgressIndicator(),
+                      child: CircularProgressIndicator(color: textColor),
                     )
                         : filteredTransactions.isEmpty
                         ? Center(
                       child: Text(
                         'You have no bookings yet.',
-                        style: TextStyle(fontSize: 14),
+                        style: TextStyle(fontSize: 14, color: textColor),
                       ),
                     )
                         : Column(
@@ -244,7 +255,7 @@ class _BookingPage extends State<BookingPage> {
                             margin: EdgeInsets.only(bottom: 20),
                             padding: EdgeInsets.all(10),
                             decoration: BoxDecoration(
-                              color: Colors.white,
+                              color: cardColor,
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Column(
@@ -263,7 +274,7 @@ class _BookingPage extends State<BookingPage> {
                                           return Container(
                                             width: 80,
                                             height: 80,
-                                            color: Colors.grey.shade300,
+                                            color: placeholderColor,
                                             child: Icon(
                                               Icons.image_not_supported,
                                               color: Colors.grey,
@@ -283,6 +294,7 @@ class _BookingPage extends State<BookingPage> {
                                             style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               fontSize: 15,
+                                              color: textColor,
                                             ),
                                           ),
                                           Text(
@@ -290,6 +302,7 @@ class _BookingPage extends State<BookingPage> {
                                             style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               fontSize: 10,
+                                              color: secondaryTextColor,
                                             ),
                                           ),
                                           SizedBox(height: 6),
@@ -317,7 +330,7 @@ class _BookingPage extends State<BookingPage> {
                                 // garis pemisah
                                 Container(
                                   height: 1,
-                                  color: Colors.grey[300],
+                                  color: dividerColor,
                                 ),
                                 SizedBox(height: 10),
                                 // tombol
@@ -333,9 +346,10 @@ class _BookingPage extends State<BookingPage> {
                                               context: context,
                                               builder: (dialogContext) {
                                                 return AlertDialog(
-                                                  title: Text('Cancel Booking'),
+                                                  backgroundColor: dialogColor,
+                                                  title: Text('Cancel Booking', style: TextStyle(color: textColor)),
                                                   content: Text(
-                                                    'Are you sure you want to cancel this booking?',
+                                                    'Are you sure you want to cancel this booking?', style: TextStyle(color: textColor)
                                                   ),
                                                   actions: [
                                                     TextButton(
@@ -364,7 +378,7 @@ class _BookingPage extends State<BookingPage> {
                                             }
                                           },
                                           style: ElevatedButton.styleFrom(
-                                            backgroundColor: Colors.white,
+                                            backgroundColor: cardColor,
                                             side: BorderSide(
                                               color: Colors.green,
                                               width: 1.5,
@@ -402,7 +416,7 @@ class _BookingPage extends State<BookingPage> {
                                             );
                                           },
                                           style: ElevatedButton.styleFrom(
-                                            backgroundColor: Color(0xFF10B981),
+                                            backgroundColor: cardColor,
                                             side: BorderSide(
                                               color: Colors.green,
                                               width: 1.5,

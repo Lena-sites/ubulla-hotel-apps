@@ -34,15 +34,25 @@ class TicketPage extends StatefulWidget {
 class _TicketPage extends State<TicketPage> {
   final TicketService ticketService = TicketService();
 
+
   @override
   Widget build(BuildContext context){
     //Ambil email user
     final userEmail = Supabase.instance.client.auth.currentUser!.email!;
     final username = Supabase.instance.client.auth.currentUser!.userMetadata!['username'];
 
+    // dark atau light mode
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bgColor = isDark ? const Color(0xFF121212) : Colors.white;
+    final cardColor = Theme.of(context).cardColor;
+    final textColor = Theme.of(context).colorScheme.onSurface;
+    final secondaryTextColor = Theme.of(context).colorScheme.onSurfaceVariant;
+    final dividerColor = isDark ? Colors.white12 : Colors.grey.shade300;
+
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.grey,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+        foregroundColor: textColor,
         title: Row(
           children: [
             //tombol untuk keluar (diarahkan ke booking page)
@@ -80,7 +90,7 @@ class _TicketPage extends State<TicketPage> {
         body: SafeArea(
           child: SingleChildScrollView(
             child: Container(
-              color: Colors.white,
+              color: bgColor,
               padding: EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center, // Bikin konten utama rata tengah
@@ -88,17 +98,18 @@ class _TicketPage extends State<TicketPage> {
                   SizedBox(height: 10),
                   Text(
                     'CHECK-IN TICKET',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: textColor,),
                   ),
                   SizedBox(height: 10),
-                  Divider(color: Colors.grey[300], thickness: 1, height: 30),
+                  Divider(color: dividerColor, thickness: 1, height: 30),
                   //isi dari QR Code nya ini kode booking yaa
                   QrImageView(
                     data: widget.transactionId.toString(), //isi QR Code, yaitu ID transaksi
                     version: QrVersions.auto, //menentukan versi QR secara otomatis
                     size: 250,
+                    backgroundColor: Colors.white,
                   ),
-                  Divider(color: Colors.grey[300], thickness: 1, height: 30),
+                  Divider(color: dividerColor, thickness: 1, height: 30),
                   SizedBox(height: 10),
                   // Informasi Tiket
                   Column(
@@ -110,9 +121,9 @@ class _TicketPage extends State<TicketPage> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Text('Name', style: TextStyle(color: Colors.grey, fontSize: 12)),
+                                Text('Name', style: TextStyle(color: secondaryTextColor, fontSize: 12)),
                                 SizedBox(height: 4),
-                                Text(username, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600), textAlign: TextAlign.center),
+                                Text(username, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: textColor), textAlign: TextAlign.center),
                               ],
                             ),
                           ),
@@ -120,9 +131,9 @@ class _TicketPage extends State<TicketPage> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Text('Email', style: TextStyle(color: Colors.grey, fontSize: 12)),
+                                Text('Email', style: TextStyle(color: secondaryTextColor, fontSize: 12)),
                                 SizedBox(height: 4),
-                                Text(userEmail, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600), textAlign: TextAlign.center),
+                                Text(userEmail, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: textColor), textAlign: TextAlign.center),
                               ],
                             ),
                           ),
@@ -136,10 +147,10 @@ class _TicketPage extends State<TicketPage> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Text('Check in', style: TextStyle(color: Colors.grey, fontSize: 12)),
+                                Text('Check in', style: TextStyle(color: secondaryTextColor, fontSize: 12)),
                                 SizedBox(height: 4),
                                 //memisahkan tanggal dan waktu pake spasi lalu ambil hanya yg di index 0 aja, yaitu tglnya doang
-                                Text('${widget.checkInDate}'.split(' ')[0], style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600), textAlign: TextAlign.center),
+                                Text('${widget.checkInDate}'.split(' ')[0], style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: textColor,), textAlign: TextAlign.center),
                               ],
                             ),
                           ),
@@ -147,9 +158,9 @@ class _TicketPage extends State<TicketPage> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Text('Check out', style: TextStyle(color: Colors.grey, fontSize: 12)),
+                                Text('Check out', style: TextStyle(color: secondaryTextColor, fontSize: 12)),
                                 SizedBox(height: 4),
-                                Text('${widget.checkOutDate}'.split(' ')[0], style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600), textAlign: TextAlign.center),
+                                Text('${widget.checkOutDate}'.split(' ')[0], style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: textColor,), textAlign: TextAlign.center),
                               ],
                             ),
                           ),
@@ -164,9 +175,9 @@ class _TicketPage extends State<TicketPage> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Text('Hotel', style: TextStyle(color: Colors.grey, fontSize: 12)),
+                                Text('Hotel', style: TextStyle(color: secondaryTextColor, fontSize: 12)),
                                 SizedBox(height: 4),
-                                Text(widget.hotel.name, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600), textAlign: TextAlign.center),
+                                Text(widget.hotel.name, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: textColor,), textAlign: TextAlign.center),
                               ],
                             ),
                           ),
@@ -174,9 +185,9 @@ class _TicketPage extends State<TicketPage> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Text('Guest', style: TextStyle(color: Colors.grey, fontSize: 12)),
+                                Text('Guest', style: TextStyle(color: secondaryTextColor, fontSize: 12)),
                                 SizedBox(height: 4),
-                                Text('${widget.guest}', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600), textAlign: TextAlign.center),
+                                Text('${widget.guest}', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600,color: textColor), textAlign: TextAlign.center),
                               ],
                             ),
                           ),

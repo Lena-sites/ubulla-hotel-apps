@@ -158,9 +158,17 @@ class _SearchPageState extends State<SearchPage> {
 
     final shownHotels = filteredHotels;
 
+    //dark mode atau light mode
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bgColor = isDark ? const Color(0xFF121212) : Colors.grey[200];
+    final cardColor = Theme.of(context).cardColor;
+    final placeholderColor = isDark ? const Color(0xFF333333) : Colors.grey[300];
+    final textColor = Theme.of(context).colorScheme.onSurface;
+    final searchBorderColor = isDark ? Colors.white54 : Colors.black;
+
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.grey,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         title: Row(
           children: [
             ClipRRect(
@@ -217,6 +225,8 @@ class _SearchPageState extends State<SearchPage> {
                       });
                     },
                     decoration: InputDecoration(
+                        fillColor: cardColor,
+                        filled: true,
                         hintText: 'Search',
                         prefixIcon: Icon(Icons.search_outlined),
                         suffixIcon: CompositedTransformTarget(
@@ -229,11 +239,12 @@ class _SearchPageState extends State<SearchPage> {
                               icon: Icon(Icons.tune)
                           ),
                         ),
-
-
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                         //kondisi klo fieldnya ditekan, bordernya tetap warna hitam
-                        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12),borderSide: BorderSide(color: Colors.black)),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: searchBorderColor),
+                        ),
                         floatingLabelStyle: TextStyle(color: Colors.black) //warna labelTextnya saat floating biar tetap hitam
                     ),
                   ),
@@ -244,7 +255,7 @@ class _SearchPageState extends State<SearchPage> {
                     //basee container
                     child: Container(
                       padding: EdgeInsets.all(20),
-                      color: Colors.grey[200],
+                      color: bgColor,
                       child: Column(
                         children: [
                           //bagian tombol2 filtering
@@ -263,7 +274,7 @@ class _SearchPageState extends State<SearchPage> {
                                       });
                                     },
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: selectedCategory == 'All' ? Colors.green : Colors.white,
+                                        backgroundColor: selectedCategory == 'All' ? Color(0xFF10B981) : cardColor,
                                       side: BorderSide(color: Colors.green, width: 1.5)
                                     ),
                                     child: Text('All', style: TextStyle(
@@ -282,7 +293,9 @@ class _SearchPageState extends State<SearchPage> {
                                       });
                                     },
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: selectedCategory == 'Recommended' ? Color(0xFF10B981) : Colors.white, // Background hijau / putih
+                                      backgroundColor: selectedCategory == 'Recommended'
+                                          ? Color(0xFF10B981)
+                                          : cardColor,
                                       side: BorderSide(
                                         color: Colors.green, // Warna border hijau untuk kedua kondisi
                                         width: 1.5,
@@ -304,7 +317,9 @@ class _SearchPageState extends State<SearchPage> {
                                       });
                                     },
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: selectedCategory == 'Popular' ? Color(0xFF10B981) : Colors.white, // Background hijau / putih
+                                      backgroundColor: selectedCategory == 'Popular'
+                                          ? const Color(0xFF10B981)
+                                          : cardColor,
                                       side: BorderSide(
                                         color: Colors.green, // Warna border hijau untuk kedua kondisi
                                         width: 1.5,
@@ -326,7 +341,9 @@ class _SearchPageState extends State<SearchPage> {
                                       });
                                     },
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: selectedCategory == 'Trending' ? Color(0xFF10B981) : Colors.white, // Background hijau / putih
+                                      backgroundColor: selectedCategory == 'Trending'
+                                          ? const Color(0xFF10B981)
+                                          : cardColor,
                                       side: BorderSide(
                                         color: Colors.green, // Warna border hijau untuk kedua kondisi
                                         width: 1.5,
@@ -348,7 +365,9 @@ class _SearchPageState extends State<SearchPage> {
                                       });
                                     },
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: selectedCategory == 'New' ? Color(0xFF10B981) : Colors.white, // Background hijau / putih
+                                      backgroundColor: selectedCategory == 'New'
+                                          ? const Color(0xFF10B981)
+                                          : cardColor,
                                       side: BorderSide(
                                         color: Colors.green, // Warna border hijau untuk kedua kondisi
                                         width: 1.5,
@@ -413,7 +432,7 @@ class _SearchPageState extends State<SearchPage> {
                                   child: Container(
                                     padding: EdgeInsets.all(5),
                                     decoration: BoxDecoration(
-                                        color: Colors.white,
+                                        color: cardColor,
                                         borderRadius: BorderRadius.circular(10)
                                     ),
                                     child: Row(
@@ -439,15 +458,15 @@ class _SearchPageState extends State<SearchPage> {
                                             errorBuilder: (context, error, stackTrace) => Container(
                                               width: 80,
                                               height: 80,
-                                              color: Colors.grey[300],
+                                              color: placeholderColor,
                                               child: const Icon(Icons.hotel, color: Colors.grey),
                                             ),
                                           )
                                               : Container(
                                             width: 80,
                                             height: 80,
-                                            color: Colors.grey[300],
-                                            child: const Icon(Icons.hotel, color: Colors.grey),
+                                            color: placeholderColor,
+                                            child: Icon(Icons.hotel, color: Colors.grey),
                                           ),
                                         ),
                                         SizedBox(width: 10),
@@ -502,8 +521,8 @@ class _SearchPageState extends State<SearchPage> {
                                                 ? Icons.bookmark
                                                 : Icons.bookmark_outline,
                                             color: isBookmarked
-                                                ? Colors.green
-                                                : Colors.black,
+                                                ? const Color(0xFF10B981)
+                                                : textColor,
                                             size: 20,
                                           ),
                                         ),
