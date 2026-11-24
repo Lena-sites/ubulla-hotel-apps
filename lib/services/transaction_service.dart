@@ -57,4 +57,30 @@ class TransactionService {
       },
     );
   }
+
+  // Mengambil transaksi yang tidak dibatalkan (untuk home page, recently book)
+  Future<List<Map<String, dynamic>>> getActiveTransactions({
+    int? limit,
+  }) async {
+    final user = supabase.auth.currentUser;
+
+    if (user == null) {
+      throw Exception('User belum login.');
+    }
+
+    var query = supabase
+        .from('transactions')
+        .select('*, hotel_rooms(room_type, hotels(*, hotel_categories(category_name)), hotel_prices(price_per_night, currency))')
+        .eq('user_id', user.id)
+        .neq('booking_status', 'canceled')
+        .order('created_at', ascending: false);
+
+    if (limit != null) {
+      query = query.limit(limit);
+    }
+
+    final response = await query;
+
+    return List<Map<String, dynamic>>.from(response);
+  }
 }

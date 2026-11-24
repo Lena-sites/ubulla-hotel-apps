@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:hotelapps/class_list.dart';
 import 'package:hotelapps/ui/widgets/navigation.dart';
 import 'package:hotelapps/services/hotel_service.dart';
 import 'package:hotelapps/services/user_service.dart';
-// import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:hotelapps/models/hotels.dart';
+import 'package:hotelapps/ui/screens/detail.dart';
+import 'package:hotelapps/services/transaction_service.dart';
+
 
 class HomePage extends StatefulWidget{
   const HomePage({super.key});
@@ -12,6 +14,67 @@ class HomePage extends StatefulWidget{
 }
 
 class _MyAppState extends State<HomePage>{
+
+  List<Hotels> fiveStarHotels = [];
+  bool isLoading = true;
+
+  List<Map<String, dynamic>> recentTransactions = [];
+  bool isTransactionLoading = true;
+  bool showAllTransactions = false;
+
+  @override
+  void initState() {
+    super.initState();
+    loadFiveStarHotels();
+    loadRecentTransactions();
+  }
+
+  Future<void> loadFiveStarHotels() async {
+    try {
+      final data = await HotelService().getFiveStarHotels();
+
+      setState(() {
+        fiveStarHotels = data;
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+
+      debugPrint('Gagal mengambil hotel bintang 5: $e');
+    }
+  }
+
+  Future<void> loadRecentTransactions() async {
+    try {
+      final data = await TransactionService().getActiveTransactions();
+
+      if (!mounted) return;
+
+      setState(() {
+        recentTransactions = data;
+        isTransactionLoading = false;
+      });
+    } catch (e) {
+      debugPrint('Gagal mengambil transaksi: $e');
+
+      if (!mounted) return;
+
+      setState(() {
+        isTransactionLoading = false;
+      });
+    }
+  }
+
+  //8000 jadi 8.000 ada titiknya
+  String formatRupiah(int harga) {
+    return harga.toString().replaceAllMapped(
+      RegExp(r'\B(?=(\d{3})+(?!\d))'),
+          (match) => '.',
+    );
+  }
+
   @override
   Widget build(BuildContext context){
 
@@ -23,6 +86,11 @@ class _MyAppState extends State<HomePage>{
     //ambil hasil pengambilan di /services
     final userService = UserService();
     final username = userService.getUsername();
+
+    //menentukan jumlah transaksi yang ditampilkan berdasarkan kondisi tombol
+    final displayedTransactions = showAllTransactions
+        ? recentTransactions
+        : recentTransactions.take(3).toList(); //ambil 3 dulu
 
     return Scaffold(
       appBar: AppBar(
@@ -77,768 +145,321 @@ class _MyAppState extends State<HomePage>{
                     ),
                   ),
                   //item2 hotel hasil dari filtering dan bisa di scroll ke samping
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: [
-                        //hotel 1
-                        SizedBox(width: 20,),
-                        Stack(
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(30),
-                              child: Image.asset(
-                                  'assets/images/hotel1.jpg',
-                                  width: 190,
-                                  height: 260,
-                                  fit: BoxFit.cover
+
+                  if (isLoading)
+                    const Center(child: CircularProgressIndicator())
+                  else if (fiveStarHotels.isEmpty)
+                    const Center(child: Text('Belum ada hotel bintang 5'))
+                  else
+                    SizedBox(
+                      height: 260,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: fiveStarHotels.length,
+                        itemBuilder: (context, index) {
+                          final hotel = fiveStarHotels[index];
+
+                          return GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => DetailPage(hotel: hotel),
+                                  ),
+                                );
+                              },
+                            child:Container(
+                              width: 190,
+                              margin: EdgeInsets.only(
+                                left: index == 0 ? 20 : 0,
+                                right: 20,
                               ),
-                            ),
-                            //rating
-                            Positioned(
-                                top: 12,
-                                right: 12,
-                                child: Container(
-                                  width: 60,
-                                  height: 30,
-                                  decoration: BoxDecoration(
-                                      color: Colors.green,
-                                      borderRadius: BorderRadius.circular(20)
+                              child: Stack(
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(30),
+                                    child: Image.network(
+                                      hotel.imageUrl,
+                                      width: 190,
+                                      height: 260,
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (context, error, stackTrace) {
+                                        return Container(
+                                          width: 190,
+                                          height: 260,
+                                          color: Colors.grey[400],
+                                          child: const Icon(Icons.hotel, size: 50),
+                                        );
+                                      },
+                                    ),
                                   ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(Icons.star, color: Colors.white, size: 13,),
-                                      SizedBox(width: 5,),
-                                      Text('4.8', style: TextStyle(fontSize: 12, color: Colors.white),)
-                                    ],
+
+                                  // Rating
+                                  Positioned(
+                                    top: 12,
+                                    right: 12,
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 10,
+                                        vertical: 7,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: Colors.green,
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          const Icon(
+                                            Icons.star,
+                                            color: Colors.white,
+                                            size: 13,
+                                          ),
+                                          const SizedBox(width: 5),
+                                          Text(
+                                            '${hotel.hotelStars}',
+                                            style: const TextStyle(
+                                              fontSize: 12,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
                                   ),
-                                )
-                            ),
-                            //info hotel
-                            Positioned(
-                                bottom: 12,
-                                left: 12,
-                                right: 12,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text('Emeralda De Hotel', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
-                                    Text('Paris, France', style: TextStyle(color: Colors.white, fontSize: 10)),
-                                    Row(
+
+                                  // Informasi hotel
+                                  Positioned(
+                                    bottom: 12,
+                                    left: 12,
+                                    right: 12,
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Text('Rp 800.000', style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold)),
-                                        Text(' / per night', style: TextStyle(fontSize: 10, color: Colors.white)),
-                                        Spacer(),
-                                        Icon(Icons.bookmark_outline, color: Colors.white,)
+                                        Text(
+                                          hotel.name,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        Text(
+                                          '${hotel.city}, ${hotel.country}',
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 10,
+                                          ),
+                                        ),
+                                        Text(
+                                          'Rp ${formatRupiah(hotel.pricePerNight)} / night',
+                                          style: TextStyle(
+                                            fontSize: 13,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
                                       ],
-                                    )
-                                  ],
-                                )
-                            ),
-                          ],
-                        ),
-                        SizedBox(width: 20,),
-                        //hotel 2
-                        Stack(
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(30),
-                              child: Image.asset(
-                                  'assets/images/hotel2.jpg',
-                                  width: 190,
-                                  height: 260,
-                                  fit: BoxFit.cover
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ),
-                            //rating
-                            Positioned(
-                                top: 12,
-                                right: 12,
-                                child: Container(
-                                  width: 60,
-                                  height: 30,
-                                  decoration: BoxDecoration(
-                                      color: Colors.green,
-                                      borderRadius: BorderRadius.circular(20)
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(Icons.star, color: Colors.white, size: 13,),
-                                      SizedBox(width: 5,),
-                                      Text('4.8', style: TextStyle(fontSize: 12, color: Colors.white),)
-                                    ],
-                                  ),
-                                )
-                            ),
-                            //info hotel
-                            Positioned(
-                                bottom: 12,
-                                left: 12,
-                                right: 12,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text('Emeralda De Hotel', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
-                                    Text('Paris, France', style: TextStyle(color: Colors.white, fontSize: 10)),
-                                    Row(
-                                      children: [
-                                        Text('Rp 800.000', style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold)),
-                                        Text(' / per night', style: TextStyle(fontSize: 10, color: Colors.white)),
-                                        Spacer(),
-                                        Icon(Icons.bookmark_outline, color: Colors.white,)
-                                      ],
-                                    )
-                                  ],
-                                )
-                            ),
-                          ],
-                        ),
-                        SizedBox(width: 20,),
-                        //hotel 3
-                        Stack(
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(30),
-                              child: Image.asset(
-                                  'assets/images/hotel3.jpg',
-                                  width: 190,
-                                  height: 260,
-                                  fit: BoxFit.cover
-                              ),
-                            ),
-                            //rating
-                            Positioned(
-                                top: 12,
-                                right: 12,
-                                child: Container(
-                                  width: 60,
-                                  height: 30,
-                                  decoration: BoxDecoration(
-                                      color: Colors.green,
-                                      borderRadius: BorderRadius.circular(20)
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(Icons.star, color: Colors.white, size: 13,),
-                                      SizedBox(width: 5,),
-                                      Text('4.8', style: TextStyle(fontSize: 12, color: Colors.white),)
-                                    ],
-                                  ),
-                                )
-                            ),
-                            //info hotel
-                            Positioned(
-                                bottom: 12,
-                                left: 12,
-                                right: 12,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text('Emeralda De Hotel', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
-                                    Text('Paris, France', style: TextStyle(color: Colors.white, fontSize: 10)),
-                                    Row(
-                                      children: [
-                                        Text('Rp 800.000', style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold)),
-                                        Text(' / per night', style: TextStyle(fontSize: 10, color: Colors.white)),
-                                        Spacer(),
-                                        Icon(Icons.bookmark_outline, color: Colors.white,)
-                                      ],
-                                    )
-                                  ],
-                                )
-                            ),
-                          ],
-                        ),
-                        SizedBox(width: 20,),
-                        //hotel 4
-                        Stack(
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(30),
-                              child: Image.asset(
-                                  'assets/images/hotel4.jpg',
-                                  width: 190,
-                                  height: 260,
-                                  fit: BoxFit.cover
-                              ),
-                            ),
-                            //rating
-                            Positioned(
-                                top: 12,
-                                right: 12,
-                                child: Container(
-                                  width: 60,
-                                  height: 30,
-                                  decoration: BoxDecoration(
-                                      color: Colors.green,
-                                      borderRadius: BorderRadius.circular(20)
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(Icons.star, color: Colors.white, size: 13,),
-                                      SizedBox(width: 5,),
-                                      Text('4.8', style: TextStyle(fontSize: 12, color: Colors.white),)
-                                    ],
-                                  ),
-                                )
-                            ),
-                            //info hotel
-                            Positioned(
-                                bottom: 12,
-                                left: 12,
-                                right: 12,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text('Emeralda De Hotel', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
-                                    Text('Paris, France', style: TextStyle(color: Colors.white, fontSize: 10)),
-                                    Row(
-                                      children: [
-                                        Text('Rp 800.000', style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold)),
-                                        Text(' / per night', style: TextStyle(fontSize: 10, color: Colors.white)),
-                                        Spacer(),
-                                        Icon(Icons.bookmark_outline, color: Colors.white,)
-                                      ],
-                                    )
-                                  ],
-                                )
-                            ),
-                          ],
-                        ),
-                      ],
+                            )
+                          );
+                        },
+                      ),
                     ),
-                  ),
                   SizedBox(height: 20,),
                   //tulisan Recenlty Booked dan see all
                   Row(
                     children: [
-                      SizedBox(width: 20,),
-                      Text('Recently Booked', style: TextStyle(fontWeight: FontWeight.bold),),
+                      const SizedBox(width: 20),
+                      const Text(
+                        'Recently Booked',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                       Spacer(),
-                      Text('See All', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),),
-                      SizedBox(width: 20,),
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            showAllTransactions = !showAllTransactions;
+                          });
+                        },
+                        child: Text(
+                          showAllTransactions ? 'See Less' : 'See All',
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.green,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 20),
                     ],
                   ),
                   //History Booking
                   Container(
                     padding: EdgeInsets.all(20),
-                    child: Column(
+                    child:
+                    Column(
                       children: [
-                        //histori 1
-                        GestureDetector(
-                          onDoubleTap: (){
-                            setState(() {
-                              hotellist[0].save=true;
-                            });
-                          },
-                          child: Container(
-                            padding: EdgeInsets.all(5),
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(10)
-                            ),
-                            child: Row(
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Image.asset(
-                                      'assets/images/hotel5.jpg',
-                                      width: 80,
-                                      height: 80,
-                                      fit: BoxFit.cover
-                                  ),
-                                ),
-                                SizedBox(width: 10,),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(hotellist[0].name,
-                                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                        if (isTransactionLoading)
+                          const Center(child: CircularProgressIndicator())
+                        else if (displayedTransactions.isEmpty)
+                          const Center(
+                            child: Text('Belum ada riwayat booking'),
+                          )
+                        else
+                          ...displayedTransactions.map((transaction) {
+
+                            // Mengambil data kamar
+                            final roomData =
+                            transaction['hotel_rooms'] as Map<String, dynamic>?;
+
+                            // Mengambil data harga kamar
+                            final priceData =
+                            roomData?['hotel_prices'] as Map<String, dynamic>?;
+
+                            final roomPrice =
+                                (priceData?['price_per_night'] as num?)?.toInt() ?? 0;
+
+                            // Mengambil data hotel
+                            final hotelData =
+                            roomData?['hotels'] as Map<String, dynamic>?;
+
+                            if (hotelData == null) {
+                              return const SizedBox.shrink();
+                            }
+
+                            //DetailPage membutuhkan objek Hotels, bukan sekadar nama dan foto hotel
+                            final selectedHotel = Hotels.fromJson(
+                              Map<String, dynamic>.from(hotelData),
+                            );
+
+                            final hotelImage =
+                                hotelData?['image_url'] as String? ?? '';
+
+                            final hotelCity =
+                                hotelData?['city'] as String? ?? '';
+
+                            final hotelCountry =
+                                hotelData?['country'] as String? ?? '';
+
+                            final hotelName =
+                                transaction['hotel_name']?.toString() ?? 'Hotel';
+
+                            final roomType =
+                                roomData?['room_type']?.toString() ?? 'Room';
+
+                            return GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => DetailPage(
+                                        hotel: selectedHotel,
                                       ),
-                                      Text(hotellist[0].location, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10),),
-                                      Row(
-                                        children: [
-                                          Text('Rp ${hotellist[0].price}', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
-                                          Text(' / night', style: TextStyle(fontSize: 12),),
-                                        ],
-                                      )
-                                    ],
+                                    ),
+                                  );
+                                },
+                                child: Container(
+                                  margin: const EdgeInsets.only(bottom: 20),
+                                  padding: const EdgeInsets.all(5),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(10),
                                   ),
-                                ),
-                                //pengkondisian untuk posisi keterangan harga sama tanda mark nya
-                                LayoutBuilder(
-                                    builder: (context, constraint){
-                                      return Flex(
-                                        direction: isLargeScreen? Axis.horizontal: Axis.vertical,
-                                        crossAxisAlignment: isLargeScreen? CrossAxisAlignment.center: CrossAxisAlignment.end,
-                                        mainAxisAlignment: isLargeScreen? MainAxisAlignment.start: MainAxisAlignment.center,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Icon(Icons.star, color: Colors.yellowAccent,size: 18,),
-                                              SizedBox(width: 3,),
-                                              Text('4.8'),
-                                            ],
-                                          ),
-                                          //ini buat geser si icon mark nya supaya aga jauh dari "/ night" saat layarnya >600
-                                          SizedBox(
-                                            width: isLargeScreen ? 20 : 0,
-                                            height: isLargeScreen ? 0 : 5,
-                                          ),
-                                          GestureDetector(
-                                            onTap: () {
-                                              setState(() {
-                                                hotellist[0].save = !hotellist[0].save;
-                                              });
-                                            },
-                                            child: Container(
-                                              child: Icon(
-                                                hotellist[0].save ? Icons.bookmark : Icons.bookmark_border_outlined,
-                                                color: hotellist[0].save ? Colors.green : Colors.black,
+                                  child: Row(
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(10),
+                                        child: hotelImage.isNotEmpty
+                                            ? Image.network(
+                                          hotelImage,
+                                          width: 80,
+                                          height: 80,
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (context, error, stackTrace) {
+                                            return Container(
+                                              width: 80,
+                                              height: 80,
+                                              color: Colors.grey[300],
+                                              child: const Icon(Icons.hotel),
+                                            );
+                                          },
+                                        )
+                                            : Container(
+                                          width: 80,
+                                          height: 80,
+                                          color: Colors.grey[300],
+                                          child: const Icon(Icons.hotel),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 10),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              hotelName,
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 15,
                                               ),
                                             ),
-                                          )
-                                        ],
-                                      );
-                                    }
-                                ),
-                                SizedBox(width: 10,)
-                              ],
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 20,),
-                        //histori booking ke2
-                        GestureDetector(
-                          onDoubleTap: (){
-                            setState(() {
-                              hotellist[1].save=true;
-                            });
-                          },
-                          child: Container(
-                            padding: EdgeInsets.all(5),
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(10)
-                            ),
-                            child: Row(
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Image.asset(
-                                      'assets/images/hotel6.jpg',
-                                      width: 80,
-                                      height: 80,
-                                      fit: BoxFit.cover
-                                  ),
-                                ),
-                                SizedBox(width: 10,),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(hotellist[1].name,
-                                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                                      ),
-                                      Text(hotellist[1].location, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10),),
-                                      Row(
-                                        children: [
-                                          Text('Rp ${hotellist[1].price}', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
-                                          Text(' / night', style: TextStyle(fontSize: 12),),
-                                        ],
-                                      )
-                                    ],
-                                  ),
-                                ),
-                                //pengkondisian untuk posisi keterangan harga sama tanda mark nya
-                                LayoutBuilder(
-                                    builder: (context, constraint){
-                                      return Flex(
-                                        direction: isLargeScreen? Axis.horizontal: Axis.vertical,
-                                        crossAxisAlignment: isLargeScreen? CrossAxisAlignment.center: CrossAxisAlignment.end,
-                                        mainAxisAlignment: isLargeScreen? MainAxisAlignment.start: MainAxisAlignment.center,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Icon(Icons.star, color: Colors.yellowAccent,size: 18,),
-                                              SizedBox(width: 3,),
-                                              Text('4.8'),
-                                            ],
-                                          ),
-                                          //ini buat geser si icon mark nya supaya aga jauh dari "/ night" saat layarnya >600
-                                          SizedBox(
-                                            width: isLargeScreen ? 20 : 0,
-                                            height: isLargeScreen ? 0 : 5,
-                                          ),
-                                          GestureDetector(
-                                            onTap: () {
-                                              setState(() {
-                                                hotellist[1].save = !hotellist[1].save;
-                                              });
-                                            },
-                                            child: Container(
-                                              child: Icon(
-                                                hotellist[1].save ? Icons.bookmark : Icons.bookmark_border_outlined,
-                                                color: hotellist[1].save ? Colors.green : Colors.black,
+                                            Text(
+                                              '$hotelCity, $hotelCountry',
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 10,
                                               ),
                                             ),
-                                          )
-                                        ],
-                                      );
-                                    }
-                                ),
-                                SizedBox(width: 10,)
-                              ],
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 20,),
-                        //histori booking ke3
-                        GestureDetector(
-                          onDoubleTap: (){
-                            setState(() {
-                              hotellist[2].save=true;
-                            });
-                          },
-                          child: Container(
-                            padding: EdgeInsets.all(5),
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(10)
-                            ),
-                            child: Row(
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Image.asset(
-                                      'assets/images/hotel7.jpg',
-                                      width: 80,
-                                      height: 80,
-                                      fit: BoxFit.cover
-                                  ),
-                                ),
-                                SizedBox(width: 10,),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(hotellist[2].name,
-                                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                                            Row(
+                                              children: [
+                                                Text(
+                                                  'Rp ${formatRupiah(roomPrice)}',
+                                                  style: const TextStyle(
+                                                    fontSize: 15,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                const Text(
+                                                  ' / night',
+                                                  style: TextStyle(fontSize: 12),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                      Text(hotellist[2].location, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10),),
-                                      Row(
-                                        children: [
-                                          Text('Rp ${hotellist[2].price}', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
-                                          Text(' / night', style: TextStyle(fontSize: 12),),
-                                        ],
-                                      )
+                                      const SizedBox(width: 10),
+                                      //tampilin room type yg dia pesen
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 10,
+                                          vertical: 8,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: Colors.green.shade50,
+                                          borderRadius: BorderRadius.circular(10),
+                                        ),
+                                        child: Text(
+                                          roomType,
+                                          style: TextStyle(
+                                            color: Colors.green.shade800,
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
                                     ],
                                   ),
-                                ),
-                                //pengkondisian untuk posisi keterangan harga sama tanda mark nya
-                                LayoutBuilder(
-                                    builder: (context, constraint){
-                                      return Flex(
-                                        direction: isLargeScreen? Axis.horizontal: Axis.vertical,
-                                        crossAxisAlignment: isLargeScreen? CrossAxisAlignment.center: CrossAxisAlignment.end,
-                                        mainAxisAlignment: isLargeScreen? MainAxisAlignment.start: MainAxisAlignment.center,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Icon(Icons.star, color: Colors.yellowAccent,size: 18,),
-                                              SizedBox(width: 3,),
-                                              Text('4.8'),
-                                            ],
-                                          ),
-                                          //ini buat geser si icon mark nya supaya aga jauh dari "/ night" saat layarnya >600
-                                          SizedBox(
-                                            width: isLargeScreen ? 20 : 0,
-                                            height: isLargeScreen ? 0 : 5,
-                                          ),
-                                          GestureDetector(
-                                            onTap: () {
-                                              setState(() {
-                                                hotellist[2].save = !hotellist[2].save;
-                                              });
-                                            },
-                                            child: Container(
-                                              child: Icon(
-                                                hotellist[2].save ? Icons.bookmark : Icons.bookmark_border_outlined,
-                                                color: hotellist[2].save ? Colors.green : Colors.black,
-                                              ),
-                                            ),
-                                          )
-                                        ],
-                                      );
-                                    }
-                                ),
-                                SizedBox(width: 10,)
-                              ],
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 20,),
-                        //histori booking ke4
-                        GestureDetector(
-                          onDoubleTap: (){
-                            setState(() {
-                              hotellist[3].save=true;
-                            });
-                          },
-                          child: Container(
-                            padding: EdgeInsets.all(5),
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(10)
-                            ),
-                            child: Row(
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Image.asset(
-                                      'assets/images/hotel8.jpg',
-                                      width: 80,
-                                      height: 80,
-                                      fit: BoxFit.cover
-                                  ),
-                                ),
-                                SizedBox(width: 10,),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(hotellist[3].name,
-                                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                                      ),
-                                      Text(hotellist[3].location, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10),),
-                                      Row(
-                                        children: [
-                                          Text('Rp ${hotellist[3].price}', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
-                                          Text(' / night', style: TextStyle(fontSize: 12),),
-                                        ],
-                                      )
-                                    ],
-                                  ),
-                                ),
-                                //pengkondisian untuk posisi keterangan harga sama tanda mark nya
-                                LayoutBuilder(
-                                    builder: (context, constraint){
-                                      return Flex(
-                                        direction: isLargeScreen? Axis.horizontal: Axis.vertical,
-                                        crossAxisAlignment: isLargeScreen? CrossAxisAlignment.center: CrossAxisAlignment.end,
-                                        mainAxisAlignment: isLargeScreen? MainAxisAlignment.start: MainAxisAlignment.center,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Icon(Icons.star, color: Colors.yellowAccent,size: 18,),
-                                              SizedBox(width: 3,),
-                                              Text('4.8'),
-                                            ],
-                                          ),
-                                          //ini buat geser si icon mark nya supaya aga jauh dari "/ night" saat layarnya >600
-                                          SizedBox(
-                                            width: isLargeScreen ? 20 : 0,
-                                            height: isLargeScreen ? 0 : 5,
-                                          ),
-                                          GestureDetector(
-                                            onTap: () {
-                                              setState(() {
-                                                hotellist[3].save = !hotellist[3].save;
-                                              });
-                                            },
-                                            child: Container(
-                                              child: Icon(
-                                                hotellist[3].save ? Icons.bookmark : Icons.bookmark_border_outlined,
-                                                color: hotellist[3].save ? Colors.green : Colors.black,
-                                              ),
-                                            ),
-                                          )
-                                        ],
-                                      );
-                                    }
-                                ),
-                                SizedBox(width: 10,)
-                              ],
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 20,),
-                        //histori booking ke5
-                        GestureDetector(
-                          onDoubleTap: (){
-                            setState(() {
-                              hotellist[4].save=true;
-                            });
-                          },
-                          child: Container(
-                            padding: EdgeInsets.all(5),
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(10)
-                            ),
-                            child: Row(
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Image.asset(
-                                      'assets/images/hotel9.jpg',
-                                      width: 80,
-                                      height: 80,
-                                      fit: BoxFit.cover
-                                  ),
-                                ),
-                                SizedBox(width: 10,),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(hotellist[4].name,
-                                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                                      ),
-                                      Text(hotellist[4].location, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10),),
-                                      Row(
-                                        children: [
-                                          Text('Rp ${hotellist[4].price}', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
-                                          Text(' / night', style: TextStyle(fontSize: 12),),
-                                        ],
-                                      )
-                                    ],
-                                  ),
-                                ),
-                                //pengkondisian untuk posisi keterangan harga sama tanda mark nya
-                                LayoutBuilder(
-                                    builder: (context, constraint){
-                                      return Flex(
-                                        direction: isLargeScreen? Axis.horizontal: Axis.vertical,
-                                        crossAxisAlignment: isLargeScreen? CrossAxisAlignment.center: CrossAxisAlignment.end,
-                                        mainAxisAlignment: isLargeScreen? MainAxisAlignment.start: MainAxisAlignment.center,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Icon(Icons.star, color: Colors.yellowAccent,size: 18,),
-                                              SizedBox(width: 3,),
-                                              Text('4.8'),
-                                            ],
-                                          ),
-                                          //ini buat geser si icon mark nya supaya aga jauh dari "/ night" saat layarnya >600
-                                          SizedBox(
-                                            width: isLargeScreen ? 20 : 0,
-                                            height: isLargeScreen ? 0 : 5,
-                                          ),
-                                          GestureDetector(
-                                            onTap: () {
-                                              setState(() {
-                                                hotellist[4].save = !hotellist[4].save;
-                                              });
-                                            },
-                                            child: Container(
-                                              child: Icon(
-                                                hotellist[4].save ? Icons.bookmark : Icons.bookmark_border_outlined,
-                                                color: hotellist[4].save ? Colors.green : Colors.black,
-                                              ),
-                                            ),
-                                          )
-                                        ],
-                                      );
-                                    }
-                                ),
-                                SizedBox(width: 10,)
-                              ],
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 20,),
-                        //histori booking ke6
-                        GestureDetector(
-                          onDoubleTap: (){
-                            setState(() {
-                              hotellist[5].save=true;
-                            });
-                          },
-                          child: Container(
-                            padding: EdgeInsets.all(5),
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(10)
-                            ),
-                            child: Row(
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Image.asset(
-                                      'assets/images/hotel10.jpg',
-                                      width: 80,
-                                      height: 80,
-                                      fit: BoxFit.cover
-                                  ),
-                                ),
-                                SizedBox(width: 10,),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(hotellist[5].name,
-                                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                                      ),
-                                      Text(hotellist[5].location, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10),),
-                                      Row(
-                                        children: [
-                                          Text('Rp ${hotellist[5].price}', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
-                                          Text(' / night', style: TextStyle(fontSize: 12),),
-                                        ],
-                                      )
-                                    ],
-                                  ),
-                                ),
-                                //pengkondisian untuk posisi keterangan harga sama tanda mark nya
-                                LayoutBuilder(
-                                    builder: (context, constraint){
-                                      return Flex(
-                                        direction: isLargeScreen? Axis.horizontal: Axis.vertical,
-                                        crossAxisAlignment: isLargeScreen? CrossAxisAlignment.center: CrossAxisAlignment.end,
-                                        mainAxisAlignment: isLargeScreen? MainAxisAlignment.start: MainAxisAlignment.center,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Icon(Icons.star, color: Colors.yellowAccent,size: 18,),
-                                              SizedBox(width: 3,),
-                                              Text('4.8'),
-                                            ],
-                                          ),
-                                          //ini buat geser si icon mark nya supaya aga jauh dari "/ night" saat layarnya >600
-                                          SizedBox(
-                                            width: isLargeScreen ? 20 : 0,
-                                            height: isLargeScreen ? 0 : 5,
-                                          ),
-                                          GestureDetector(
-                                            onTap: () {
-                                              setState(() {
-                                                hotellist[5].save = !hotellist[5].save;
-                                              });
-                                            },
-                                            child: Container(
-                                              child: Icon(
-                                                hotellist[5].save ? Icons.bookmark : Icons.bookmark_border_outlined,
-                                                color: hotellist[5].save ? Colors.green : Colors.black,
-                                              ),
-                                            ),
-                                          )
-                                        ],
-                                      );
-                                    }
-                                ),
-                                SizedBox(width: 10,)
-                              ],
-                            ),
-                          ),
-                        ),
+                                )
+                            );
+                          }),
                       ],
-                    ),
+                    )
                   ) // sini
                 ],
               )
@@ -847,34 +468,6 @@ class _MyAppState extends State<HomePage>{
       ),
       //tempat navigasi
       bottomNavigationBar: BottomNavigation(currentIndex: 0),
-      // bottomNavigationBar: BottomNavigationBar(
-      //   currentIndex: 0,
-      //   type: BottomNavigationBarType.fixed,
-      //   backgroundColor: Colors.white,
-      //   selectedItemColor: Color(0xFF10B981),
-      //   unselectedItemColor: Colors.grey,
-      //   onTap: (index) {
-      //     if(index == 0){
-      //       Navigator.push(context, MaterialPageRoute(builder: (context) => const HomePage()),
-      //       );
-      //     } else if (index == 1){
-      //       Navigator.push(context, MaterialPageRoute(builder: (context) => const SearchPage()),
-      //       );
-      //     } else if (index == 2){
-      //       Navigator.push(context, MaterialPageRoute(builder: (context) => const BookingPage()),
-      //       );
-      //     } else if (index == 3){
-      //       Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfilePage()),
-      //       );
-      //     }
-      //   },
-      //   items: [
-      //     BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: 'Home'),
-      //     BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
-      //     BottomNavigationBarItem(icon: Icon(Icons.receipt_long_outlined), label: 'Booking'),
-      //     BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-      //   ],
-      // ),
     );
   }
 }

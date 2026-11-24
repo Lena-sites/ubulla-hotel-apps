@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hotelapps/ui/screens/confirmpayment.dart';
 import 'package:hotelapps/models/hotels.dart';
-import 'package:hotelapps/class_list.dart';
 import 'package:hotelapps/models/paymentuser.dart';
 import 'package:hotelapps/services/paymentuser_service.dart';
 
@@ -277,7 +276,6 @@ class _PaymentPage extends State<PaymentPage> {
               ],
             ),
           ),
-
       ),
     );
   }

@@ -39,4 +39,16 @@ class HotelService {
 
     return Hotels.fromJson(response);
   }
+
+  // Mengambil hotel yang memiliki 5 bintang
+  Future<List<Hotels>> getFiveStarHotels() async {
+    final response = await supabase
+        .from('hotels')
+        .select('*, hotel_rooms(*, hotel_prices(*)), hotel_categories(category_name)')
+        .eq('hotel_stars', 5);
+
+    return response.map<Hotels>((hotel) {
+      return Hotels.fromJson(hotel);
+    }).toList();
+  }
 }
