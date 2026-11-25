@@ -5,7 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:hotelapps/ui_customer/authentication/signup.dart';
 import 'package:hotelapps/services/auth_service.dart';
 import 'package:hotelapps/ui_customer/screens/home.dart';
-
+import 'package:hotelapps/ui_admin/admindashboard.dart';
 
 class LoginPage extends StatefulWidget{
   const LoginPage({super.key});
@@ -30,9 +30,78 @@ class _LoginPageState extends State<LoginPage>{
           mounted &&
           !_isNavigating) {
         _isNavigating = true;
-        Navigator.push(context, MaterialPageRoute(builder: (context) => const HomePage()));
+        _navigateBasedOnRole();
+        // Navigator.push(context, MaterialPageRoute(builder: (context) => const HomePage()));
       }
     });
+  }
+
+  //fungsi untuk mengecek role akun
+  Future<void> _navigateBasedOnRole() async {
+    try {
+      final supabase = Supabase.instance.client;
+      final user = supabase.auth.currentUser;
+
+      if (user == null) {
+        _isNavigating = false;
+        return;
+      }
+
+      final profile = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', user.id)
+          .maybeSingle();
+
+      if (!mounted) return;
+
+      if (profile == null) {
+        _isNavigating = false;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Data profil pengguna tidak ditemukan'),
+          ),
+        );
+        return;
+      }
+
+      final role = profile['role'];
+
+      if (role == 'admin') {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const AdminDashboard(),
+          ),
+              (route) => false,
+        );
+      } else if (role == 'user') {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const HomePage(),
+          ),
+              (route) => false,
+        );
+      } else {
+        _isNavigating = false;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Role akun tidak dikenali'),
+          ),
+        );
+      }
+    } catch (e) {
+      _isNavigating = false;
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Gagal memeriksa role akun: $e'),
+        ),
+      );
+    }
   }
   
   @override
