@@ -425,7 +425,7 @@ class _BookingPage extends State<BookingPage> {
                                           child: Text(
                                             'View Ticket',
                                             style: TextStyle(
-                                              color: Colors.white,
+                                              color: Colors.green,
                                               fontWeight: FontWeight.w600,
                                               fontSize: 12,
                                             ),

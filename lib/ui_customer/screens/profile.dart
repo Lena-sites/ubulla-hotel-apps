@@ -383,60 +383,9 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                       ),
                       // menu payment
-                      Divider(height: 1, color: dividerColor),
                     ],
                   ),
                 ),
-
-                // // ===== KATEGORI DATA & SECURITY =====
-                // Align(
-                //   alignment: Alignment.centerLeft,
-                //   child: Padding(
-                //     padding: EdgeInsets.only(left: 4, bottom: 8),
-                //     child: Text(
-                //       'Data & Security',
-                //       style: TextStyle(
-                //         fontSize: 13,
-                //         fontWeight: FontWeight.bold,
-                //         color: subTextColor,
-                //       ),
-                //     ),
-                //   ),
-                // ),
-                // Container(
-                //   width: double.infinity,
-                //   margin: EdgeInsets.only(bottom: 16),
-                //   decoration: BoxDecoration(
-                //     color: cardColor,
-                //     borderRadius: BorderRadius.circular(10),
-                //   ),
-                //   child: Column(
-                //     children: [
-                //       // menu security
-                //       Container(
-                //         width: double.infinity,
-                //         padding:
-                //         EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-                //         child: Row(
-                //           children: [
-                //             Icon(Icons.shield_outlined,
-                //                 color: textColor, size: 22),
-                //             SizedBox(width: 16),
-                //             Expanded(
-                //               child: Text(
-                //                 'Security',
-                //                 style:
-                //                 TextStyle(fontSize: 15, color: textColor),
-                //               ),
-                //             ),
-                //             Icon(Icons.chevron_right, color: Colors.grey, size: 22),
-                //           ],
-                //         ),
-                //       ),
-                //     ],
-                //   ),
-                // ),
-
                 // ===== KATEGORI PREFERENCES =====
                 Align(
                   alignment: Alignment.centerLeft,
