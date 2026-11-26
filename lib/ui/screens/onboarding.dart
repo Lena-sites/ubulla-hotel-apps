@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:hotelapps/ui/authentication/resetpassword.dart';
 import 'package:hotelapps/services/auth_state.dart';
+import 'package:hotelapps/ui/ui_admin/admindashboard.dart';
 
 class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
@@ -58,9 +59,22 @@ class _OnboardingPageState extends State<OnboardingPage> {
       // Jika pengguna sedang reset password
       nextPage = ResetPasswordPage();
 
-    } else if (session != null) {
-      // Jika sudah login
-      nextPage = HomePage();
+    }  else if (session != null) {
+      final userId = session.user.id;
+
+      final profile = await Supabase.instance.client
+          .from('profiles')
+          .select('role')
+          .eq('id', userId)
+          .single();
+
+      final role = profile['role'];
+
+      if (role == 'admin') {
+        nextPage = const AdminDashboard();
+      } else {
+        nextPage = HomePage();
+      }
 
     } else if (hasSeenOnboarding) {
       // Jika sudah pernah onboarding
