@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hotelapps/models/hotels.dart';
 import 'package:hotelapps/services/favorite_service.dart';
-import 'package:hotelapps/ui_customer/screens/detail.dart';
+import 'package:hotelapps/ui/screens/detail.dart';
 
 class FavoritePage extends StatefulWidget {
   const FavoritePage({super.key});

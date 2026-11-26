@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:hotelapps/ui_customer/screens/onboarding2.dart';
-import 'package:hotelapps/ui_customer/screens/home.dart';
-import 'package:hotelapps/ui_customer/authentication/login.dart';
+import 'package:hotelapps/ui/screens/onboarding2.dart';
+import 'package:hotelapps/ui/screens/home.dart';
+import 'package:hotelapps/ui/authentication/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:hotelapps/ui_customer/authentication/resetpassword.dart';
+import 'package:hotelapps/ui/authentication/resetpassword.dart';
 import 'package:hotelapps/services/auth_state.dart';
 
 class OnboardingPage extends StatefulWidget {
