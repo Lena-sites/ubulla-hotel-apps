@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hotelapps/models/hotels.dart';
 import 'package:hotelapps/services/hotelmanagement_service.dart';
+import 'package:hotelapps/ui/ui_admin/hoteldetail.dart';
 
 class HotelManagementPage extends StatefulWidget {
   const HotelManagementPage({super.key});
@@ -10,8 +11,8 @@ class HotelManagementPage extends StatefulWidget {
 }
 
 class _HotelManagementPageState extends State<HotelManagementPage> {
-  final AdminHotelManagementService _service =
-  AdminHotelManagementService();
+  final HotelManagementService _service =
+  HotelManagementService();
 
   List<Hotels> _hotels = [];
   final TextEditingController _searchController = TextEditingController();
@@ -44,6 +45,94 @@ class _HotelManagementPageState extends State<HotelManagementPage> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Gagal mengambil data hotel: $e')),
+      );
+    }
+  }
+
+  Future<void> _deleteHotel(Hotels hotel) async {
+    //ini handling error dari supabase nya kalau misalnya hotel tersebut sudah bertransaksi (integritas tabel transaksi)
+    try {
+      final hasTransactions = await _service.hasTransactions(hotel.id);
+
+      if (!mounted) return;
+
+      if (hasTransactions) {
+        await showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Cannot Delete Hotel'),
+            content: const Text(
+              'This hotel has transaction history and cannot be deleted. '
+                  'Please change its status to Non-active instead.',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+
+        return;
+      }
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to check hotel transactions: $e'),
+        ),
+      );
+
+      return;
+    }
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Hotel'),
+        content: Text(
+          'Are you sure you want to delete "${hotel.name}"?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.red,
+            ),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm != true) return;
+
+    try {
+      await _service.deleteHotel(hotel.id);
+
+      if (!mounted) return;
+
+      setState(() {
+        _hotels.removeWhere((item) => item.id == hotel.id);
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Hotel deleted successfully'),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to delete hotel: $e'),
+        ),
       );
     }
   }
@@ -141,6 +230,16 @@ class _HotelManagementPageState extends State<HotelManagementPage> {
 
                 return Card(
                   child: ListTile(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => HotelDetailPage(
+                            hotel: hotel,
+                          ),
+                        ),
+                      );
+                    },
                     title: Text(
                       hotel.name,
                       style: TextStyle(fontWeight: FontWeight.bold),
@@ -178,6 +277,14 @@ class _HotelManagementPageState extends State<HotelManagementPage> {
                           ),
                         ),
                       ],
+                    ),
+                    trailing: IconButton(
+                      icon: const Icon(
+                        Icons.delete_outline,
+                        color: Colors.red,
+                      ),
+                      tooltip: 'Delete Hotel',
+                      onPressed: () => _deleteHotel(hotel),
                     ),
                   ),
                 );

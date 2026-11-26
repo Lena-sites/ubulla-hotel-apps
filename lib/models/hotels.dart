@@ -17,6 +17,7 @@ class Hotels {
   final String imageUrl;
   final String details;
   final List<String> facilities;
+  final List<HotelRooms> rooms;
   final String status;
   final String? partnerId;
   final String? ownerName;
@@ -36,6 +37,7 @@ class Hotels {
       required this.imageUrl,
       required this.details,
       required this.facilities,
+      required this.rooms,
       required this.status,
       this.partnerId,
       this.ownerName,
@@ -84,6 +86,7 @@ class Hotels {
       imageUrl: json['image_url'] ?? '',
       details: json['details'] ?? '',
       facilities: List<String>.from(json['facilities'] ?? []),
+      rooms: hotelRooms,
       status: json['status'] ?? 'Active',
       partnerId: json['partner_id']?.toString(),
       ownerName: json['owner']?['name'],
