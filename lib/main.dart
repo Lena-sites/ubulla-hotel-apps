@@ -4,6 +4,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:hotelapps/ui/screens/onboarding.dart';
 import 'package:hotelapps/services/auth_state.dart';
 import 'package:hotelapps/services/theme_controller.dart';
+import 'package:hotelapps/ui/screens/home.dart';
+import 'package:hotelapps/ui/ui_admin/admindashboard.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
 
@@ -31,10 +33,40 @@ class MyApp extends StatefulWidget{
 }
 
 class _MyAppState extends State<MyApp>{
+
+  //Simpan Future agar tidak dipanggil berulang
+  late Future<Widget> _initialPageFuture;
+
+  //fungsi untuk menentukan halaman awal.
+  Future<Widget> _getInitialPage() async {
+    final supabase = Supabase.instance.client;
+    final user = supabase.auth.currentUser;
+
+    if (user == null) {
+      return const OnboardingPage();
+    }
+
+    final profile = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .maybeSingle();
+
+    final role = profile?['role'];
+
+    if (role == 'admin') {
+      return const AdminDashboard();
+    } else if (role == 'user') {
+      return const HomePage();
+    }
+
+    return const OnboardingPage();
+  }
+
   @override
   void initState(){
     super.initState();
-
+    _initialPageFuture = _getInitialPage();
     Supabase.instance.client.auth.onAuthStateChange.listen((data){
       if (data.event == AuthChangeEvent.passwordRecovery) {
         isPasswordRecovery = true;
@@ -105,7 +137,28 @@ class _MyAppState extends State<MyApp>{
           // tema yang sedang aktif
           themeMode: currentTheme,
 
-          home: const OnboardingPage(),
+          //Kalau sesi login tersimpan dan role admin → AdminDashboard
+          //Kalau role user → HomePage
+          //Kalau belum login → OnboardingPage
+          //Selama pengecekan berlangsung → loading indicator
+          home: FutureBuilder<Widget>(
+            future: _initialPageFuture,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Scaffold(
+                  body: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                );
+              }
+
+              if (snapshot.hasError) {
+                return const OnboardingPage();
+              }
+
+              return snapshot.data ?? const OnboardingPage();
+            },
+          ),
         );
       },
     );

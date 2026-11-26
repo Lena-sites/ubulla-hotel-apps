@@ -10,10 +10,10 @@ import 'package:hotelapps/services/transaction_service.dart';
 class HomePage extends StatefulWidget{
   const HomePage({super.key});
   @override
-  State<StatefulWidget> createState()=>_MyAppState();
+  State<StatefulWidget> createState()=>_HomePageState();
 }
 
-class _MyAppState extends State<HomePage>{
+class _HomePageState extends State<HomePage>{
 
   List<Hotels> fiveStarHotels = [];
   bool isLoading = true;

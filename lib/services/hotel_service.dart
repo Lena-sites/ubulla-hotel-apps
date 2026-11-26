@@ -13,15 +13,8 @@ class HotelService {
 
     final response = await supabase
         .from('hotels')
-        .select('*, hotel_rooms(*, hotel_prices(*)), hotel_categories(category_name)');
-
-    // debugPrint('Jumlah: ${response.length}');
-    // final response = await supabase
-    //     .from('hotels')
-    //     .select('*, hotel_rooms(room_type, hotel_prices(price_per_night, currency)), hotel_categories(category_name)');
-    // final response = await supabase
-    //     .from('hotels')
-    //     .select('*, hotel_prices(price_per_night, currency), hotel_categories(category_name)');
+        .select('*, hotel_rooms(*, hotel_prices(*)), hotel_categories(category_name)')
+        .eq('status', 'Active');
 
     //mengubah data JSON menjadi objek Hotels. jadi tinggal panggil aja misal hotel.category
     return response.map<Hotels>((hotel){
@@ -35,6 +28,7 @@ class HotelService {
         .from('hotels')
         .select('*, hotel_rooms(*, hotel_prices(*)), hotel_categories(category_name)')
         .eq('id', hotelId)
+        .eq('status', 'Active')
         .single();
 
     return Hotels.fromJson(response);
@@ -45,7 +39,8 @@ class HotelService {
     final response = await supabase
         .from('hotels')
         .select('*, hotel_rooms(*, hotel_prices(*)), hotel_categories(category_name)')
-        .eq('hotel_stars', 5);
+        .eq('hotel_stars', 5)
+        .eq('status', 'Active');
 
     return response.map<Hotels>((hotel) {
       return Hotels.fromJson(hotel);

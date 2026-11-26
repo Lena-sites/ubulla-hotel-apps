@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:hotelapps/ui/screens/onboarding.dart';
 
 class AdminDashboard extends StatefulWidget {
   const AdminDashboard({super.key});
@@ -52,7 +54,7 @@ class _AdminDashboard extends State<AdminDashboard> {
                     onPressed: () {
                       showDialog(
                         context: context,
-                        builder: (context) => AlertDialog(
+                        builder: (dialogContext) => AlertDialog(
                           title: const Text('Logout'),
                           content: const Text(
                             'Are you sure you want to logout?',
@@ -60,14 +62,25 @@ class _AdminDashboard extends State<AdminDashboard> {
                           actions: [
                             TextButton(
                               onPressed: () {
-                                Navigator.pop(context);
+                                Navigator.pop(dialogContext);
                               },
                               child: const Text('Cancel'),
                             ),
                             TextButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                                // Logout akan dihubungkan nanti.
+                              onPressed: () async {
+                                Navigator.pop(dialogContext);
+
+                                await Supabase.instance.client.auth.signOut();
+
+                                if (!mounted) return;
+
+                                Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const OnboardingPage(),
+                                  ),
+                                      (route) => false,
+                                );
                               },
                               child: const Text(
                                 'Logout',

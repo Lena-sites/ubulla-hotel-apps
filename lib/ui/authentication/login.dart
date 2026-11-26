@@ -75,7 +75,7 @@ class _LoginPageState extends State<LoginPage>{
           ),
               (route) => false,
         );
-      } else if (role == 'user') {
+      } else if (role == 'customer') {
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(

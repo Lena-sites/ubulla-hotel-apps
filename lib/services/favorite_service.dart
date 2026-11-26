@@ -10,8 +10,9 @@ class FavoriteService {
     final user = supabase.auth.currentUser!;
 
     final response = await supabase.from('favorites').select(
-      'hotels(*, hotel_rooms(*, hotel_prices(*)), hotel_categories(category_name))',
-    ).eq('user_id', user.id);
+      'hotels!inner(*, hotel_rooms(*, hotel_prices(*)), hotel_categories(category_name))',
+    ).eq('user_id', user.id)
+        .eq('hotels.status', 'Active');
 
     return response.map<Hotels>((favorite) {
       return Hotels.fromJson(favorite['hotels']);
