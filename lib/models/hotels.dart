@@ -17,6 +17,9 @@ class Hotels {
   final String imageUrl;
   final String details;
   final List<String> facilities;
+  final String status;
+  final String? partnerId;
+  final String? ownerName;
 
   Hotels({
       required this.id,
@@ -33,6 +36,9 @@ class Hotels {
       required this.imageUrl,
       required this.details,
       required this.facilities,
+      required this.status,
+      this.partnerId,
+      this.ownerName,
   });
 
   //mengubah menjadi objek hotel supaya bisa di pake ama flutter (ini dia ngambil datanya uda dari tabel supabase)
@@ -78,6 +84,9 @@ class Hotels {
       imageUrl: json['image_url'] ?? '',
       details: json['details'] ?? '',
       facilities: List<String>.from(json['facilities'] ?? []),
+      status: json['status'] ?? 'Active',
+      partnerId: json['partner_id']?.toString(),
+      ownerName: json['owner']?['name'],
     );
   }
 }

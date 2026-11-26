@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:hotelapps/ui/screens/onboarding.dart';
+import 'package:hotelapps/ui/ui_admin/hotelmanagement.dart';
 
 class AdminDashboard extends StatefulWidget {
   const AdminDashboard({super.key});
@@ -221,7 +222,12 @@ class _AdminDashboard extends State<AdminDashboard> {
                     // HOTEL MANAGEMENT
                     GestureDetector(
                       onTap: () {
-                        // Navigasi Hotel Management nanti
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const HotelManagementPage(),
+                          ),
+                        );
                       },
                       child: Container(
                         width: 125,
