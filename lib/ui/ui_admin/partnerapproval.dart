@@ -6,8 +6,7 @@ class PartnerApprovalPage extends StatefulWidget {
   const PartnerApprovalPage({super.key});
 
   @override
-  State<PartnerApprovalPage> createState() =>
-      _PartnerApprovalPageState();
+  State<PartnerApprovalPage> createState() => _PartnerApprovalPageState();
 }
 
 class _PartnerApprovalPageState extends State<PartnerApprovalPage> {

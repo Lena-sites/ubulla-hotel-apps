@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:hotelapps/ui/authentication/resetpassword.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -6,6 +7,8 @@ import 'package:hotelapps/services/auth_state.dart';
 import 'package:hotelapps/services/theme_controller.dart';
 import 'package:hotelapps/ui/screens/home.dart';
 import 'package:hotelapps/ui/ui_admin/admindashboard.dart';
+import 'package:hotelapps/ui/ui_partner/partnerdashboard.dart';
+
 
 final navigatorKey = GlobalKey<NavigatorState>();
 
@@ -34,6 +37,10 @@ class MyApp extends StatefulWidget{
 
 class _MyAppState extends State<MyApp>{
 
+  //validasi session saat approval admin
+  RealtimeChannel? _profileChannel;
+  StreamSubscription<AuthState>? _authSubscription;
+
   //Simpan Future agar tidak dipanggil berulang
   late Future<Widget> _initialPageFuture;
 
@@ -56,23 +63,73 @@ class _MyAppState extends State<MyApp>{
 
     if (role == 'admin') {
       return const AdminDashboard();
-    } else if (role == 'user') {
+    } else if (role == 'partner') {
+      return const PartnerDashboard();
+    } else if (role == 'customer') {
       return const HomePage();
     }
 
     return const OnboardingPage();
   }
 
+  void _listenToRoleChanges() {
+    final supabase = Supabase.instance.client;
+    final user = supabase.auth.currentUser;
+
+    if (user == null) return;
+
+    _profileChannel = supabase
+        .channel('profile-role-${user.id}')
+        .onPostgresChanges(
+      event: PostgresChangeEvent.update,
+      schema: 'public',
+      table: 'profiles',
+      filter: PostgresChangeFilter(
+        type: PostgresChangeFilterType.eq,
+        column: 'id',
+        value: user.id,
+      ),
+      callback: (payload) async {
+        if (payload.newRecord['role'] == 'partner' && mounted) {
+          await supabase.auth.signOut();
+
+          if (!mounted) return;
+
+          navigatorKey.currentState?.pushAndRemoveUntil(
+            MaterialPageRoute(
+              builder: (context) => const OnboardingPage(),
+            ),
+                (route) => false,
+          );
+        }
+      },
+    ).subscribe();
+  }
+
   @override
   void initState(){
     super.initState();
     _initialPageFuture = _getInitialPage();
-    Supabase.instance.client.auth.onAuthStateChange.listen((data){
+    _authSubscription = Supabase.instance.client.auth.onAuthStateChange.listen((data) {
+      if (data.event == AuthChangeEvent.signedIn) {
+        _listenToRoleChanges();
+      }
+
+      if (data.event == AuthChangeEvent.signedOut) {
+        if (_profileChannel != null) {
+          Supabase.instance.client.removeChannel(_profileChannel!);
+          _profileChannel = null;
+        }
+      }
+
       if (data.event == AuthChangeEvent.passwordRecovery) {
         isPasswordRecovery = true;
         _goToReset();
       }
     });
+
+    // Pasang listener untuk sesi yang sudah login saat aplikasi dibuka
+    _listenToRoleChanges();
     // Kalau flag sudah true dari cek URL, langsung arahkan setelah frame pertama
     if (isPasswordRecovery) {
       WidgetsBinding.instance.addPostFrameCallback((_) => _goToReset());
@@ -83,6 +140,19 @@ class _MyAppState extends State<MyApp>{
     navigatorKey.currentState?.pushAndRemoveUntil(
       MaterialPageRoute(builder: (_) => const ResetPasswordPage()),(route) =>false,
     );
+  }
+
+  //untuk membersihkan subscription Auth dan Realtime ketika MyApp sudah tidak digunakan
+  @override
+  void dispose() {
+    _authSubscription?.cancel();
+
+    if (_profileChannel != null) {
+      Supabase.instance.client.removeChannel(_profileChannel!);
+      _profileChannel = null;
+    }
+
+    super.dispose();
   }
 
   @override
