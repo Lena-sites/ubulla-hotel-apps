@@ -95,4 +95,83 @@ class PartnerHotelService {
       });
     }
   }
+
+
+  // Memperbarui hotel milik Partner
+  Future<void> updatePartnerHotel({
+    required int hotelId,
+    required String name,
+    required String address,
+    required String city,
+    required String country,
+    required double latitude,
+    required double longitude,
+    required int hotelStars,
+    required String description,
+    required String imageUrl,
+    required List<String> facilities,
+    required List<Map<String, dynamic>> rooms,
+  }) async {
+    final user = supabase.auth.currentUser;
+
+    if (user == null) {
+      throw Exception('User belum login');
+    }
+
+    // Menentukan kategori berdasarkan jumlah bintang
+    final categoryName = hotelStars == 5 ? 'Recommended' : 'New';
+
+    final category = await supabase
+        .from('hotel_categories')
+        .select('id')
+        .eq('category_name', categoryName)
+        .single();
+
+    // Memperbarui informasi hotel
+    await supabase
+        .from('hotels')
+        .update({
+      'name': name,
+      'address': address,
+      'city': city,
+      'country': country,
+      'latitude': latitude,
+      'longitude': longitude,
+      'hotel_stars': hotelStars,
+      'category_id': category['id'],
+      'image_url': imageUrl,
+      'details': description,
+      'facilities': facilities,
+    })
+        .eq('id', hotelId)
+        .eq('partner_id', user.id);
+
+    // Memperbarui jumlah kamar dan harga
+    for (final room in rooms) {
+      final roomData = await supabase
+          .from('hotel_rooms')
+          .select('id')
+          .eq('hotel_id', hotelId)
+          .eq('room_type', room['room_type'])
+          .single();
+
+      final roomId = roomData['id'];
+
+      await supabase
+          .from('hotel_rooms')
+          .update({
+        'total_rooms': room['total_rooms'],
+      })
+          .eq('id', roomId);
+
+      await supabase
+          .from('hotel_prices')
+          .update({
+        'price_per_night': room['price_per_night'],
+        'currency': 'IDR',
+      })
+          .eq('room_id', roomId);
+    }
+  }
+
 }

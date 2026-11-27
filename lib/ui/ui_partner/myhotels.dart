@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hotelapps/models/hotels.dart';
 import 'package:hotelapps/services/partnerhotel_service.dart';
 import 'package:hotelapps/ui/ui_partner/addhotel.dart';
+import 'package:hotelapps/ui/ui_partner/partnerhoteldetail.dart';
 
 class MyHotelsPage extends StatefulWidget {
   const MyHotelsPage({super.key});
@@ -303,11 +304,12 @@ class _MyHotelsPageState extends State<MyHotelsPage> {
                     ),
                     child: ListTile(
                       contentPadding: const EdgeInsets.all(16),
-                      onTap: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                              'Hotel detail page will be connected next.',
+                      onTap: () async {
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => PartnerHotelDetailPage(
+                              hotel: hotel,
                             ),
                           ),
                         );
