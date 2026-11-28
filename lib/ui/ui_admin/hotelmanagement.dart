@@ -137,6 +137,101 @@ class _HotelManagementPageState extends State<HotelManagementPage> {
     }
   }
 
+
+  Future<void> _changeHotelStatus(Hotels hotel) async {
+    String selectedStatus = hotel.status;
+
+    final newStatus = await showDialog<String>(
+      context: context,
+      builder: (dialogContext) {
+        return StatefulBuilder(
+          builder: (dialogContext, setDialogState) {
+            return AlertDialog(
+              title: const Text('Change Hotel Status'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Hotel: ${hotel.name}'),
+                  const SizedBox(height: 16),
+                  DropdownButtonFormField<String>(
+                    value: selectedStatus,
+                    decoration: const InputDecoration(
+                      labelText: 'Hotel Status',
+                      border: OutlineInputBorder(),
+                    ),
+                    items: const [
+                      DropdownMenuItem(
+                        value: 'Active',
+                        child: Text('Active'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'Non-active',
+                        child: Text('Non-active'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'Suspend',
+                        child: Text('Suspend'),
+                      ),
+                    ],
+                    onChanged: (value) {
+                      if (value != null) {
+                        setDialogState(() {
+                          selectedStatus = value;
+                        });
+                      }
+                    },
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(dialogContext),
+                  child: const Text('Cancel'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(dialogContext, selectedStatus);
+                  },
+                  child: const Text('Save'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+
+    if (newStatus == null || newStatus == hotel.status) return;
+
+    try {
+      await _service.changeHotelStatus(hotel.id, newStatus);
+
+      if (!mounted) return;
+
+      await _loadHotels();
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Hotel status changed to $newStatus'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to change hotel status: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     //Filter hotel berdasarkan nama
@@ -278,13 +373,26 @@ class _HotelManagementPageState extends State<HotelManagementPage> {
                         ),
                       ],
                     ),
-                    trailing: IconButton(
-                      icon: const Icon(
-                        Icons.delete_outline,
-                        color: Colors.red,
-                      ),
-                      tooltip: 'Delete Hotel',
-                      onPressed: () => _deleteHotel(hotel),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(
+                            Icons.edit_note,
+                            color: Color(0xFF10A05A),
+                          ),
+                          tooltip: 'Change Status',
+                          onPressed: () => _changeHotelStatus(hotel),
+                        ),
+                        IconButton(
+                          icon: const Icon(
+                            Icons.delete_outline,
+                            color: Colors.red,
+                          ),
+                          tooltip: 'Delete Hotel',
+                          onPressed: () => _deleteHotel(hotel),
+                        ),
+                      ],
                     ),
                   ),
                 );

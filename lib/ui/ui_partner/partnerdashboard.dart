@@ -1,11 +1,70 @@
 import 'package:flutter/material.dart';
 import 'package:hotelapps/ui/ui_partner/myhotels.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:hotelapps/ui/screens/onboarding.dart';
 
 class PartnerDashboard extends StatelessWidget {
   const PartnerDashboard({super.key});
 
   static const Color primaryGreen = Color(0xFF10B981);
   static const Color darkGreen = Color(0xFF047857);
+
+  Future<void> _signOut(BuildContext context) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('Sign Out'),
+          content: const Text(
+            'Are you sure you want to sign out?',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(dialogContext, false);
+              },
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+              ),
+              onPressed: () {
+                Navigator.pop(dialogContext, true);
+              },
+              child: const Text('Sign Out'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmed != true) return;
+
+    try {
+      await Supabase.instance.client.auth.signOut();
+
+      if (!context.mounted) return;
+
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const OnboardingPage(),
+        ),
+            (route) => false,
+      );
+    } catch (e) {
+      if (!context.mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to sign out: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -256,7 +315,7 @@ class PartnerDashboard extends StatelessWidget {
                     'Sign out from your partner account.',
                   ),
                   trailing: const Icon(Icons.chevron_right_rounded),
-                  onTap: () {},
+                  onTap: () => _signOut(context),
                 ),
               ),
             ],

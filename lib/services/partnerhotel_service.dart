@@ -229,5 +229,60 @@ class PartnerHotelService {
   }
 
 
+  Future<void> addPartnerHotelRoom({
+    required int hotelId,
+    required String roomType,
+    required int totalRooms,
+    required int pricePerNight,
+  }) async {
+    final user = supabase.auth.currentUser;
+
+    if (user == null) {
+      throw Exception('User belum login');
+    }
+
+    // Pastikan hotel milik partner yang sedang login
+    final hotel = await supabase
+        .from('hotels')
+        .select('id')
+        .eq('id', hotelId)
+        .eq('partner_id', user.id)
+        .maybeSingle();
+
+    if (hotel == null) {
+      throw Exception('Hotel tidak ditemukan atau bukan milik Anda.');
+    }
+
+    // Cek apakah tipe kamar sudah tersedia
+    final existingRoom = await supabase
+        .from('hotel_rooms')
+        .select('id')
+        .eq('hotel_id', hotelId)
+        .eq('room_type', roomType)
+        .maybeSingle();
+
+    if (existingRoom != null) {
+      throw Exception('$roomType room already exists.');
+    }
+
+    // Tambahkan tipe kamar
+    final room = await supabase
+        .from('hotel_rooms')
+        .insert({
+      'hotel_id': hotelId,
+      'room_type': roomType,
+      'total_rooms': totalRooms,
+    })
+        .select('id')
+        .single();
+
+    // Tambahkan harga kamar
+    await supabase.from('hotel_prices').insert({
+      'room_id': room['id'],
+      'price_per_night': pricePerNight,
+      'currency': 'IDR',
+    });
+  }
+
 
 }

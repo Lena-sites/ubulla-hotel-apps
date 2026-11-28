@@ -790,6 +790,184 @@ class _PartnerHotelDetailPageState extends State<PartnerHotelDetailPage> {
     }
   }
 
+
+
+
+  Future<void> addRoom() async {
+    // Simpan ScaffoldMessenger dari halaman utama sebelum dialog dibuka.
+    final messenger = ScaffoldMessenger.of(context);
+
+    final existingRoomTypes = hotelRooms
+        .map((room) => room.roomType)
+        .toList();
+
+    final availableRoomTypes = ['Standard', 'Deluxe', 'Suite']
+        .where((type) => !existingRoomTypes.contains(type))
+        .toList();
+
+    if (availableRoomTypes.isEmpty) {
+      messenger.showSnackBar(
+        const SnackBar(
+          content: Text('All room types have been added.'),
+        ),
+      );
+      return;
+    }
+
+    String selectedRoomType = availableRoomTypes.first;
+
+    final quantityController = TextEditingController();
+    final priceController = TextEditingController();
+
+    await showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return StatefulBuilder(
+          builder: (dialogContext, setDialogState) {
+            return AlertDialog(
+              title: const Text('Add Room Type'),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    DropdownButtonFormField<String>(
+                      value: selectedRoomType,
+                      decoration: const InputDecoration(
+                        labelText: 'Room Type',
+                        border: OutlineInputBorder(),
+                      ),
+                      items: availableRoomTypes.map((type) {
+                        return DropdownMenuItem(
+                          value: type,
+                          child: Text(type),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        if (value != null) {
+                          setDialogState(() {
+                            selectedRoomType = value;
+                          });
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 14),
+                    TextField(
+                      controller: quantityController,
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(
+                        labelText: 'Total Rooms',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                    const SizedBox(height: 14),
+                    TextField(
+                      controller: priceController,
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(
+                        labelText: 'Price per Night',
+                        prefixText: 'Rp ',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(dialogContext),
+                  child: const Text('Cancel'),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: primaryColor,
+                    foregroundColor: Colors.white,
+                  ),
+                  onPressed: () async {
+                    final quantity = int.tryParse(
+                      quantityController.text.trim(),
+                    );
+
+                    final price = int.tryParse(
+                      priceController.text.trim(),
+                    );
+
+                    if (quantity == null ||
+                        price == null ||
+                        quantity < 0 ||
+                        price < 0 ||
+                        (quantity > 0 && price == 0)) {
+                      messenger.showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            'Enter valid room quantity and price.',
+                          ),
+                        ),
+                      );
+                      return;
+                    }
+
+                    Navigator.pop(dialogContext);
+
+                    try {
+                      await _service.addPartnerHotelRoom(
+                        hotelId: widget.hotel.id,
+                        roomType: selectedRoomType,
+                        totalRooms: quantity,
+                        pricePerNight: price,
+                      );
+
+                      final updatedRooms = await Supabase
+                          .instance.client
+                          .from('hotel_rooms')
+                          .select('*, hotel_prices(*)')
+                          .eq('hotel_id', widget.hotel.id);
+
+                      final newRoomList = updatedRooms
+                          .map<HotelRooms>(
+                            (room) => HotelRooms.fromJson(room),
+                      )
+                          .toList();
+
+                      if (!mounted) return;
+
+                      setState(() {
+                        hotelRooms = newRoomList;
+                      });
+
+                      messenger.showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            '$selectedRoomType room added successfully!',
+                          ),
+                          backgroundColor: primaryColor,
+                        ),
+                      );
+                    } catch (e) {
+                      if (!mounted) return;
+
+                      messenger.showSnackBar(
+                        SnackBar(
+                          content: Text('Failed to add room: $e'),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    }
+                  },
+                  child: const Text('Save'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+
+    quantityController.dispose();
+    priceController.dispose();
+  }
+
+
+
   //Buat tampilan Gallery Photos
 
   Widget buildHotelGallery() {
@@ -1300,12 +1478,27 @@ class _PartnerHotelDetailPageState extends State<PartnerHotelDetailPage> {
                   const SizedBox(height: 24),
 
                   // ROOM DETAILS
-                  const Text(
-                    'Room Details & Pricing',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  Row(
+                    children: [
+                      const Expanded(
+                        child: Text(
+                          'Room Details & Pricing',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      ElevatedButton.icon(
+                        onPressed: addRoom,
+                        icon: const Icon(Icons.add, size: 18),
+                        label: const Text('Add Room'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: primaryColor,
+                          foregroundColor: Colors.white,
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 12),
 
