@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:hotelapps/ui/ui_partner/myhotels.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:hotelapps/ui/screens/onboarding.dart';
+import 'package:hotelapps/ui/ui_partner/profile.dart';
+import 'package:hotelapps/ui/ui_partner/partnerhelp.dart';
+import 'package:hotelapps/ui/ui_partner/reservationreports.dart';
 
 class PartnerDashboard extends StatelessWidget {
   const PartnerDashboard({super.key});
@@ -229,7 +232,14 @@ class PartnerDashboard extends StatelessWidget {
                     'View incoming reservations and booking details.',
                   ),
                   trailing: const Icon(Icons.chevron_right_rounded),
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ReservationReportsPage(),
+                      ),
+                    );
+                  },
                 ),
               ),
 
@@ -276,9 +286,61 @@ class PartnerDashboard extends StatelessWidget {
                     'Manage your account information.',
                   ),
                   trailing: const Icon(Icons.chevron_right_rounded),
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const PartnerProfilePage(),
+                      ),
+                    );
+                  },
                 ),
               ),
+
+              const SizedBox(height: 14),
+
+// Help & Support
+              Card(
+                color: Colors.white,
+                elevation: 1,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: ListTile(
+                  contentPadding: const EdgeInsets.all(16),
+                  leading: Container(
+                    width: 50,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: Colors.orange.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: const Icon(
+                      Icons.support_agent_rounded,
+                      color: Colors.orange,
+                      size: 25,
+                    ),
+                  ),
+                  title: const Text(
+                    'Help & Support',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  subtitle: const Text(
+                    'Report an issue or get assistance.',
+                  ),
+                  trailing: const Icon(Icons.chevron_right_rounded),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const PartnerHelpPage(),
+                      ),
+                    );
+                  },
+                ),
+              ),
+
+              const SizedBox(height: 14),
 
               const SizedBox(height: 14),
 
