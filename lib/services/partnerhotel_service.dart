@@ -98,6 +98,7 @@ class PartnerHotelService {
 
 
   // Memperbarui hotel milik Partner
+
   Future<void> updatePartnerHotel({
     required int hotelId,
     required String name,
@@ -127,8 +128,8 @@ class PartnerHotelService {
         .eq('category_name', categoryName)
         .single();
 
-    // Memperbarui informasi hotel
-    await supabase
+    // UPDATE HOTEL
+    final hotelResult = await supabase
         .from('hotels')
         .update({
       'name': name,
@@ -144,9 +145,17 @@ class PartnerHotelService {
       'facilities': facilities,
     })
         .eq('id', hotelId)
-        .eq('partner_id', user.id);
+        .eq('partner_id', user.id)
+        .select('id')
+        .maybeSingle();
 
-    // Memperbarui jumlah kamar dan harga
+    if (hotelResult == null) {
+      throw Exception(
+        'Hotel tidak berhasil diperbarui. Periksa hak akses UPDATE pada tabel hotels.',
+      );
+    }
+
+    // UPDATE ROOM DAN PRICE
     for (final room in rooms) {
       final roomData = await supabase
           .from('hotel_rooms')
@@ -157,21 +166,68 @@ class PartnerHotelService {
 
       final roomId = roomData['id'];
 
-      await supabase
+      final roomResult = await supabase
           .from('hotel_rooms')
           .update({
         'total_rooms': room['total_rooms'],
       })
-          .eq('id', roomId);
+          .eq('id', roomId)
+          .select('id')
+          .maybeSingle();
 
-      await supabase
+      if (roomResult == null) {
+        throw Exception(
+          'Gagal memperbarui jumlah kamar ${room['room_type']}. Periksa RLS UPDATE hotel_rooms.',
+        );
+      }
+
+      final priceResult = await supabase
           .from('hotel_prices')
           .update({
         'price_per_night': room['price_per_night'],
         'currency': 'IDR',
       })
-          .eq('room_id', roomId);
+          .eq('room_id', roomId)
+          .select('id');
+
+      if (priceResult.isEmpty) {
+        throw Exception(
+          'Gagal memperbarui harga kamar ${room['room_type']}. Periksa data harga dan RLS UPDATE hotel_prices.',
+        );
+      }
     }
   }
+
+  // mengambil foto
+  Future<List<Map<String, dynamic>>> getHotelGallery(int hotelId) async {
+    final response = await supabase
+        .from('hotel_gallery')
+        .select('id, image_url')
+        .eq('hotel_id', hotelId)
+        .order('id');
+
+    return List<Map<String, dynamic>>.from(response);
+  }
+
+  // Menghapus foto gallery (menghapus foto dari tabel)
+  Future<void> deleteHotelGalleryImage(int galleryId) async {
+    await supabase
+        .from('hotel_gallery')
+        .delete()
+        .eq('id', galleryId);
+  }
+
+  //method untuk menyimpan URL foto baru (menyimpan foto baru)
+  Future<void> addHotelGalleryImage({
+    required int hotelId,
+    required String imageUrl,
+  }) async {
+    await supabase.from('hotel_gallery').insert({
+      'hotel_id': hotelId,
+      'image_url': imageUrl,
+    });
+  }
+
+
 
 }
